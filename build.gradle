@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.1-SNAPSHOT'
+	id 'fabric-loom' version '1.1.8'
 	id 'maven-publish'
 	id 'gradle-build-utils' version '1.1.0'
 }
@@ -22,14 +22,6 @@ repositories {
 }
 
 loom {
-    splitEnvironmentSourceSets()
-
-    mods {
-        modid {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
-        }
-    }
     runs {
         // This adds a new gradle task that runs the datagen API: "gradlew runDatagen"
         datagen {
@@ -37,7 +29,7 @@ loom {
             name "Data Generation"
             vmArg "-Dfabric-api.datagen"
             vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
-            vmArg "-Dfabric-api.datagen.modid=testmod"
+            vmArg "-Dfabric-api.datagen.modid=kibu"
  
             runDir "build/datagen"
         }
@@ -60,6 +52,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "work.lclpnet.mods:mplugins:${project.mplugins_version}"
 
     /* other Java dependencies */
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
@@ -97,8 +90,8 @@ publishing {
             from components.java
 
             pom {
-                name = 'Test Mod'
-                description = 'This is an example description! Tell everyone what your mod is about!'
+                name = 'Kibu'
+                description = 'Modding library for FabricMC.'
             }
         }
     }

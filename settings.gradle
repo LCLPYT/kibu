@@ -12,3 +12,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+rootProject.name = 'kibu'
+
+include 'kibu-fabric-hooks'

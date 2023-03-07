@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "kibu",
+	"id": "kibu-fabric-hooks",
 	"version": "${version}",
 	"name": "Kibu",
-	"description": "A modding library for FabricMC.",
+	"description": "A Fabric-API event extension to use them as hooks.",
 	"authors": [
 		"LCLP"
 	],
@@ -12,7 +12,7 @@
 		"sources": "https://github.com/LCLPYT/kibu"
 	},
 	"license": "MIT",
-	"icon": "assets/kibu/icon.png",
+	"icon": "assets/kibu-fabric-hooks/icon.png",
 	"environment": "*",
 	"entrypoints": {},
 	"mixins": [],

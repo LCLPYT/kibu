@@ -11,7 +11,8 @@ version = gitVersion.call()
 allprojects {
     group = project.maven_group
 
-    apply plugin: "fabric-loom"
+    apply plugin: 'fabric-loom'
+    apply plugin: 'maven-publish'
 
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -59,6 +60,10 @@ allprojects {
             rename { "${it}_${project.archivesBaseName}"}
         }
     }
+
+    publishing {
+        setupPublishRepositories(repositories, props)
+    }
 }
 
 subprojects {
@@ -66,7 +71,7 @@ subprojects {
 
     publishing {
         publications {
-            "mavenJava_${project.name}" (MavenPublication) {
+            mavenJava(MavenPublication) {
                 artifactId = project.archivesBaseName
 
                 artifact remapJar
@@ -74,12 +79,16 @@ subprojects {
             }
         }
     }
+
+    publishMavenJavaPublicationToMavenRepository.onlyIf {
+        return !checkProjectIsDeployed(project, props)
+    }
 }
 
 // configure the maven publication
 publishing {
     publications {
-        "mavenJava_${project.name}" (MavenPublication) {
+        mavenJava(MavenPublication) {
             artifactId = project.archivesBaseName
 
             artifact remapJar
@@ -88,30 +97,70 @@ publishing {
             pom {
                 name = 'Kibu'
                 description = 'Modding library for FabricMC.'
+
+                // add subproject as maven compile dependency
+                withXml {
+                    def depsNode = asNode().appendNode("dependencies")
+                    subprojects.each {
+                        def depNode = depsNode.appendNode("dependency")
+                        depNode.appendNode("groupId", it.group)
+                        depNode.appendNode("artifactId", it.name)
+                        depNode.appendNode("version", it.version)
+                        depNode.appendNode("scope", "compile")
+                    }
+                }
             }
         }
     }
+}
 
-    repositories {
-        maven {
-            Map<String, String> env = System.getenv()
+// main jar must remap after all the subprojects
+subprojects.each {
+    remapJar.dependsOn("${it.path}:remapJar")
+}
 
-            if (Arrays.stream("DEPLOY_URL", "DEPLOY_USER", "DEPLOY_PASSWORD").allMatch(env.&containsKey)) {
-                credentials {
-                    username env.get("DEPLOY_USER")
-                    password env.get("DEPLOY_PASSWORD")
-                }
-                url env.get("DEPLOY_URL")
-            } else if (Arrays.stream("mavenHost", "mavenUser", "mavenPassword").allMatch(props.&containsKey)) {
-                credentials {
-                    username props.getProperty('mavenUser')
-                    password props.getProperty('mavenPassword')
-                }
-                url props.getProperty('mavenHost')
-            } else {
-                url "file:///${rootProject.projectDir}/repo"
-            }
+dependencies {
+    afterEvaluate {
+        subprojects.each {
+            api project(path: it.path, configuration: "namedElements")
         }
+    }
+}
+
+// add subprojects as nested jar to the main jar
+remapJar {
+    afterEvaluate {
+        subprojects.each {
+            nestedJars.from project(it.path).tasks.named("remapJar")
+        }
+    }
+}
+
+def checkProjectIsDeployed(Project project, Properties props) {
+    def url = "${getDeployUrl(props)}/${project.group.toString().replace('.', '/')}/${project.archivesBaseName}/maven-metadata.xml"
+
+    String xml
+    try {
+        xml = new URL(url).text
+    } catch (Throwable ignored) {
+        return false
+    }
+
+    def meta = new groovy.xml.XmlSlurper().parseText(xml)
+    def versions = meta.versioning.versions.version*.text()
+
+    return versions.contains(project.version)
+}
+
+def getDeployUrl(Properties props) {
+    Map<String, String> env = System.getenv()
+
+    if (env.containsKey("DEPLOY_URL")) {
+        return env.get("DEPLOY_URL")
+    } else if (props.containsKey('mavenHost')) {
+        return props.getProperty('mavenHost')
+    } else {
+        return "file:///${rootProject.projectDir}/repo"
     }
 }
 
@@ -121,4 +170,24 @@ static def getSubprojectVersion(Project project) {
         throw new IllegalStateException("Could not find version for project ${project.getName()}")
     }
     return version
+}
+
+def setupPublishRepositories(RepositoryHandler repositories, Properties props) {
+    repositories.maven {
+        Map<String, String> env = System.getenv()
+
+        if (Arrays.stream("DEPLOY_USER", "DEPLOY_PASSWORD").allMatch(env.&containsKey)) {
+            credentials {
+                username env.get("DEPLOY_USER")
+                password env.get("DEPLOY_PASSWORD")
+            }
+        } else if (Arrays.stream("mavenUser", "mavenPassword").allMatch(props.&containsKey)) {
+            credentials {
+                username props.getProperty('mavenUser')
+                password props.getProperty('mavenPassword')
+            }
+        }
+
+        url getDeployUrl(props)
+    }
 }

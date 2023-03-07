@@ -3,3 +3,14 @@ plugins {
 }
 
 archivesBaseName = "kibu-fabric-hooks"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'kibu-fabric-hooks'
+                description = 'A Fabric-API event extension to use them as hooks.'
+            }
+        }
+    }
+}

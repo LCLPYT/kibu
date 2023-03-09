@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "kibu-fabric-hooks",
+	"id": "kibu-hooks",
 	"version": "${version}",
-	"name": "Kibu Fabric Hooks",
-	"description": "A Fabric-API event extension to use them as hooks.",
+	"name": "Kibu Hooks",
+	"description": "Additional Fabric hooks.",
 	"authors": [
 		"LCLP"
 	],
@@ -12,10 +12,12 @@
 		"sources": "https://github.com/LCLPYT/kibu"
 	},
 	"license": "MIT",
-	"icon": "assets/kibu-fabric-hooks/icon.png",
+	"icon": "assets/kibu-hooks/icon.png",
 	"environment": "*",
 	"entrypoints": {},
-	"mixins": [],
+	"mixins": [
+		"kibu-hooks.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=0.14.14",
 		"minecraft": "~1.19.3",

@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = "kibu-hooks"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'kibu-hooks'
+                description = 'Additional fabric hooks.'
+            }
+        }
+    }
+}

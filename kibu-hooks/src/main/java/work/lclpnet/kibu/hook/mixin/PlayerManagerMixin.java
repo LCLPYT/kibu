@@ -59,6 +59,7 @@ public abstract class PlayerManagerMixin {
         Text text = PlayerHooks.JOIN.invoker().onJoin(player, originalText.formatted(Formatting.YELLOW));
         if (text != null) {
             this.broadcast(text, false);
+            player.sendMessage(text, false);
         }
     }
 }

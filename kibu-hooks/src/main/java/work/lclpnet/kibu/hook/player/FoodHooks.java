@@ -31,10 +31,26 @@ public class FoodHooks {
     });
 
     public interface FoodFloatLevel {
+        /**
+         * Called when a food float value changes.
+         *
+         * @param player The player on that the event occurs.
+         * @param fromLevel The old food level.
+         * @param toLevel The new food level.
+         * @return True, if the food level change should be cancelled.
+         */
         boolean onChange(PlayerEntity player, float fromLevel, float toLevel);
     }
 
     public interface FoodIntLevel {
+        /**
+         * Called when a food integer value changes.
+         *
+         * @param player The player on that the event occurs.
+         * @param fromLevel The old food level.
+         * @param toLevel The new food level.
+         * @return True, if the food level change should be cancelled.
+         */
         boolean onChange(PlayerEntity player, int fromLevel, int toLevel);
     }
 }

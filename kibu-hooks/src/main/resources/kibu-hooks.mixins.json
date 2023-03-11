@@ -7,11 +7,16 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "BlockItemMixin",
+    "BucketItemMixin",
     "ExplosionMixin",
+    "FarmlandBlockMixin",
     "FrostWalkerEnchantmentMixin",
     "HungerManagerMixin",
     "IceBlockMixin",
     "PlayerEntityMixin",
+    "PlayerManagerMixin",
+    "ServerPlayNetworkHandlerMixin",
     "ServerWorldMixin",
     "SnowBlockMixin",
     "WorldMixin"

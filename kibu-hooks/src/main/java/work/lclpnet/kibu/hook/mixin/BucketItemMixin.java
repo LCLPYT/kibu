@@ -3,6 +3,7 @@ package work.lclpnet.kibu.hook.mixin;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FluidDrainable;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
@@ -13,18 +14,20 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import work.lclpnet.kibu.hook.model.BlockModification;
-import work.lclpnet.kibu.hook.model.BlockModificationType;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
 @Mixin(BucketItem.class)
 public class BucketItemMixin {
+
+    @Shadow @Final private Fluid fluid;
 
     @Inject(
             method = "use",
@@ -35,17 +38,15 @@ public class BucketItemMixin {
             cancellable = true,
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    public void onPickupFluid(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir,
-                              ItemStack itemStack, BlockHitResult blockHitResult, BlockPos blockPos, Direction direction, BlockPos blockPos2, BlockState blockState, FluidDrainable fluidDrainable) {
+    public void onPickupFluid(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir,
+                              ItemStack itemStack, BlockHitResult blockHitResult, BlockPos pos, Direction direction, BlockPos blockPos2, BlockState blockState, FluidDrainable fluidDrainable) {
 
-        final BlockModification data = new BlockModification(BlockModificationType.PICKUP_FLUID, world, blockPos, user);
-
-        if (BlockModificationHooks.MODIFY_BLOCK.invoker().onModify(data)) {
+        if (BlockModificationHooks.PICKUP_FLUID.invoker().onTransfer(world, pos, player, fluid)) {
             cir.setReturnValue(TypedActionResult.fail(itemStack));
 
-            if (user instanceof ServerPlayerEntity) {
-                ((ServerPlayerEntity) user).networkHandler.sendPacket(new BlockUpdateS2CPacket(world, blockPos));
-                PlayerUtils.syncPlayerItems(user);
+            if (player instanceof ServerPlayerEntity) {
+                ((ServerPlayerEntity) player).networkHandler.sendPacket(new BlockUpdateS2CPacket(world, pos));
+                PlayerUtils.syncPlayerItems(player);
             }
         }
     }
@@ -59,9 +60,7 @@ public class BucketItemMixin {
             cancellable = true
     )
     public void onPlaceFluid(PlayerEntity player, World world, BlockPos pos, BlockHitResult blockHitResult, CallbackInfoReturnable<Boolean> cir) {
-        final BlockModification data = new BlockModification(BlockModificationType.PLACE_FLUID, world, pos, player);
-
-        if (BlockModificationHooks.MODIFY_BLOCK.invoker().onModify(data)) {
+        if (BlockModificationHooks.PLACE_FLUID.invoker().onTransfer(world, pos, player, fluid)) {
             cir.setReturnValue(false);
 
             if (player instanceof ServerPlayerEntity) {

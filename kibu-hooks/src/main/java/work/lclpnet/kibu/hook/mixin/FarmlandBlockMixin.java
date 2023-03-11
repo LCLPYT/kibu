@@ -9,8 +9,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.model.BlockModification;
-import work.lclpnet.kibu.hook.model.BlockModificationType;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
 @Mixin(FarmlandBlock.class)
@@ -25,9 +23,7 @@ public class FarmlandBlockMixin {
             cancellable = true
     )
     public void onTrample(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
-        final BlockModification data = new BlockModification(BlockModificationType.FARMLAND_TRAMPLE, world, pos, entity);
-
-        if (BlockModificationHooks.MODIFY_BLOCK.invoker().onModify(data)) {
+        if (BlockModificationHooks.FARMLAND_TRAMPLE.invoker().onModify(world, pos, entity)) {
             ci.cancel();
         }
     }

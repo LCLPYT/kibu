@@ -1,7 +1,5 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -14,7 +12,7 @@ import javax.annotation.Nullable;
 
 public class PlayerHooks {
 
-    public static final Event<Join> JOIN = EventFactory.createArrayBacked(Join.class, callbacks -> (player, message) -> {
+    public static final Hook<Join> JOIN = HookFactory.createArrayBacked(Join.class, callbacks -> (player, message) -> {
         for (var callback : callbacks) {
             final Text newMessage = callback.onJoin(player, message);
             if (!message.equals(newMessage))
@@ -24,7 +22,7 @@ public class PlayerHooks {
         return message;
     });
 
-    public static final Event<Quit> QUIT = EventFactory.createArrayBacked(Quit.class, callbacks -> (player, message) -> {
+    public static final Hook<Quit> QUIT = HookFactory.createArrayBacked(Quit.class, callbacks -> (player, message) -> {
         for (var callback : callbacks) {
             final Text newMessage = callback.onQuit(player, message);
             if (!message.equals(newMessage))

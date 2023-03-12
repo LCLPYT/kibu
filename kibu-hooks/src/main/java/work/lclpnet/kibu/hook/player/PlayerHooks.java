@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import work.lclpnet.mplugins.hook.Hook;
 import work.lclpnet.mplugins.hook.HookFactory;
 
@@ -13,7 +15,7 @@ import javax.annotation.Nullable;
 public class PlayerHooks {
 
     public static final Event<Join> JOIN = EventFactory.createArrayBacked(Join.class, callbacks -> (player, message) -> {
-        for (Join callback : callbacks) {
+        for (var callback : callbacks) {
             final Text newMessage = callback.onJoin(player, message);
             if (!message.equals(newMessage))
                 return newMessage;
@@ -23,7 +25,7 @@ public class PlayerHooks {
     });
 
     public static final Event<Quit> QUIT = EventFactory.createArrayBacked(Quit.class, callbacks -> (player, message) -> {
-        for (Quit callback : callbacks) {
+        for (var callback : callbacks) {
             final Text newMessage = callback.onQuit(player, message);
             if (!message.equals(newMessage))
                 return newMessage;
@@ -33,7 +35,7 @@ public class PlayerHooks {
     });
 
     public static final Hook<FoodFloatLevel> SATURATION_CHANGE = HookFactory.createArrayBacked(FoodFloatLevel.class, callbacks -> (player, fromLevel, toLevel) -> {
-        for (FoodFloatLevel callback : callbacks)
+        for (var callback : callbacks)
             if (callback.onChange(player, fromLevel, toLevel))
                 return true;
 
@@ -41,7 +43,7 @@ public class PlayerHooks {
     });
 
     public static final Hook<FoodFloatLevel> EXHAUSTION_CHANGE = HookFactory.createArrayBacked(FoodFloatLevel.class, callbacks -> (player, fromLevel, toLevel) -> {
-        for (FoodFloatLevel callback : callbacks)
+        for (var callback : callbacks)
             if (callback.onChange(player, fromLevel, toLevel))
                 return true;
 
@@ -49,8 +51,16 @@ public class PlayerHooks {
     });
 
     public static final Hook<FoodIntLevel> LEVEL_CHANGE = HookFactory.createArrayBacked(FoodIntLevel.class, callbacks -> (player, fromLevel, toLevel) -> {
-        for (FoodIntLevel callback : callbacks)
+        for (var callback : callbacks)
             if (callback.onChange(player, fromLevel, toLevel))
+                return true;
+
+        return false;
+    });
+
+    public static final Hook<SpawnPointChange> SPAWN_POINT_CHANGE = HookFactory.createArrayBacked(SpawnPointChange.class, callbacks -> (player, world, pos) -> {
+        for (var callback : callbacks)
+            if (callback.onChange(player, world, pos))
                 return true;
 
         return false;
@@ -88,5 +98,9 @@ public class PlayerHooks {
          * @return True, if the food level change should be cancelled.
          */
         boolean onChange(PlayerEntity player, int fromLevel, int toLevel);
+    }
+
+    public interface SpawnPointChange {
+        boolean onChange(PlayerEntity player, World world, BlockPos pos);
     }
 }

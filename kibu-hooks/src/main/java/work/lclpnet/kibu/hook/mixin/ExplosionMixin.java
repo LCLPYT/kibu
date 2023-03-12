@@ -12,12 +12,12 @@ public class ExplosionMixin implements CancellableExplosion {
     public boolean cancelled = false;
 
     @Override
-    public void setCancelled(boolean cancel) {
+    public void kibu$setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
 
     @Override
-    public boolean isCancelled() {
+    public boolean kibu$isCancelled() {
         return cancelled;
     }
 }

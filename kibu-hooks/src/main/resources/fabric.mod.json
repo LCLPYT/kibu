@@ -14,7 +14,11 @@
 	"license": "MIT",
 	"icon": "assets/kibu-hooks/icon.png",
 	"environment": "*",
-	"entrypoints": {},
+	"entrypoints": {
+		"main": [
+			"work.lclpnet.kibu.hook.KibuHooks"
+		]
+	},
 	"mixins": [
 		"kibu-hooks.mixins.json"
 	],

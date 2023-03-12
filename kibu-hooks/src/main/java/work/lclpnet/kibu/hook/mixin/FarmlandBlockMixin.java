@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.hook.mixin;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.entity.Entity;
@@ -12,7 +13,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
 @Mixin(FarmlandBlock.class)
-public class FarmlandBlockMixin {
+public abstract class FarmlandBlockMixin extends Block {
+
+    public FarmlandBlockMixin(Settings settings) {
+        super(settings);
+    }
 
     @Inject(
             method = "onLandedUpon",
@@ -23,8 +28,10 @@ public class FarmlandBlockMixin {
             cancellable = true
     )
     public void onTrample(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
-        if (BlockModificationHooks.FARMLAND_TRAMPLE.invoker().onModify(world, pos, entity)) {
+        if (BlockModificationHooks.TRAMPLE_FARMLAND.invoker().onModify(world, pos, entity)) {
             ci.cancel();
+
+            super.onLandedUpon(world, state, pos, entity, fallDistance);
         }
     }
 }

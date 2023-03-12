@@ -20,6 +20,6 @@ public class PlayerEntityMixin {
     )
     public void onInit(CallbackInfo ci) {
         //noinspection DataFlowIssue
-        ((PlayerAware) hungerManager).setPlayer((PlayerEntity) (Object) this);
+        ((PlayerAware) hungerManager).kibu$setPlayer((PlayerEntity) (Object) this);
     }
 }

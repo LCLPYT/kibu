@@ -4,5 +4,5 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public interface PlayerAware {
 
-    void setPlayer(PlayerEntity entity);
+    void kibu$setPlayer(PlayerEntity entity);
 }

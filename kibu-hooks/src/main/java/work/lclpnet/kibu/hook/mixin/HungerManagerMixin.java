@@ -64,7 +64,7 @@ public class HungerManagerMixin implements PlayerAware {
     }
 
     @Override
-    public void setPlayer(PlayerEntity player) {
+    public void kibu$setPlayer(PlayerEntity player) {
         this.player = player;
     }
 }

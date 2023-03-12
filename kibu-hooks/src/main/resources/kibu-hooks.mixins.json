@@ -7,18 +7,32 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "AbstractCauldronBlockMixin",
+    "AbstractSignBlockMixin",
+    "BedBlockMixin",
     "BlockItemMixin",
     "BucketItemMixin",
+    "CandleBlockMixin",
+    "CauldronBlockMixin",
+    "ComposterBlockMixin",
     "ExplosionMixin",
     "FarmlandBlockMixin",
     "FrostWalkerEnchantmentMixin",
     "HungerManagerMixin",
     "IceBlockMixin",
+    "ItemStackMixin",
+    "LecternBlockEntityMixin",
+    "LecternScreenHandlerMixin",
+    "LeveledCauldronBlockMixin",
     "PlayerEntityMixin",
     "PlayerManagerMixin",
+    "RespawnAnchorBlockMixin",
     "ServerPlayNetworkHandlerMixin",
     "ServerWorldMixin",
     "SnowBlockMixin",
+    "StepAndDestroyBlockGoalMixin",
+    "TntBlockMixin",
+    "TurtleEggBlockMixin",
     "WorldMixin"
   ]
 }

@@ -34,7 +34,7 @@ public class ServerWorldMixin {
             locals = LocalCapture.CAPTURE_FAILHARD
     )
     public void onExplode(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, CallbackInfoReturnable<Explosion> cir, Explosion explosion) {
-        if (((CancellableExplosion) explosion).isCancelled())
+        if (((CancellableExplosion) explosion).kibu$isCancelled())
             cir.setReturnValue(explosion);
     }
 

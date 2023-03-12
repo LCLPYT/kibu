@@ -29,7 +29,7 @@ public class WorldMixin {
     public void onExplode(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, boolean particles, CallbackInfoReturnable<Explosion> cir, Explosion.DestructionType destructionType, Explosion explosion) {
         if (!WorldPhysicsHooks.EXPLOSION.invoker().onExplode(entity)) return;
 
-        ((CancellableExplosion) explosion).setCancelled(true);
+        ((CancellableExplosion) explosion).kibu$setCancelled(true);
         cir.setReturnValue(explosion);
     }
 }

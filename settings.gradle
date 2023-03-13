@@ -17,4 +17,5 @@ rootProject.name = 'kibu'
 
 include 'kibu-fabric-hooks'
 include 'kibu-hooks'
+include 'kibu-command-api'
 

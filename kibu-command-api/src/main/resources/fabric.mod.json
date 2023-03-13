@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-command-api",
+	"version": "${version}",
+	"name": "Kibu Command API",
+	"description": "API for registering / unregistering commands at runtime.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-command-api/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [],
+	"depends": {
+		"fabricloader": ">=0.14.14",
+		"minecraft": "~1.19.3",
+		"java": ">=17",
+		"fabric-api": "*",
+		"mplugins": "${mplugins_version}"
+	},
+	"suggests": {}
+}

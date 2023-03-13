@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = "kibu-command-api"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'kibu-command-api'
+                description = 'API for registering / unregistering commands at runtime'
+            }
+        }
+    }
+}

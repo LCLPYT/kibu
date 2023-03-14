@@ -18,7 +18,7 @@ import java.util.ArrayList;
 @Mixin(CommandDispatcher.class)
 public class CommandDispatcherMixin {
 
-    @Shadow @Final
+    @Shadow(remap = false) @Final
     private RootCommandNode<?> root;
 
     @Inject(

@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-scheduler-api",
+	"version": "${version}",
+	"name": "Kibu Scheduler API",
+	"description": "API for task scheduling.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-scheduler-api/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"work.lclpnet.kibu.scheduler.KibuScheduling"
+		]
+	},
+	"mixins": [],
+	"depends": {
+		"fabricloader": ">=0.14.14",
+		"minecraft": "~1.19.3",
+		"java": ">=17",
+		"fabric-api": "*",
+		"mplugins": "${mplugins_version}"
+	},
+	"suggests": {}
+}

@@ -1,0 +1,23 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-hook-api",
+	"version": "${version}",
+	"name": "Kibu Hook API",
+	"description": "Event based hook API with registration/unregistration.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-hook-api/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [],
+	"depends": {
+		"java": ">=8"
+	},
+	"suggests": {}
+}

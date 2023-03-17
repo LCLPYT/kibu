@@ -19,4 +19,5 @@ include 'kibu-fabric-hooks'
 include 'kibu-hooks'
 include 'kibu-command-api'
 include 'kibu-scheduler-api'
+include 'kibu-hook-api'
 

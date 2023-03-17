@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.world;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
-import work.lclpnet.mplugins.hook.Hook;
-import work.lclpnet.mplugins.hook.HookFactory;
+import work.lclpnet.kibu.hook.Hook;
+import work.lclpnet.kibu.hook.HookFactory;
 
 /**
  * Hook versions of {@link ServerChunkEvents} from fabric-lifecycle-events.

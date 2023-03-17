@@ -8,6 +8,34 @@ Properties props = loadProperties.call('publish.properties') as Properties
 
 version = gitVersion.call()
 
+def moduleDependencies(project, List<String> dependencies) {
+    def deps = dependencies.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
+
+    project.dependencies {
+        deps.each {
+            api it
+        }
+    }
+
+    // As we manually handle the maven artifacts, we need to also manually specify the deps.
+    project.publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                pom.withXml {
+                    def depsNode = asNode().appendNode("dependencies")
+                    deps.each {
+                        def depNode = depsNode.appendNode("dependency")
+                        depNode.appendNode("groupId", it.group)
+                        depNode.appendNode("artifactId", it.name)
+                        depNode.appendNode("version", it.version)
+                        depNode.appendNode("scope", "compile")
+                    }
+                }
+            }
+        }
+    }
+}
+
 allprojects {
     group = project.maven_group
 
@@ -31,7 +59,6 @@ allprojects {
         modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-        modImplementation "work.lclpnet.mods:mplugins:${project.mplugins_version}"
 
         /* other Java dependencies */
         implementation 'com.google.code.findbugs:jsr305:3.0.2'

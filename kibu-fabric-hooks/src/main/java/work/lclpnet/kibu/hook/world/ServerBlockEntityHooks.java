@@ -3,8 +3,8 @@ package work.lclpnet.kibu.hook.world;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.minecraft.util.profiler.Profiler;
-import work.lclpnet.mplugins.hook.Hook;
-import work.lclpnet.mplugins.hook.HookFactory;
+import work.lclpnet.kibu.hook.Hook;
+import work.lclpnet.kibu.hook.HookFactory;
 
 /**
  * Hook versions of {@link ServerBlockEntityEvents} from fabric-lifecycle-events.

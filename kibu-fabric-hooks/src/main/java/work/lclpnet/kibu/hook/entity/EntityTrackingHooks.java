@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.entity;
 
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
-import work.lclpnet.mplugins.hook.Hook;
-import work.lclpnet.mplugins.hook.HookFactory;
+import work.lclpnet.kibu.hook.Hook;
+import work.lclpnet.kibu.hook.HookFactory;
 
 /**
  * Hook versions of {@link EntityTrackingEvents} from fabric-networking-api.

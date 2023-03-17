@@ -1,8 +1,6 @@
 package work.lclpnet.kibu.hook;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import work.lclpnet.mplugins.hook.Hook;
-import work.lclpnet.mplugins.hook.HookFactory;
 
 /**
  * Hook versions of {@link ServerPlayConnectionEvents} from fabric-networking-api.

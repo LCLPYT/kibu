@@ -5,8 +5,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import work.lclpnet.mplugins.hook.Hook;
-import work.lclpnet.mplugins.hook.HookFactory;
+import work.lclpnet.kibu.hook.Hook;
+import work.lclpnet.kibu.hook.HookFactory;
 
 public class WorldPhysicsHooks {
 

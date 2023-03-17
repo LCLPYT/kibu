@@ -4,8 +4,8 @@ import net.fabricmc.fabric.api.event.player.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
-import work.lclpnet.mplugins.hook.Hook;
-import work.lclpnet.mplugins.hook.HookFactory;
+import work.lclpnet.kibu.hook.Hook;
+import work.lclpnet.kibu.hook.HookFactory;
 
 /**
  * Hook versions of player interaction events from fabric-events-interaction.

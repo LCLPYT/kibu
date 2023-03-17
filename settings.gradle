@@ -20,4 +20,5 @@ include 'kibu-hooks'
 include 'kibu-command-api'
 include 'kibu-scheduler-api'
 include 'kibu-hook-api'
+include 'kibu-plugins'
 

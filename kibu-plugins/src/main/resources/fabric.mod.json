@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "kibu-scheduler-api",
+	"id": "kibu-hooks",
 	"version": "${version}",
-	"name": "Kibu Scheduler API",
-	"description": "API for task scheduling.",
+	"name": "Kibu Hooks",
+	"description": "Additional Fabric hooks.",
 	"authors": [
 		"LCLP"
 	],
@@ -12,19 +12,16 @@
 		"sources": "https://github.com/LCLPYT/kibu"
 	},
 	"license": "MIT",
-	"icon": "assets/kibu-scheduler-api/icon.png",
+	"icon": "assets/kibu-plugins/icon.png",
 	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"work.lclpnet.kibu.scheduler.KibuScheduling"
-		]
-	},
+	"entrypoints": {},
 	"mixins": [],
 	"depends": {
 		"fabricloader": ">=0.14.14",
 		"minecraft": "~1.19.3",
 		"java": ">=17",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"mplugins": "${mplugins_version}"
 	},
 	"suggests": {}
 }

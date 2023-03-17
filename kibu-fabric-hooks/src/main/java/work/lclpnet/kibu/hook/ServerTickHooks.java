@@ -1,8 +1,6 @@
 package work.lclpnet.kibu.hook;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import work.lclpnet.mplugins.hook.Hook;
-import work.lclpnet.mplugins.hook.HookFactory;
 
 /**
  * Hook versions of {@link ServerTickEvents} from fabric-lifecycle-events.

@@ -4,6 +4,10 @@ plugins {
 
 archivesBaseName = "kibu-fabric-hooks"
 
+moduleDependencies(project, [
+        'kibu-hook-api'
+])
+
 publishing {
     publications {
         mavenJava(MavenPublication) {

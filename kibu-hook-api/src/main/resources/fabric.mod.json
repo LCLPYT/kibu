@@ -19,5 +19,11 @@
 	"depends": {
 		"java": ">=8"
 	},
-	"suggests": {}
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
 }

@@ -22,5 +22,10 @@
 		"java": ">=17",
 		"fabric-api": "*"
 	},
-	"suggests": {}
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"]
+		}
+	}
 }

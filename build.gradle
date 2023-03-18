@@ -68,8 +68,7 @@ allprojects {
         inputs.property "version", project.version
 
         filesMatching("fabric.mod.json") {
-            expand "version": project.version,
-                    "mplugins_version": project.mplugins_version
+            expand "version": project.version
         }
     }
 

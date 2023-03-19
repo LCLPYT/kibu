@@ -47,7 +47,7 @@ public class RootScheduler extends Scheduler {
     public void removeChild(Scheduler child) {
         if (child == null) return;
 
-        if (Boolean.TRUE.equals(deadlock.get())) {
+        if (deadlock.get()) {
             throw new IllegalStateException("Modification of root scheduler during iteration (deadlock)");
         }
 

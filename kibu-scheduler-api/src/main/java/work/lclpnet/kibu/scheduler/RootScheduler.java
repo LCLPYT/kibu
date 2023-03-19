@@ -11,7 +11,7 @@ public class RootScheduler extends Scheduler {
 
     public RootScheduler(Logger logger) {
         super(logger);
-        this.children = new RootScheduler[0];
+        this.children = new Scheduler[0];
     }
 
     /**
@@ -21,7 +21,7 @@ public class RootScheduler extends Scheduler {
      *
      * @param child The child to add.
      */
-    public void addChild(RootScheduler child) {
+    public void addChild(Scheduler child) {
         if (child == null) throw new NullPointerException("Child must not be null");
 
         if (Boolean.TRUE.equals(deadlock.get())) {
@@ -44,7 +44,7 @@ public class RootScheduler extends Scheduler {
      *
      * @param child The child to remove.
      */
-    public void removeChild(RootScheduler child) {
+    public void removeChild(Scheduler child) {
         if (child == null) return;
 
         if (Boolean.TRUE.equals(deadlock.get())) {

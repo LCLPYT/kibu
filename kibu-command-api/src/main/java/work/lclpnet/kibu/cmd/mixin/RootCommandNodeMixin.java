@@ -5,7 +5,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import work.lclpnet.kibu.cmd.util.RedirectAware;
+import work.lclpnet.kibu.cmd.type.RedirectAware;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

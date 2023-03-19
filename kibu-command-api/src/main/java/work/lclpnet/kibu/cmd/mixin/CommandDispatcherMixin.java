@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import work.lclpnet.kibu.cmd.util.RedirectAware;
+import work.lclpnet.kibu.cmd.type.RedirectAware;
 
 import java.util.ArrayList;
 

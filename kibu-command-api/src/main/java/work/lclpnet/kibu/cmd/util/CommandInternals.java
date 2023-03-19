@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.cmd;
+package work.lclpnet.kibu.cmd.util;
 
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;

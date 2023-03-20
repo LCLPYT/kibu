@@ -8,6 +8,7 @@ import work.lclpnet.kibu.cmd.type.Initializable;
 import work.lclpnet.kibu.cmd.util.MinecraftCommandRegister;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.CompletableFuture;
 
 public class KibuCommands<S> implements ModInitializer {
 
@@ -46,7 +47,7 @@ public class KibuCommands<S> implements ModInitializer {
         }
     }
 
-    private LiteralCommandNode<S> register0(LiteralArgumentBuilder<S> command) {
+    private CompletableFuture<LiteralCommandNode<S>> register0(LiteralArgumentBuilder<S> command) {
         return register.register(command);
     }
 
@@ -54,7 +55,7 @@ public class KibuCommands<S> implements ModInitializer {
         register.unregister(command);
     }
 
-    public static <S> LiteralCommandNode<S> register(LiteralArgumentBuilder<S> command) {
+    public static <S> CompletableFuture<LiteralCommandNode<S>> register(LiteralArgumentBuilder<S> command) {
         KibuCommands<S> genericInstance = getInstance();
         return genericInstance.register0(command);
     }

@@ -12,10 +12,11 @@ import work.lclpnet.kibu.cmd.type.Initializable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class MinecraftCommandRegister implements CommandRegister<ServerCommandSource>, Initializable {
 
-    private final List<LiteralArgumentBuilder<ServerCommandSource>> deferred = new ArrayList<>();
+    private final List<DeferredRegisterItem> deferred = new ArrayList<>();
     private final Object mutex = new Object();
     private MinecraftServer server = null;
 
@@ -30,16 +31,27 @@ public class MinecraftCommandRegister implements CommandRegister<ServerCommandSo
     }
 
     @Override
-    public LiteralCommandNode<ServerCommandSource> register(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public CompletableFuture<LiteralCommandNode<ServerCommandSource>> register(LiteralArgumentBuilder<ServerCommandSource> command) {
         if (command == null) throw new NullPointerException("Command cannot be null");
 
         synchronized (mutex) {
             if (server == null) {
                 // server is not loaded yet, defer registration
-                deferred.add(command);
+                var future = new CompletableFuture<LiteralCommandNode<ServerCommandSource>>();
+
+                var defer = new DeferredRegisterItem(command, future);
+                deferred.add(defer);
+
+                return future;
             }
         }
 
+        var registered = registerDirect(command);
+
+        return CompletableFuture.completedFuture(registered);
+    }
+
+    private LiteralCommandNode<ServerCommandSource> registerDirect(LiteralArgumentBuilder<ServerCommandSource> command) {
         var registered = CommandDispatcherUtils.register(getDispatcher(), command);
 
         syncCommandTree();
@@ -49,7 +61,7 @@ public class MinecraftCommandRegister implements CommandRegister<ServerCommandSo
 
     @Override
     public void unregister(LiteralCommandNode<ServerCommandSource> command) {
-        if (server == null) return;  // cannot register yet
+        if (server == null) return;  // cannot unregister yet
 
         CommandDispatcherUtils.unregister(getDispatcher(), command);
 
@@ -57,7 +69,11 @@ public class MinecraftCommandRegister implements CommandRegister<ServerCommandSo
     }
 
     private void loadDeferred() {
-        this.deferred.forEach(this::register);
+        this.deferred.forEach(defer -> {
+            var cmd = registerDirect(defer.command());
+            defer.future().complete(cmd);
+        });
+
         this.deferred.clear();
     }
 
@@ -71,4 +87,9 @@ public class MinecraftCommandRegister implements CommandRegister<ServerCommandSo
 
         PlayerLookup.all(server).forEach(commandManager::sendCommandTree);
     }
+
+    private record DeferredRegisterItem(
+            LiteralArgumentBuilder<ServerCommandSource> command,
+            CompletableFuture<LiteralCommandNode<ServerCommandSource>> future
+    ) {}
 }

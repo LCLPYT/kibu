@@ -9,5 +9,5 @@ public interface CommandRegister<S> {
 
     CompletableFuture<LiteralCommandNode<S>> register(LiteralArgumentBuilder<S> command);
 
-    void unregister(LiteralCommandNode<S> command);
+    boolean unregister(LiteralCommandNode<S> command);
 }

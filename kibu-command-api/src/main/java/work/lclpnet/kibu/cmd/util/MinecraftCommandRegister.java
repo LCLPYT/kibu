@@ -3,93 +3,79 @@ package work.lclpnet.kibu.cmd.util;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
-import work.lclpnet.kibu.cmd.type.CommandRegister;
 import work.lclpnet.kibu.cmd.type.Initializable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class MinecraftCommandRegister implements CommandRegister<ServerCommandSource>, Initializable {
+public class MinecraftCommandRegister extends DeferredProxyCommandRegister<ServerCommandSource> implements Initializable {
 
-    private final List<DeferredRegisterItem> deferred = new ArrayList<>();
     private final Object mutex = new Object();
     private MinecraftServer server = null;
+    private CommandDispatcher<ServerCommandSource> dispatcher = null;
+    private boolean ready = false;
 
     @Override
     public void init() {
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             synchronized (mutex) {
                 this.server = server;
-                loadDeferred();
             }
+
+            this.update();
+        });
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            synchronized (mutex) {
+                this.dispatcher = dispatcher;
+            }
+
+            this.update();
         });
     }
 
-    @Override
-    public CompletableFuture<LiteralCommandNode<ServerCommandSource>> register(LiteralArgumentBuilder<ServerCommandSource> command) {
-        if (command == null) throw new NullPointerException("Command cannot be null");
-
+    private void update() {
         synchronized (mutex) {
-            if (server == null) {
-                // server is not loaded yet, defer registration
-                var future = new CompletableFuture<LiteralCommandNode<ServerCommandSource>>();
+            if (ready || dispatcher == null || server == null) return;
 
-                var defer = new DeferredRegisterItem(command, future);
-                deferred.add(defer);
+            ready = true;
+            setTarget(new DirectCommandRegister<>(dispatcher));
+        }
+    }
 
-                return future;
-            }
+    @Override
+    protected CompletableFuture<LiteralCommandNode<ServerCommandSource>> proxyRegister(LiteralArgumentBuilder<ServerCommandSource> command) {
+        var future = super.proxyRegister(command);
+
+        syncCommandTree();
+
+        return future;
+    }
+
+    @Override
+    public boolean unregister(LiteralCommandNode<ServerCommandSource> command) {
+        boolean unregistered = super.unregister(command);
+
+        if (unregistered) {
+            syncCommandTree();
         }
 
-        var registered = registerDirect(command);
-
-        return CompletableFuture.completedFuture(registered);
-    }
-
-    private LiteralCommandNode<ServerCommandSource> registerDirect(LiteralArgumentBuilder<ServerCommandSource> command) {
-        var registered = CommandDispatcherUtils.register(getDispatcher(), command);
-
-        syncCommandTree();
-
-        return registered;
-    }
-
-    @Override
-    public void unregister(LiteralCommandNode<ServerCommandSource> command) {
-        if (server == null) return;  // cannot unregister yet
-
-        CommandDispatcherUtils.unregister(getDispatcher(), command);
-
-        syncCommandTree();
-    }
-
-    private void loadDeferred() {
-        this.deferred.forEach(defer -> {
-            var cmd = registerDirect(defer.command());
-            defer.future().complete(cmd);
-        });
-
-        this.deferred.clear();
-    }
-
-    private CommandDispatcher<ServerCommandSource> getDispatcher() {
-        if (this.server == null) throw new IllegalStateException("Server is not initialized yet");
-        return this.server.getCommandManager().getDispatcher();
+        return unregistered;
     }
 
     private void syncCommandTree() {
+        final MinecraftServer server;
+
+        synchronized (mutex) {
+            server = this.server;
+        }
+
         var commandManager = server.getCommandManager();
 
         PlayerLookup.all(server).forEach(commandManager::sendCommandTree);
     }
-
-    private record DeferredRegisterItem(
-            LiteralArgumentBuilder<ServerCommandSource> command,
-            CompletableFuture<LiteralCommandNode<ServerCommandSource>> future
-    ) {}
 }

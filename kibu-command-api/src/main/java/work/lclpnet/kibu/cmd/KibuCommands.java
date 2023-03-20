@@ -3,65 +3,29 @@ package work.lclpnet.kibu.cmd;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.api.ModInitializer;
-import work.lclpnet.kibu.cmd.type.CommandRegister;
-import work.lclpnet.kibu.cmd.type.Initializable;
+import net.minecraft.server.command.ServerCommandSource;
+import work.lclpnet.kibu.cmd.util.DeferredProxyCommandRegister;
 import work.lclpnet.kibu.cmd.util.MinecraftCommandRegister;
 
-import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
-public class KibuCommands<S> implements ModInitializer {
+public class KibuCommands implements ModInitializer {
 
-    private static final Object mutex = new Object();
-    private static KibuCommands<?> instance = null;
-    private final CommandRegister<S> register;
-
-    @SuppressWarnings("unchecked")
-    public KibuCommands() {
-        this((CommandRegister<S>) new MinecraftCommandRegister());
-    }
-
-    public KibuCommands(CommandRegister<S> register) {
-        this.register = register;
-    }
-
-    @Nonnull
-    private static <S> KibuCommands<S> getInstance() {
-        @SuppressWarnings("unchecked")
-        KibuCommands<S> ret = (KibuCommands<S>) instance;
-        if (ret == null) throw new IllegalStateException("Not initialized");
-
-        return ret;
-    }
+    static final DeferredProxyCommandRegister<ServerCommandSource> PROXY = new DeferredProxyCommandRegister<>();
 
     @Override
     public void onInitialize() {
-        synchronized (mutex) {
-            if (instance != null) throw new IllegalStateException("Already initialized");
+        var register = new MinecraftCommandRegister();
+        PROXY.setTarget(register);
 
-            instance = this;
-        }
-
-        if (register instanceof Initializable initializable) {
-            initializable.init();
-        }
+        register.init();
     }
 
-    private CompletableFuture<LiteralCommandNode<S>> register0(LiteralArgumentBuilder<S> command) {
-        return register.register(command);
+    public static CompletableFuture<LiteralCommandNode<ServerCommandSource>> register(LiteralArgumentBuilder<ServerCommandSource> command) {
+        return PROXY.register(command);
     }
 
-    private void unregister0(LiteralCommandNode<S> command) {
-        register.unregister(command);
-    }
-
-    public static <S> CompletableFuture<LiteralCommandNode<S>> register(LiteralArgumentBuilder<S> command) {
-        KibuCommands<S> genericInstance = getInstance();
-        return genericInstance.register0(command);
-    }
-
-    public static <S> void unregister(LiteralCommandNode<S> command) {
-        KibuCommands<S> genericInstance = getInstance();
-        genericInstance.unregister0(command);
+    public static boolean unregister(LiteralCommandNode<ServerCommandSource> command) {
+        return PROXY.unregister(command);
     }
 }

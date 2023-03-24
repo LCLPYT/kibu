@@ -8,39 +8,25 @@ Properties props = loadProperties.call('publish.properties') as Properties
 
 version = gitVersion.call()
 
-def moduleDependencies(project, List<String> dependencies) {
-    def deps = dependencies.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
-
-    project.dependencies {
-        deps.each {
-            api it
-        }
-    }
-
-    // As we manually handle the maven artifacts, we need to also manually specify the deps.
-    project.publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                pom.withXml {
-                    def depsNode = asNode().appendNode("dependencies")
-                    deps.each {
-                        def depNode = depsNode.appendNode("dependency")
-                        depNode.appendNode("groupId", it.group)
-                        depNode.appendNode("artifactId", it.name)
-                        depNode.appendNode("version", it.version)
-                        depNode.appendNode("scope", "compile")
-                    }
-                }
-            }
-        }
-    }
-}
-
 allprojects {
     group = project.maven_group
 
-    apply plugin: 'fabric-loom'
+    apply plugin: 'java'
     apply plugin: 'maven-publish'
+
+    def initFile = file('init.gradle')
+
+    ext {
+        isMc = true
+    }
+
+    if (initFile.exists()) {
+        apply from: initFile
+    }
+
+    if (ext.isMc) {
+        apply plugin: 'fabric-loom'
+    }
 
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -54,14 +40,17 @@ allprojects {
     }
 
     dependencies {
-        minecraft "com.mojang:minecraft:${project.minecraft_version}"
-        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-        modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-        /* other Java dependencies */
         implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    }
+
+    if (ext.isMc) {
+        dependencies {
+            minecraft "com.mojang:minecraft:${project.minecraft_version}"
+            mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+            modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+            modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+        }
     }
 
     processResources {
@@ -95,13 +84,22 @@ allprojects {
 subprojects {
     version = getSubprojectVersion(project)
 
+    if (!ext.isMc) {
+        configureNonLoomProject(project)
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 artifactId = project.archivesBaseName
 
-                artifact remapJar
-                artifact remapSourcesJar
+                if (project.ext.isMc) {
+                    artifact remapJar
+                    artifact remapSourcesJar
+                } else {
+                    artifact jar
+                    artifact sourcesJar
+                }
             }
         }
     }
@@ -142,13 +140,17 @@ publishing {
 
 // main jar must remap after all the subprojects
 subprojects.each {
-    remapJar.dependsOn("${it.path}:remapJar")
+    if (it.ext.isMc) {
+        remapJar.dependsOn("${it.path}:remapJar")
+    }
 }
 
 dependencies {
     afterEvaluate {
         subprojects.each {
-            api project(path: it.path, configuration: "namedElements")
+            if (it.ext.isMc) {
+                api project(path: it.path, configuration: "namedElements")
+            }
         }
     }
 }
@@ -157,7 +159,11 @@ dependencies {
 remapJar {
     afterEvaluate {
         subprojects.each {
-            nestedJars.from project(it.path).tasks.named("remapJar")
+            if (it.ext.isMc) {
+                nestedJars.from project(it.path).tasks.named("remapJar")
+            } else {
+                nestedJars.from project(it.path).tasks.named("jar")
+            }
         }
     }
 }
@@ -198,6 +204,18 @@ static def getSubprojectVersion(Project project) {
     return version
 }
 
+static def configureNonLoomProject(Project project) {
+    // non-loom subprojects need to have a "namedElements" configuration that provides the project artifacts
+    project.configurations {
+        namedElements
+    }
+
+    // add the project artifacts to the namedElements configuration
+    project.apply {
+        project.artifacts(artifactHandler -> artifactHandler.add("namedElements", project.getTasks().named("jar")));
+    }
+}
+
 def setupPublishRepositories(RepositoryHandler repositories, Properties props) {
     repositories.maven {
         Map<String, String> env = System.getenv()
@@ -215,5 +233,37 @@ def setupPublishRepositories(RepositoryHandler repositories, Properties props) {
         }
 
         url getDeployUrl(props)
+    }
+}
+
+def moduleDependencies(project, List<String> dependencies) {
+    // for each subproject dependency, collect the 'namedElements' configuration
+    def deps = dependencies.iterator().collect {
+        project.dependencies.project(path: ":$it", configuration: 'namedElements')
+    }
+
+    // now add the actual dependency to the project
+    project.dependencies {
+        deps.each {
+            api it
+        }
+    }
+
+    // As we manually handle the maven artifacts, we need to also manually specify the deps.
+    project.publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                pom.withXml {
+                    def depsNode = asNode().appendNode("dependencies")
+                    deps.each {
+                        def depNode = depsNode.appendNode("dependency")
+                        depNode.appendNode("groupId", it.group)
+                        depNode.appendNode("artifactId", it.name)
+                        depNode.appendNode("version", it.version)
+                        depNode.appendNode("scope", "compile")
+                    }
+                }
+            }
+        }
     }
 }

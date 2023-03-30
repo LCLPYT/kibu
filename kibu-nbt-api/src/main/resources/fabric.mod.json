@@ -3,7 +3,7 @@
 	"id": "kibu-nbt-api",
 	"version": "${version}",
 	"name": "Kibu NBT API",
-	"description": "A modified JNBT for modern Java versions.",
+	"description": "A modified JNBT implementation for modern Java versions.",
 	"authors": [
 		"LCLP"
 	],

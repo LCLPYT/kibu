@@ -22,7 +22,7 @@ public class RespawnAnchorBlockMixin {
             method = "onUse",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/RespawnAnchorBlock;charge(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V"
+                    target = "Lnet/minecraft/block/RespawnAnchorBlock;charge(Lnet/minecraft/entity/Entity;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V"
             ),
             cancellable = true
     )

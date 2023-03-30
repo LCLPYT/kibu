@@ -24,8 +24,6 @@ public abstract class StepAndDestroyBlockGoalMixin {
     @Shadow
     protected abstract @Nullable BlockPos tweakToProperPos(BlockPos pos, BlockView world);
 
-    @Shadow public abstract void stop();
-
     @Inject(
             method = "tick",
             at = @At(

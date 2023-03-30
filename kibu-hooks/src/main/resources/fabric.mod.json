@@ -23,8 +23,8 @@
 		"kibu-hooks.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.14.14",
-		"minecraft": "~1.19.3",
+		"fabricloader": ">=0.14.18",
+		"minecraft": "~1.19.4",
 		"java": ">=17",
 		"fabric-api": "*",
 		"kibu-hook-api": "*"

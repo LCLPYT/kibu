@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class DeferredProxyCommandRegister<S> implements CommandRegister<S> {
 
-    private final List<DeferredProxyCommandRegister.DeferredRegisterItem<S>> deferred = new ArrayList<>();
+    private final List<DeferredRegisterItem<S>> deferred = new ArrayList<>();
     private final Object mutex = new Object();
     private CommandRegister<S> target = null;
 

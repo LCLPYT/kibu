@@ -21,7 +21,7 @@ public class ComposterBlockMixin {
             method = "onUse",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/ComposterBlock;addToComposter(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/block/BlockState;"
+                    target = "Lnet/minecraft/block/ComposterBlock;addToComposter(Lnet/minecraft/entity/Entity;Lnet/minecraft/block/BlockState;Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/block/BlockState;"
             ),
             cancellable = true
     )
@@ -35,7 +35,7 @@ public class ComposterBlockMixin {
             method = "onUse",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/ComposterBlock;emptyFullComposter(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"
+                    target = "Lnet/minecraft/block/ComposterBlock;emptyFullComposter(Lnet/minecraft/entity/Entity;Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"
             ),
             cancellable = true
     )

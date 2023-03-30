@@ -1,0 +1,29 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-schematic-api",
+	"version": "${version}",
+	"name": "Kibu Schematic API",
+	"description": "API for schematic creation and loading.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-schematic-api/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [],
+	"depends": {
+		"java": ">=17"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

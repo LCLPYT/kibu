@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = "kibu-nbt-api"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'kibu-nbt-api'
+                description = 'A modified JNBT for modern Java versions.'
+            }
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}

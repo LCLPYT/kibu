@@ -1,0 +1,29 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-nbt-api",
+	"version": "${version}",
+	"name": "Kibu NBT API",
+	"description": "A modified JNBT for modern Java versions.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-nbt-api/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [],
+	"depends": {
+		"java": ">=17"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

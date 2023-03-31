@@ -24,7 +24,7 @@ public class SimpleBlockStructure implements BlockStructure {
     @Override
     public void setBlockState(BlockPos pos, @Nullable BlockState state) {
         synchronized (blocks) {
-            if (state == null) {
+            if (state == null || state.isAir()) {
                 blocks.remove(pos);
             } else {
                 blocks.put(pos, state);

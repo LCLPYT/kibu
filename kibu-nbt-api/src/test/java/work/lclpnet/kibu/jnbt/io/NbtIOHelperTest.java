@@ -59,4 +59,38 @@ class NbtIOHelperTest {
 
         assertEquals(nbt, tagInfo.tag());
     }
+
+    @Test
+    void testToArray() throws IOException {
+        final var nbt = new CompoundTag();
+        nbt.putString("value", "Hello World");
+
+        final byte[] refBytes;
+
+        try (var out = new ByteArrayOutputStream()) {
+            NbtIOHelper.write(nbt, out);
+            refBytes = out.toByteArray();
+        }
+
+        final byte[] bytes = NbtIOHelper.toArray(nbt);
+
+        assertArrayEquals(refBytes, bytes);
+    }
+
+    @Test
+    void testFromArray() throws IOException {
+        var testNbt = Path.of("src/test/resources/test.nbt");
+
+        TagInfo refTag;
+        try (var in = Files.newInputStream(testNbt)) {
+            refTag = NbtIOHelper.read(in);
+        }
+
+        final byte[] bytes = Files.readAllBytes(testNbt);
+
+        TagInfo tag = NbtIOHelper.fromArray(bytes);
+
+        assertEquals(refTag.name(), tag.name());
+        assertEquals(refTag.rootTag(), tag.rootTag());
+    }
 }

@@ -7,22 +7,22 @@ import work.lclpnet.kibu.mc.BlockStateAdapter;
 import work.lclpnet.kibu.schematic.api.SchematicReader;
 import work.lclpnet.kibu.schematic.io.VarIntReader;
 import work.lclpnet.kibu.structure.BlockStructure;
-import work.lclpnet.kibu.structure.SimpleBlockStructure;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import static work.lclpnet.kibu.schematic.sponge.SpongeSchematicV2.*;
 
 class ReaderV2 implements SchematicReader {
 
     @Override
-    public BlockStructure read(CompoundTag nbt, BlockStateAdapter blockStateAdapter) {
+    public BlockStructure read(CompoundTag nbt, BlockStateAdapter blockStateAdapter, Function<Integer, BlockStructure> containerFactory) {
         var schematic = nbt.getCompound(SCHEMATIC);
-        return readSchematic(schematic, blockStateAdapter);
+        return readSchematic(schematic, blockStateAdapter, containerFactory);
     }
 
-    private BlockStructure readSchematic(CompoundTag nbt, BlockStateAdapter blockStateAdapter) {
+    private BlockStructure readSchematic(CompoundTag nbt, BlockStateAdapter blockStateAdapter, Function<Integer, BlockStructure> containerFactory) {
         final int version = nbt.getInt(VERSION);
         if (version != FORMAT_VERSION) throw new IllegalArgumentException("Invalid nbt");
 
@@ -41,14 +41,15 @@ class ReaderV2 implements SchematicReader {
 
         for (var blockString : paletteTag.keySet()) {
             var blockState = blockStateAdapter.getBlockState(blockString);
-            if (blockState == null || blockState.isAir()) continue;
+            if (blockState == null) continue;
 
             int id = paletteTag.getInt(blockString);
             palette.put(id, blockState);
         }
 
+        final var container = containerFactory.apply(dataVersion);
+
         // parse blocks
-        final var container = new SimpleBlockStructure(dataVersion);
         final byte[] blockData = nbt.getByteArray(BLOCK_DATA);
         final var worldPos = new BlockPos();
         final var idReader = new VarIntReader(blockData);

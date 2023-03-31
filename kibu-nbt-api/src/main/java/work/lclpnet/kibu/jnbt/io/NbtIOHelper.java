@@ -23,6 +23,18 @@ public class NbtIOHelper {
         return out.toByteArray();
     }
 
+    public static byte[] toArray(Tag tag, String name) throws IOException {
+        var out = new ByteArrayOutputStream();
+        write(tag, name, out);
+        return out.toByteArray();
+    }
+
+    public static byte[] toArrayUncompressed(Tag tag, String name) throws IOException {
+        var out = new ByteArrayOutputStream();
+        writeUncompressed(tag, name, out);
+        return out.toByteArray();
+    }
+
     public static void write(Tag tag, OutputStream out) throws IOException {
         write(tag, "", out);
     }

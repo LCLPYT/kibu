@@ -3,7 +3,9 @@ package work.lclpnet.kibu.structure;
 import work.lclpnet.kibu.mc.BlockEntity;
 import work.lclpnet.kibu.mc.BlockPos;
 import work.lclpnet.kibu.mc.BlockState;
+import work.lclpnet.kibu.mc.BuiltinBlockState;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,16 +47,20 @@ public class SimpleBlockStructure implements BlockStructure {
         }
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public BlockState getBlockState(BlockPos pos) {
+        BlockState blockState;
+
         synchronized (blocks) {
-            return blocks.get(pos);
+            blockState = blocks.get(pos);
         }
+
+        return blockState == null ? BuiltinBlockState.AIR : blockState;
     }
 
     @Override
-    public BlockEntity getBlockEntity(BlockPos pos) {
+    public @Nullable BlockEntity getBlockEntity(BlockPos pos) {
         return null;  // block entities are not supported yet
     }
 

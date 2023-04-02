@@ -25,7 +25,7 @@ class EmptyStructure implements BlockStructure {
     }
 
     @Override
-    public BlockPos getOffset() {
+    public BlockPos getOrigin() {
         return pos;
     }
 

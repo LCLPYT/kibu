@@ -16,7 +16,7 @@ class SerializerV2 implements SchematicSerializer {
 
     @Override
     public CompoundTag serialize(SchematicWriteable schematic) {
-        final var offset = schematic.getOffset();
+        final var offset = schematic.getOrigin();
 
         final int width = schematic.getWidth();
         final int height = schematic.getHeight();

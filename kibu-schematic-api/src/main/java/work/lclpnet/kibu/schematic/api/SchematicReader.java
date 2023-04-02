@@ -1,17 +1,17 @@
 package work.lclpnet.kibu.schematic.api;
 
-import work.lclpnet.kibu.jnbt.CompoundTag;
 import work.lclpnet.kibu.mc.BlockStateAdapter;
 import work.lclpnet.kibu.structure.BlockStructure;
-import work.lclpnet.kibu.structure.SimpleBlockStructure;
 
-import java.util.function.Function;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public interface SchematicReader {
 
-    BlockStructure read(CompoundTag nbt, BlockStateAdapter blockStateAdapter, Function<Integer, BlockStructure> containerFactory);
+    BlockStructure read(InputStream in, BlockStateAdapter adapter) throws IOException;
 
-    default BlockStructure read(CompoundTag nbt, BlockStateAdapter blockStateAdapter) {
-        return read(nbt, blockStateAdapter, SimpleBlockStructure::new);
+    default BlockStructure fromArray(byte[] bytes, BlockStateAdapter adapter) throws IOException {
+        return read(new ByteArrayInputStream(bytes), adapter);
     }
 }

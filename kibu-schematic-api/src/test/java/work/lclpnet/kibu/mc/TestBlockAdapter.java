@@ -1,7 +1,4 @@
-package work.lclpnet.kibu.schematic.sponge;
-
-import work.lclpnet.kibu.mc.BlockState;
-import work.lclpnet.kibu.mc.BlockStateAdapter;
+package work.lclpnet.kibu.mc;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

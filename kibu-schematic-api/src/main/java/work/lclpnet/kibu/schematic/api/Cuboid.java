@@ -8,11 +8,10 @@ import work.lclpnet.kibu.mc.BlockPos;
 public interface Cuboid {
 
     /**
-     * The cuboid region has its own coordinate system.
-     * To transform the coordinates to world coordinates, simply add the offset to a coordinate.
-     * @return Offset to world space.
+     * The origin of the cuboid. This is also the minimum point.
+     * @return Offset to world space; minimum point (origin) of the cuboid.
      */
-    BlockPos getOffset();
+    BlockPos getOrigin();
 
     int getWidth();
 

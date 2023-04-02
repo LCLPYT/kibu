@@ -81,7 +81,7 @@ public class SimpleBlockStructure implements BlockStructure {
     }
 
     @Override
-    public BlockPos getOffset() {
+    public BlockPos getOrigin() {
         return minPos;
     }
 

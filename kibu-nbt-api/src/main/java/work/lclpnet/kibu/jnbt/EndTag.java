@@ -40,7 +40,11 @@ package work.lclpnet.kibu.jnbt;
  * 
  */
 public final class EndTag implements Tag {
-	
+
+	public static final EndTag INSTANCE = new EndTag();
+
+	private EndTag() {}
+
 	@Override
 	public Object getValue() {
 		return null;

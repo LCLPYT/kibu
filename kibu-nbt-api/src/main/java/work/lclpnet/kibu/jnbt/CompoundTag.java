@@ -94,6 +94,13 @@ public final class CompoundTag implements Tag {
 		throw new IllegalStateException("Tag %s is not of type %s".formatted(name, type.getSimpleName()));
 	}
 
+	public Tag get(String name) {
+		var tag = getNullable(name);
+		if (tag != null) return tag;
+
+		throw new IllegalStateException("Tag %s does not exist".formatted(name));
+	}
+
 	@Nonnull
 	public <T extends Tag> T get(String name, Class<T> type) {
 		var tag = getNullable(name, type);

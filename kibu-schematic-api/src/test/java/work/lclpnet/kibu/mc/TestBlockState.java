@@ -1,6 +1,4 @@
-package work.lclpnet.kibu.schematic.sponge;
-
-import work.lclpnet.kibu.mc.BlockState;
+package work.lclpnet.kibu.mc;
 
 public class TestBlockState implements BlockState {
 

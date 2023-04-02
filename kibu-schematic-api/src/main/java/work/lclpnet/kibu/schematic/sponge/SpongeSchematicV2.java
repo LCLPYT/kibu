@@ -58,7 +58,15 @@ public class SpongeSchematicV2 implements SchematicFormat {
 
     @Override
     public SchematicWriter writer() {
-        return new WriterV2(serializer);
+        if (writer == null) {
+            synchronized (WriterV2.class) {
+                if (writer == null) {
+                    writer = new WriterV2(serializer());
+                }
+            }
+        }
+
+        return writer;
     }
 
     @Override

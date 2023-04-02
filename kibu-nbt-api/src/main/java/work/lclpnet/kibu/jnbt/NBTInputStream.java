@@ -141,7 +141,7 @@ public final class NBTInputStream implements Closeable {
                 if (depth == 0) {
                     throw new IOException("[JNBT] TAG_End found without a TAG_Compound/TAG_List tag preceding it.");
                 } else {
-                    return new EndTag();
+                    return EndTag.INSTANCE;
                 }
 
             case NBTConstants.TYPE_BYTE:

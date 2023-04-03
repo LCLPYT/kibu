@@ -46,7 +46,6 @@ class DeserializerV2 implements SchematicDeserializer {
 
         // parse blocks
         final byte[] blockData = nbt.getByteArray(BLOCK_DATA);
-        final var worldPos = new BlockPos();
         final var idReader = new VarIntReader(blockData);
 
         int posIdx = 0;
@@ -54,18 +53,18 @@ class DeserializerV2 implements SchematicDeserializer {
         while (idReader.hasNext()) {
             int id = idReader.next();
 
+            var state = palette.get(id);
+            if (state == null) continue;  // invalid buffer, ignore the error
+
             // posIdx = (y * length * width) + (z * width) + x
             int y = posIdx / (width * length);
             int z = (posIdx % (width * length)) / width;
             int x = (posIdx % (width * length)) % width;
 
-            var state = palette.get(id);
-            if (state == null) continue;  // invalid buffer, ignore the error
-
-            worldPos.set(x + offset[0], y + offset[1], z + offset[2]);
+            var worldPos = new BlockPos(x + offset[0], y + offset[1], z + offset[2]);
+            container.setBlockState(worldPos, state);
 
             // TODO read block entity, if there is one
-            container.setBlockState(worldPos, state);
 
             posIdx++;
         }

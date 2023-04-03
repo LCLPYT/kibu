@@ -37,8 +37,9 @@ class DeserializerV2Test {
         var schematic = deserializer.deserialize(nbt, new TestBlockAdapter());
 
         assertNotNull(schematic);
-        assertEquals(9, schematic.getWidth());
-        assertEquals(7, schematic.getLength());
-        assertEquals(11, schematic.getHeight());
+        // schematic is padded with air, thus the structure dimension will not be equal to the schematic dimensions
+        assertEquals(5, schematic.getWidth());
+        assertEquals(9, schematic.getHeight());
+        assertEquals(3, schematic.getLength());
     }
 }

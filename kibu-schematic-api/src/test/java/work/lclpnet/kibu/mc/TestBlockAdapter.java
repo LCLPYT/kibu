@@ -11,6 +11,6 @@ public class TestBlockAdapter implements BlockStateAdapter {
     @Nullable
     @Override
     public BlockState getBlockState(String string) {
-        return records.computeIfAbsent(string, TestBlockState::new);
+        return records.computeIfAbsent(string, BuiltinBlockState::new);
     }
 }

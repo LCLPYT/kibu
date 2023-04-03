@@ -7,6 +7,7 @@ import work.lclpnet.kibu.structure.BlockStructure;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,5 +29,9 @@ public class ReaderV2Test {
 
         assertNotNull(structure);
         assertEquals(3337, structure.getDataVersion());
+
+        // assert block positions are read correctly (dependent on default structure containre -> SimpleBlockStructure)
+        var positions = structure.getBlockPositions();
+        assertEquals(81, StreamSupport.stream(positions.spliterator(), false).count());
     }
 }

@@ -25,7 +25,7 @@ class SerializerV2 implements SchematicSerializer {
         final var dataBuffer = new ByteArrayOutputStream(width * height * length);
         final var palette = new HashMap<String, Integer>();
         final var blockEntities = new ArrayList<CompoundTag>();
-        final var pos = new BlockPos();
+        final var pos = new BlockPos.Mutable();
 
         int nextId = 0;
 

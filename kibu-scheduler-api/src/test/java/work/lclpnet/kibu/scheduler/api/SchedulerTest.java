@@ -1,6 +1,5 @@
 package work.lclpnet.kibu.scheduler.api;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SchedulerTest {
@@ -88,6 +88,6 @@ public class SchedulerTest {
             scheduler.tick();
         }
 
-        Assertions.assertEquals(expectedExecCount, execCounter.get());
+        assertEquals(expectedExecCount, execCounter.get());
     }
 }

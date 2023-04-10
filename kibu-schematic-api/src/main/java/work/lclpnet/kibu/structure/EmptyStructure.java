@@ -58,4 +58,9 @@ class EmptyStructure implements BlockStructure {
     public Iterable<BlockPos> getBlockPositions() {
         return positions;
     }
+
+    @Override
+    public int getBlockCount() {
+        return 0;
+    }
 }

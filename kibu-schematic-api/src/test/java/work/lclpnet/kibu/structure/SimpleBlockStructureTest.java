@@ -114,4 +114,37 @@ class SimpleBlockStructureTest {
         assertEquals(0, struct.getHeight());
         assertEquals(0, struct.getLength());
     }
+
+    @Test
+    void getBlockCount_empty_zero() {
+        var struct = new SimpleBlockStructure(0);
+        assertEquals(0, struct.getBlockCount());
+    }
+
+    @Test
+    void getBlockCount_filled_correct() {
+        var struct = new SimpleBlockStructure(0);
+
+        struct.setBlockState(new BlockPos(2), new BuiltinBlockState("foo"));
+        assertEquals(1, struct.getBlockCount());
+
+        struct.setBlockState(new BlockPos(2), new BuiltinBlockState("bar"));
+        assertEquals(1, struct.getBlockCount());
+
+        struct.setBlockState(new BlockPos(1), new BuiltinBlockState("foo"));
+        assertEquals(2, struct.getBlockCount());
+    }
+
+    @Test
+    void isEmpty_empty_true() {
+        var struct = new SimpleBlockStructure(0);
+        assertTrue(struct.isEmpty());
+    }
+
+    @Test
+    void isEmpty_notEmpty_false() {
+        var struct = new SimpleBlockStructure(0);
+        struct.setBlockState(new BlockPos(2), new BuiltinBlockState("foo"));
+        assertFalse(struct.isEmpty());
+    }
 }

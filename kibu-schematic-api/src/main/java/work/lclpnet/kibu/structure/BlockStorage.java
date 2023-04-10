@@ -10,4 +10,10 @@ public interface BlockStorage {
     BlockState getBlockState(BlockPos pos);
 
     Iterable<BlockPos> getBlockPositions();
+
+    int getBlockCount();
+
+    default boolean isEmpty() {
+        return getBlockCount() <= 0;
+    }
 }

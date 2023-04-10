@@ -99,6 +99,13 @@ public class SimpleBlockStructure implements BlockStructure {
     }
 
     @Override
+    public int getBlockCount() {
+        synchronized (blocks) {
+            return blocks.size();
+        }
+    }
+
+    @Override
     public BlockPos getOrigin() {
         synchronized (blocks) {
             if (blocks.isEmpty()) return new BlockPos(0);

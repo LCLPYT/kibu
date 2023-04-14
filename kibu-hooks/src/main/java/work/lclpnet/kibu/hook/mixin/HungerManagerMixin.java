@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import work.lclpnet.kibu.hook.model.PlayerAware;
 import work.lclpnet.kibu.hook.player.PlayerFoodHooks;
+import work.lclpnet.kibu.hook.type.PlayerAware;
 
 @Mixin(HungerManager.class)
 public class HungerManagerMixin implements PlayerAware {

@@ -3,7 +3,7 @@ package work.lclpnet.kibu.hook.mixin;
 import net.minecraft.world.explosion.Explosion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import work.lclpnet.kibu.hook.model.CancellableExplosion;
+import work.lclpnet.kibu.hook.type.CancellableExplosion;
 
 @Mixin(Explosion.class)
 public class ExplosionMixin implements CancellableExplosion {

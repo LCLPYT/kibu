@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import work.lclpnet.kibu.hook.model.CancellableExplosion;
+import work.lclpnet.kibu.hook.type.CancellableExplosion;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 
 @Mixin(ServerWorld.class)

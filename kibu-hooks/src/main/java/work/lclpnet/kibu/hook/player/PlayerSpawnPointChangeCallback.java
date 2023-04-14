@@ -6,9 +6,9 @@ import net.minecraft.world.World;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
-public interface PlayerSpawnPointChangeHook {
+public interface PlayerSpawnPointChangeCallback {
 
-    Hook<PlayerSpawnPointChangeHook> HOOK = HookFactory.createArrayBacked(PlayerSpawnPointChangeHook.class, callbacks -> (player, world, pos) -> {
+    Hook<PlayerSpawnPointChangeCallback> HOOK = HookFactory.createArrayBacked(PlayerSpawnPointChangeCallback.class, callbacks -> (player, world, pos) -> {
         for (var callback : callbacks)
             if (callback.onChange(player, world, pos))
                 return true;

@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.hook.model;
+package work.lclpnet.kibu.hook.type;
 
 import net.minecraft.util.math.BlockPos;
 

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import work.lclpnet.kibu.hook.model.BlockPosAware;
+import work.lclpnet.kibu.hook.type.BlockPosAware;
 
 @Mixin(LecternBlockEntity.class)
 public class LecternBlockEntityMixin {

@@ -39,6 +39,6 @@ public class ServerPlayNetworkHandlerMixin {
             at = @At("TAIL")
     )
     public void illwalls$onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packet, CallbackInfo ci) {
-        PlayerInventoryHooks.SLOT_CHANGE.invoker().onChangeSlot(packet.getSelectedSlot());
+        PlayerInventoryHooks.SLOT_CHANGE.invoker().onChangeSlot(player, packet.getSelectedSlot());
     }
 }

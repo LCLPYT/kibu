@@ -1,36 +1,12 @@
 package work.lclpnet.kibu.hook.player;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
-import javax.annotation.Nullable;
+public class PlayerFoodHooks {
 
-public class PlayerHooks {
-
-    public static final Hook<Join> JOIN = HookFactory.createArrayBacked(Join.class, callbacks -> (player, message) -> {
-        for (var callback : callbacks) {
-            final Text newMessage = callback.onJoin(player, message);
-            if (!message.equals(newMessage))
-                return newMessage;
-        }
-
-        return message;
-    });
-
-    public static final Hook<Quit> QUIT = HookFactory.createArrayBacked(Quit.class, callbacks -> (player, message) -> {
-        for (var callback : callbacks) {
-            final Text newMessage = callback.onQuit(player, message);
-            if (!message.equals(newMessage))
-                return newMessage;
-        }
-
-        return message;
-    });
+    private PlayerFoodHooks() {}
 
     public static final Hook<FoodFloatLevel> SATURATION_CHANGE = HookFactory.createArrayBacked(FoodFloatLevel.class, callbacks -> (player, fromLevel, toLevel) -> {
         for (var callback : callbacks)
@@ -39,7 +15,6 @@ public class PlayerHooks {
 
         return false;
     });
-
     public static final Hook<FoodFloatLevel> EXHAUSTION_CHANGE = HookFactory.createArrayBacked(FoodFloatLevel.class, callbacks -> (player, fromLevel, toLevel) -> {
         for (var callback : callbacks)
             if (callback.onChange(player, fromLevel, toLevel))
@@ -47,7 +22,6 @@ public class PlayerHooks {
 
         return false;
     });
-
     public static final Hook<FoodIntLevel> LEVEL_CHANGE = HookFactory.createArrayBacked(FoodIntLevel.class, callbacks -> (player, fromLevel, toLevel) -> {
         for (var callback : callbacks)
             if (callback.onChange(player, fromLevel, toLevel))
@@ -55,24 +29,6 @@ public class PlayerHooks {
 
         return false;
     });
-
-    public static final Hook<SpawnPointChange> SPAWN_POINT_CHANGE = HookFactory.createArrayBacked(SpawnPointChange.class, callbacks -> (player, world, pos) -> {
-        for (var callback : callbacks)
-            if (callback.onChange(player, world, pos))
-                return true;
-
-        return false;
-    });
-
-    public interface Join {
-        @Nullable
-        Text onJoin(ServerPlayerEntity player, Text message);
-    }
-
-    public interface Quit {
-        @Nullable
-        Text onQuit(ServerPlayerEntity player, Text message);
-    }
 
     public interface FoodFloatLevel {
         /**
@@ -96,9 +52,5 @@ public class PlayerHooks {
          * @return True, if the food level change should be cancelled.
          */
         boolean onChange(PlayerEntity player, int fromLevel, int toLevel);
-    }
-
-    public interface SpawnPointChange {
-        boolean onChange(PlayerEntity player, World world, BlockPos pos);
     }
 }

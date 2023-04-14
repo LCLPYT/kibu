@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.player.PlayerHooks;
-import work.lclpnet.kibu.hook.player.PlayerSlotChangeHook;
+import work.lclpnet.kibu.hook.player.PlayerConnectionHooks;
+import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class ServerPlayNetworkHandlerMixin {
@@ -27,7 +27,7 @@ public class ServerPlayNetworkHandlerMixin {
             )
     )
     public void sendQuitMessage(PlayerManager instance, Text message, boolean overlay) {
-        Text text = PlayerHooks.QUIT.invoker().onQuit(player, message);
+        Text text = PlayerConnectionHooks.QUIT_MESSAGE.invoker().onQuit(player, message);
 
         if (text != null) {
             instance.broadcast(text, overlay);
@@ -39,6 +39,6 @@ public class ServerPlayNetworkHandlerMixin {
             at = @At("TAIL")
     )
     public void illwalls$onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packet, CallbackInfo ci) {
-        PlayerSlotChangeHook.HOOK.invoker().onChangeSlot(packet.getSelectedSlot());
+        PlayerInventoryHooks.SLOT_CHANGE.invoker().onChangeSlot(packet.getSelectedSlot());
     }
 }

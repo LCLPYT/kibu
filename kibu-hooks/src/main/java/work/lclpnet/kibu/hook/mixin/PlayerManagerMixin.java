@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.player.PlayerHooks;
+import work.lclpnet.kibu.hook.player.PlayerConnectionHooks;
 
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
@@ -56,7 +56,7 @@ public abstract class PlayerManagerMixin {
             originalText = Text.translatable("multiplayer.player.joined.renamed", player.getDisplayName(), s);
         }
 
-        Text text = PlayerHooks.JOIN.invoker().onJoin(player, originalText.formatted(Formatting.YELLOW));
+        Text text = PlayerConnectionHooks.JOIN_MESSAGE.invoker().onJoin(player, originalText.formatted(Formatting.YELLOW));
         if (text != null) {
             this.broadcast(text, false);
             player.sendMessage(text, false);

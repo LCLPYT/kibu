@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import work.lclpnet.kibu.hook.model.PlayerAware;
-import work.lclpnet.kibu.hook.player.PlayerHooks;
+import work.lclpnet.kibu.hook.player.PlayerFoodHooks;
 
 @Mixin(HungerManager.class)
 public class HungerManagerMixin implements PlayerAware {
@@ -33,7 +33,7 @@ public class HungerManagerMixin implements PlayerAware {
             )
     )
     public void onChangeFoodLevel(HungerManager HungerManager, int foodLevel) {
-        boolean cancel = PlayerHooks.LEVEL_CHANGE.invoker().onChange(player, this.foodLevel, foodLevel);
+        boolean cancel = PlayerFoodHooks.LEVEL_CHANGE.invoker().onChange(player, this.foodLevel, foodLevel);
         if (!cancel) this.foodLevel = foodLevel;
     }
 
@@ -46,7 +46,7 @@ public class HungerManagerMixin implements PlayerAware {
             )
     )
     public void onChangeExhaustion(HungerManager HungerManager, float exhaustion) {
-        boolean cancel = PlayerHooks.EXHAUSTION_CHANGE.invoker().onChange(player, this.exhaustion, exhaustion);
+        boolean cancel = PlayerFoodHooks.EXHAUSTION_CHANGE.invoker().onChange(player, this.exhaustion, exhaustion);
         if (!cancel) this.exhaustion = exhaustion;
     }
 
@@ -59,7 +59,7 @@ public class HungerManagerMixin implements PlayerAware {
             )
     )
     public void onChangeFoodSaturationLevel(HungerManager HungerManager, float foodSaturationLevel) {
-        boolean cancel = PlayerHooks.SATURATION_CHANGE.invoker().onChange(player, this.saturationLevel, foodSaturationLevel);
+        boolean cancel = PlayerFoodHooks.SATURATION_CHANGE.invoker().onChange(player, this.saturationLevel, foodSaturationLevel);
         if (!cancel) this.saturationLevel = foodSaturationLevel;
     }
 

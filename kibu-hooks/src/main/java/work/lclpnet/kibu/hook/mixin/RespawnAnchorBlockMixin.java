@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import work.lclpnet.kibu.hook.player.PlayerHooks;
+import work.lclpnet.kibu.hook.player.PlayerSpawnPointChangeHook;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
 @Mixin(RespawnAnchorBlock.class)
@@ -55,7 +55,7 @@ public class RespawnAnchorBlockMixin {
             cancellable = true
     )
     public void onSetSpawnPoint(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
-        if (PlayerHooks.SPAWN_POINT_CHANGE.invoker().onChange(player, world, pos)) {
+        if (PlayerSpawnPointChangeHook.HOOK.invoker().onChange(player, world, pos)) {
             cir.setReturnValue(ActionResult.PASS);
         }
     }

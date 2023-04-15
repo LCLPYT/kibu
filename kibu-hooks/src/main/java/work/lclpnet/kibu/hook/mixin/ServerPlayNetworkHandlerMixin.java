@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.hook.mixin;
 
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -26,7 +27,7 @@ public class ServerPlayNetworkHandlerMixin {
                     target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"
             )
     )
-    public void sendQuitMessage(PlayerManager instance, Text message, boolean overlay) {
+    public void kibu$sendQuitMessage(PlayerManager instance, Text message, boolean overlay) {
         Text text = PlayerConnectionHooks.QUIT_MESSAGE.invoker().onQuit(player, message);
 
         if (text != null) {
@@ -38,7 +39,34 @@ public class ServerPlayNetworkHandlerMixin {
             method = "onUpdateSelectedSlot",
             at = @At("TAIL")
     )
-    public void illwalls$onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packet, CallbackInfo ci) {
+    public void kibu$onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packet, CallbackInfo ci) {
         PlayerInventoryHooks.SLOT_CHANGE.invoker().onChangeSlot(player, packet.getSelectedSlot());
+    }
+
+    @Inject(
+            method = "onPlayerAction",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;",
+                    ordinal = 0
+            ),
+            cancellable = true
+    )
+    public void kibu$beforeSwapHands(PlayerActionC2SPacket packet, CallbackInfo ci) {
+        boolean cancel = PlayerInventoryHooks.SWAP_HANDS.invoker().onSwapHands(player, player.getInventory().selectedSlot);
+        if (cancel) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(
+            method = "onPlayerAction",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;clearActiveItem()V"
+            )
+    )
+    public void kibu$afterSwapHands(PlayerActionC2SPacket packet, CallbackInfo ci) {
+        PlayerInventoryHooks.SWAPPED_HANDS.invoker().onSwappedHands(player, player.getInventory().selectedSlot);
     }
 }

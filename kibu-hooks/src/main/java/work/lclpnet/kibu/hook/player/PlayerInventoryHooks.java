@@ -1,6 +1,9 @@
 package work.lclpnet.kibu.hook.player;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
@@ -64,6 +67,29 @@ public class PlayerInventoryHooks {
         }
     });
 
+    /**
+     * Called before an inventory click event is processed by the server.
+     * Can be cancelled by returning true.
+     */
+    public static final Hook<InventoryModify> MODIFY_INVENTORY = HookFactory.createArrayBacked(InventoryModify.class, (hooks) -> (event) -> {
+        for (var hook : hooks) {
+            if (hook.onModify(event)) {
+                return true;
+            }
+        }
+
+        return false;
+    });
+
+    /**
+     * Called after an inventory click event was processed by the server.
+     */
+    public static final Hook<InventoryModified> MODIFIED_INVENTORY = HookFactory.createArrayBacked(InventoryModified.class, (hooks) -> (event) -> {
+        for (var hook : hooks) {
+            hook.onModified(event);
+        }
+    });
+
     public interface SlotChange {
 
         void onChangeSlot(ServerPlayerEntity player, int slot);
@@ -85,5 +111,27 @@ public class PlayerInventoryHooks {
 
     public interface SwappedHands {
         void onSwappedHands(ServerPlayerEntity player, int slot);
+    }
+
+    public interface InventoryModify {
+        boolean onModify(ClickEvent event);
+    }
+
+    public interface InventoryModified {
+        void onModified(ClickEvent event);
+    }
+
+    public record ClickEvent(ServerPlayerEntity player, int slot, int button, ItemStack cursorStack,
+                             SlotActionType action, Int2ObjectMap<ItemStack> modified) {
+
+        public boolean isDropAction() {
+            return action == SlotActionType.THROW || (action == SlotActionType.PICKUP && slot == -999);
+        }
+
+        @Override
+        public String toString() {
+            return "ClickEvent{player=%s, slot=%d, button=%d, cursorStack=%s, action=%s, modified=%s}"
+                    .formatted(player, slot, button, cursorStack, action, modified);
+        }
     }
 }

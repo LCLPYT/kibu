@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.hook.mixin;
 
+import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.server.PlayerManager;
@@ -68,5 +69,35 @@ public class ServerPlayNetworkHandlerMixin {
     )
     public void kibu$afterSwapHands(PlayerActionC2SPacket packet, CallbackInfo ci) {
         PlayerInventoryHooks.SWAPPED_HANDS.invoker().onSwappedHands(player, player.getInventory().selectedSlot);
+    }
+
+    @Inject(
+            method = "onClickSlot",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/network/packet/c2s/play/ClickSlotC2SPacket;getSlot()I"
+            ),
+            cancellable = true
+    )
+    public void kibu$onClickSlot(ClickSlotC2SPacket packet, CallbackInfo ci) {
+        var event = new PlayerInventoryHooks.ClickEvent(player, packet.getSlot(), packet.getButton(), packet.getStack(),
+                packet.getActionType(), packet.getModifiedStacks());
+
+        boolean cancel = PlayerInventoryHooks.MODIFY_INVENTORY.invoker().onModify(event);
+        if (cancel) {
+            ci.cancel();
+            this.player.currentScreenHandler.syncState();
+        }
+    }
+
+    @Inject(
+            method = "onClickSlot",
+            at = @At("TAIL")
+    )
+    public void kibu$onClickedSlot(ClickSlotC2SPacket packet, CallbackInfo ci) {
+        var event = new PlayerInventoryHooks.ClickEvent(player, packet.getSlot(), packet.getButton(), packet.getStack(),
+                packet.getActionType(), packet.getModifiedStacks());
+
+        PlayerInventoryHooks.MODIFIED_INVENTORY.invoker().onModified(event);
     }
 }

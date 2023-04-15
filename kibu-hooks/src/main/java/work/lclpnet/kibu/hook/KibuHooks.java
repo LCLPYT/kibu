@@ -18,6 +18,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
@@ -47,6 +48,14 @@ public class KibuHooks implements ModInitializer {
 
             return ActionResult.PASS;
 
+        });
+
+        test();
+    }
+
+    private void test() {
+        PlayerInventoryHooks.MODIFIED_CREATIVE_INVENTORY.register((event) -> {
+            System.out.println(event);
         });
     }
 

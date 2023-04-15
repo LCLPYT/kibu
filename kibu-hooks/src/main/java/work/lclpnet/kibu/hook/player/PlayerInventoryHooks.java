@@ -90,6 +90,15 @@ public class PlayerInventoryHooks {
         }
     });
 
+    /**
+     * Called after a creative inventory click event was processed by the server.
+     */
+    public static final Hook<CreativeInventoryModified> MODIFIED_CREATIVE_INVENTORY = HookFactory.createArrayBacked(CreativeInventoryModified.class, (hooks) -> (event) -> {
+        for (var hook : hooks) {
+            hook.onModified(event);
+        }
+    });
+
     public interface SlotChange {
 
         void onChangeSlot(ServerPlayerEntity player, int slot);
@@ -121,6 +130,10 @@ public class PlayerInventoryHooks {
         void onModified(ClickEvent event);
     }
 
+    public interface CreativeInventoryModified {
+        void onModified(CreativeClickEvent event);
+    }
+
     public record ClickEvent(ServerPlayerEntity player, int slot, int button, ItemStack cursorStack,
                              SlotActionType action, Int2ObjectMap<ItemStack> modified) {
 
@@ -132,6 +145,15 @@ public class PlayerInventoryHooks {
         public String toString() {
             return "ClickEvent{player=%s, slot=%d, button=%d, cursorStack=%s, action=%s, modified=%s}"
                     .formatted(player, slot, button, cursorStack, action, modified);
+        }
+    }
+
+    public record CreativeClickEvent(ServerPlayerEntity player, int slot, ItemStack stack) {
+
+        @Override
+        public String toString() {
+            return "CreativeClickEvent{player=%s, slot=%d, stack=%s}"
+                    .formatted(player, slot, stack);
         }
     }
 }

@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.hook.mixin;
 
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
+import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.server.PlayerManager;
@@ -99,5 +100,15 @@ public class ServerPlayNetworkHandlerMixin {
                 packet.getActionType(), packet.getModifiedStacks());
 
         PlayerInventoryHooks.MODIFIED_INVENTORY.invoker().onModified(event);
+    }
+
+    @Inject(
+            method = "onCreativeInventoryAction",
+            at = @At("TAIL")
+    )
+    public void kibu$onCreativeClickedSlot(CreativeInventoryActionC2SPacket packet, CallbackInfo ci) {
+        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.getSlot(), packet.getItemStack());
+
+        PlayerInventoryHooks.MODIFIED_CREATIVE_INVENTORY.invoker().onModified(event);
     }
 }

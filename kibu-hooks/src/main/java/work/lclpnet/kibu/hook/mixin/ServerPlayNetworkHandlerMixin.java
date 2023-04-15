@@ -104,7 +104,24 @@ public class ServerPlayNetworkHandlerMixin {
 
     @Inject(
             method = "onCreativeInventoryAction",
-            at = @At("TAIL")
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/screen/PlayerScreenHandler;getSlot(I)Lnet/minecraft/screen/slot/Slot;"
+            )
+    )
+    public void kibu$onCreativeClickSlot(CreativeInventoryActionC2SPacket packet, CallbackInfo ci) {
+        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.getSlot(), packet.getItemStack());
+
+        PlayerInventoryHooks.MODIFY_CREATIVE_INVENTORY.invoker().onModify(event);
+    }
+
+    @Inject(
+            method = "onCreativeInventoryAction",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/screen/PlayerScreenHandler;sendContentUpdates()V",
+                    shift = At.Shift.AFTER
+            )
     )
     public void kibu$onCreativeClickedSlot(CreativeInventoryActionC2SPacket packet, CallbackInfo ci) {
         var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.getSlot(), packet.getItemStack());

@@ -91,6 +91,15 @@ public class PlayerInventoryHooks {
     });
 
     /**
+     * Called before a creative inventory click event is processed by the server.
+     */
+    public static final Hook<CreativeInventoryModify> MODIFY_CREATIVE_INVENTORY = HookFactory.createArrayBacked(CreativeInventoryModify.class, (hooks) -> (event) -> {
+        for (var hook : hooks) {
+            hook.onModify(event);
+        }
+    });
+
+    /**
      * Called after a creative inventory click event was processed by the server.
      */
     public static final Hook<CreativeInventoryModified> MODIFIED_CREATIVE_INVENTORY = HookFactory.createArrayBacked(CreativeInventoryModified.class, (hooks) -> (event) -> {
@@ -128,6 +137,10 @@ public class PlayerInventoryHooks {
 
     public interface InventoryModified {
         void onModified(ClickEvent event);
+    }
+
+    public interface CreativeInventoryModify {
+        void onModify(CreativeClickEvent event);
     }
 
     public interface CreativeInventoryModified {

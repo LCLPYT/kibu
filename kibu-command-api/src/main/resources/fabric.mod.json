@@ -23,7 +23,7 @@
 		"kibu-command-api.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.14.18",
+		"fabricloader": ">=${loader_version}",
 		"minecraft": "~1.19.4",
 		"java": ">=17",
 		"fabric-api": "*"

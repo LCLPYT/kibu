@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.hook.player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.SlotActionType;
@@ -108,6 +109,22 @@ public class PlayerInventoryHooks {
         }
     });
 
+    public static final Hook<ItemPickup> PLAYER_PICKUP = HookFactory.createArrayBacked(ItemPickup.class, (hooks) -> (player, itemEntity) -> {
+        for (var hook : hooks) {
+            if (hook.onPickup(player, itemEntity)) {
+                return true;
+            }
+        }
+
+        return false;
+    });
+
+    public static final Hook<ItemPickedUp> PLAYER_PICKED_UP = HookFactory.createArrayBacked(ItemPickedUp.class, (hooks) -> (player, itemEntity) -> {
+        for (var hook : hooks) {
+            hook.onPickedUp(player, itemEntity);
+        }
+    });
+
     public interface SlotChange {
 
         void onChangeSlot(ServerPlayerEntity player, int slot);
@@ -168,5 +185,13 @@ public class PlayerInventoryHooks {
             return "CreativeClickEvent{player=%s, slot=%d, stack=%s}"
                     .formatted(player, slot, stack);
         }
+    }
+
+    public interface ItemPickup {
+        boolean onPickup(PlayerEntity player, ItemEntity itemEntity);
+    }
+
+    public interface ItemPickedUp {
+        void onPickedUp(PlayerEntity player, ItemEntity itemEntity);
     }
 }

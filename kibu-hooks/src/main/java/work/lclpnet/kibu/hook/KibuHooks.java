@@ -46,7 +46,6 @@ public class KibuHooks implements ModInitializer {
             }
 
             return ActionResult.PASS;
-
         });
     }
 

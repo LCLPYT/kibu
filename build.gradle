@@ -206,7 +206,12 @@ static def getSubprojectVersion(Project project) {
     if (!version) {
         throw new IllegalStateException("Could not find version for project ${project.getName()}")
     }
-    return version + "+" + project.minecraft_version
+
+    if (!project.ext.isMc) {
+        return version
+    } else {
+        return version + "+" + project.minecraft_version
+    }
 }
 
 static def configureNonLoomProject(Project project) {

@@ -16,15 +16,20 @@ import java.util.Objects;
 
 public class FabricStructureWrapper implements FabricStructureView {
 
-    protected final FabricBlockStateAdapter adapter = FabricBlockStateAdapter.getInstance();
     private final BlockStructure structure;
+    protected final FabricBlockStateAdapter adapter;
 
     public FabricStructureWrapper() {
         this(createSimpleStructure());
     }
 
     public FabricStructureWrapper(BlockStructure structure) {
+        this(structure, FabricBlockStateAdapter.getInstance());
+    }
+
+    public FabricStructureWrapper(BlockStructure structure, FabricBlockStateAdapter adapter) {
         this.structure = Objects.requireNonNull(structure);
+        this.adapter = Objects.requireNonNull(adapter);
     }
 
     public static SimpleBlockStructure createSimpleStructure() {

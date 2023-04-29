@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-schematic-fabric",
+	"version": "${version}",
+	"name": "Kibu Schematic API Fabric",
+	"description": "API for schematic creation and loading in Fabric.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-schematic-fabric/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "~1.19.4",
+		"java": ">=17",
+		"kibu-nbt-api": "*",
+		"kibu-schematic-api": "*"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

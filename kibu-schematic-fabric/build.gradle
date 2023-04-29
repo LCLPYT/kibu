@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = "kibu-schematic-fabric"
+
+moduleDependencies(project, [
+        'kibu-nbt-api',
+        'kibu-schematic-api'
+])
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'kibu-schematic-fabric'
+                description = 'Kibu schematic and NBT API for Fabric'
+            }
+        }
+    }
+}
+
+dependencies {
+    testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+}
+
+test {
+    useJUnitPlatform()
+}

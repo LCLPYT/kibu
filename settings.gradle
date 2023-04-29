@@ -22,4 +22,5 @@ include 'kibu-scheduler-api'
 include 'kibu-hook-api'
 include 'kibu-schematic-api'
 include 'kibu-nbt-api'
+include 'kibu-schematic-fabric'
 

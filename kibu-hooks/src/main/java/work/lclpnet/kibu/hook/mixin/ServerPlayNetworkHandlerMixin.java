@@ -154,54 +154,6 @@ public abstract class ServerPlayNetworkHandlerMixin {
         PlayerInventoryHooks.MODIFIED_CREATIVE_INVENTORY.invoker().onModified(event);
     }
 
-//    @Inject(
-//            method = "onPlayerMove",
-//            at = @At(
-//                    value = "INVOKE",
-//                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;getVelocity()Lnet/minecraft/util/math/Vec3d;"
-//            )
-//    )
-//    public void kibu$captureMoveFrom(PlayerMoveC2SPacket packet, CallbackInfo ci) {
-//        // capture pre-movement positions
-//        fromX = player.getX();
-//        fromY = player.getY();
-//        fromZ = player.getZ();
-//        fromYaw = player.getYaw();
-//        fromPitch = player.getPitch();
-//    }
-
-    /*@Inject(
-            method = "onPlayerMove",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;updatePositionAndAngles(DDDFF)V",
-                    ordinal = 1,
-                    shift = At.Shift.AFTER
-            ),
-            cancellable = true
-    )
-    public void kibu$onPlayerMove(PlayerMoveC2SPacket packet, CallbackInfo ci) {
-        double x = clampHorizontal(packet.getX(this.player.getX()));
-        double y = clampVertical(packet.getY(this.player.getY()));
-        double z = clampHorizontal(packet.getZ(this.player.getZ()));
-
-        Vec3d from = new Vec3d(fromX, fromY, fromZ);
-        Vec3d to = new Vec3d(x, y, z);
-
-        double mag = Math.pow(fromX - x, 2) + Math.pow(fromY - y, 2) + Math.pow(fromZ - z, 2);
-
-        if (mag < 0.015625f) return;  // 1 / 64
-
-        if (PlayerMoveCallback.HOOK.invoker().onMove(player, x, y, z)) {
-            ci.cancel();
-            return;
-        }
-
-        lastX = x;
-        lastY = y;
-        lastZ = z;
-    }*/
-
     @Inject(
             method = "onPlayerMove",
             at = @At(

@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-title-api",
+	"version": "${version}",
+	"name": "Kibu Title API",
+	"description": "API for sending titles to players",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-title-api/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [
+		"kibu-title-api.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "~1.19.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

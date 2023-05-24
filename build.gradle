@@ -10,7 +10,8 @@ ext {
     versionPattern = "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][a-zA-Z0-9.]+)?\$"
 }
 
-version = gitVersion.call()
+boolean local = System.getProperty("build.local") == "true"
+version = gitVersion.call() + (local ? '+local' : '')
 
 allprojects {
     group = project.maven_group
@@ -207,10 +208,13 @@ static def getSubprojectVersion(Project project) {
         throw new IllegalStateException("Could not find version for project ${project.getName()}")
     }
 
+    boolean local = System.getProperty("build.local") == "true"
+    def suffix = (local ? '+local' : '')
+
     if (!project.ext.isMc) {
-        return version
+        return version + suffix
     } else {
-        return version + "+" + project.minecraft_version
+        return version + "+" + project.minecraft_version + suffix
     }
 }
 

@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = "kibu-title-api"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'kibu-title-api'
+                description = 'API for sending titles to players'
+            }
+        }
+    }
+}

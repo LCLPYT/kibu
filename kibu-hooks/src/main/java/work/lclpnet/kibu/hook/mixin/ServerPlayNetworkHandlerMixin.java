@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import work.lclpnet.kibu.hook.player.PlayerConnectionHooks;
 import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 import work.lclpnet.kibu.hook.player.PlayerMoveCallback;
@@ -42,10 +43,8 @@ public abstract class ServerPlayNetworkHandlerMixin {
     private double lastX = Double.NaN, lastY = Double.NaN, lastZ = Double.NaN;
     @Unique
     private float lastYaw = Float.NaN, lastPitch = Float.NaN;
-//    @Unique
-//    private double fromX, fromY, fromZ;
-//    @Unique
-//    private float fromYaw, fromPitch;
+    @Unique
+    private boolean teleporting = false;
 
     @Redirect(
             method = "onDisconnected",
@@ -186,10 +185,18 @@ public abstract class ServerPlayNetworkHandlerMixin {
         PositionRotation from = new PositionRotation(lastX, lastY, lastZ, lastYaw, lastPitch);
         PositionRotation to = new PositionRotation(toX, toY, toZ, toYaw, toPitch);
 
+        teleporting = false;
+
         if (PlayerMoveCallback.HOOK.invoker().onMove(player, from, to)) {
             // movement disallowed; reset
             requestTeleport(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch(), Set.of());
 
+            ci.cancel();
+            return;
+        }
+
+        // the player was teleported by a hook
+        if (teleporting) {
             ci.cancel();
             return;
         }
@@ -199,5 +206,24 @@ public abstract class ServerPlayNetworkHandlerMixin {
         lastZ = toZ;
         lastYaw = toYaw;
         lastPitch = toPitch;
+    }
+
+    @SuppressWarnings("InvalidInjectorMethodSignature")
+    @Inject(
+            method = "requestTeleport(DDDFFLjava/util/Set;)V",
+            at = @At(
+                    value = "FIELD",
+                    target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;requestedTeleportPos:Lnet/minecraft/util/math/Vec3d;"
+            ),
+            locals = LocalCapture.CAPTURE_FAILSOFT
+    )
+    public void kibu$onRequestTeleport(double _x, double _y, double _z, float _yaw, float _pitch, Set<PositionFlag> set, CallbackInfo ci,
+                                       double x, double y, double z, float yaw, float pitch) {
+        teleporting = true;
+        lastX = x;
+        lastY = y;
+        lastZ = z;
+        lastYaw = yaw;
+        lastPitch = pitch;
     }
 }

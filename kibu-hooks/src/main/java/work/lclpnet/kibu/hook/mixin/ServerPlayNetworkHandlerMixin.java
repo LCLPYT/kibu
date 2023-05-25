@@ -210,14 +210,14 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
     @SuppressWarnings("InvalidInjectorMethodSignature")
     @Inject(
-            method = "requestTeleport(DDDFFLjava/util/Set;)V",
+            method = "requestTeleport(DDDFFLjava/util/Set;Z)V",
             at = @At(
                     value = "FIELD",
                     target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;requestedTeleportPos:Lnet/minecraft/util/math/Vec3d;"
             ),
             locals = LocalCapture.CAPTURE_FAILSOFT
     )
-    public void kibu$onRequestTeleport(double _x, double _y, double _z, float _yaw, float _pitch, Set<PositionFlag> set, CallbackInfo ci,
+    public void kibu$onRequestTeleport(double _x, double _y, double _z, float _yaw, float _pitch, Set<PlayerPositionLookS2CPacket.Flag> set, boolean shouldDismount, CallbackInfo ci,
                                        double x, double y, double z, float yaw, float pitch) {
         teleporting = true;
         lastX = x;

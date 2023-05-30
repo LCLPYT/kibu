@@ -24,4 +24,5 @@ include 'kibu-schematic-api'
 include 'kibu-nbt-api'
 include 'kibu-schematic-fabric'
 include 'kibu-title-api'
+include 'kibu-access-lib'
 

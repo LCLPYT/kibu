@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-access-lib",
+	"version": "${version}",
+	"name": "Kibu Access Library",
+	"description": "A library of common accessors that don't really fit in other modules.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-access-lib/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [
+		"kibu-access-lib.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "~1.19.4",
+		"java": ">=17",
+		"fabric-api": "*",
+		"kibu-hook-api": "*"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

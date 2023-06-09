@@ -15,7 +15,7 @@ public class ProjectileEntityMixin {
             method = "onBlockHit",
             at = @At("TAIL")
     )
-    public void illwalls$onBlockHit(BlockHitResult blockHitResult, CallbackInfo ci) {
+    public void kibu$onBlockHit(BlockHitResult blockHitResult, CallbackInfo ci) {
         @SuppressWarnings("DataFlowIssue")
         ProjectileEntity self = (ProjectileEntity) (Object) this;
 

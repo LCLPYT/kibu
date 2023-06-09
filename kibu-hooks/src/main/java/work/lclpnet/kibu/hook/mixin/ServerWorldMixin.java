@@ -33,7 +33,7 @@ public class ServerWorldMixin {
             cancellable = true,
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    public void onExplode(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, CallbackInfoReturnable<Explosion> cir, Explosion explosion) {
+    public void kibu$onExplode(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, CallbackInfoReturnable<Explosion> cir, Explosion explosion) {
         if (((CancellableExplosion) explosion).kibu$isCancelled())
             cir.setReturnValue(explosion);
     }
@@ -45,7 +45,7 @@ public class ServerWorldMixin {
                     target = "Lnet/minecraft/server/world/ServerWorld;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Z"
             )
     )
-    public boolean onFreeze(ServerWorld instance, BlockPos pos, BlockState blockState) {
+    public boolean kibu$onFreeze(ServerWorld instance, BlockPos pos, BlockState blockState) {
         if (blockState.isOf(Blocks.SNOW)) {
             if (WorldPhysicsHooks.SNOW_FALL.invoker().onSnowFall(instance, pos))
                 return false;
@@ -63,7 +63,7 @@ public class ServerWorldMixin {
                     target = "Lnet/minecraft/block/Block;pushEntitiesUpBeforeBlockChange(Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"
             )
     )
-    public BlockState onSnowAccumulatePushEntities(BlockState from, BlockState to, WorldAccess world, BlockPos pos) {
+    public BlockState kibu$onSnowAccumulatePushEntities(BlockState from, BlockState to, WorldAccess world, BlockPos pos) {
         @SuppressWarnings("DataFlowIssue")
         World w = (World) (Object) this;
 

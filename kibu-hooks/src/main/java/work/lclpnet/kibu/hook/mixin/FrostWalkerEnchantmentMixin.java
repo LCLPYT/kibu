@@ -18,7 +18,7 @@ public class FrostWalkerEnchantmentMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private static void onFreeze(LivingEntity entity, World world, BlockPos blockPos, int level, CallbackInfo ci) {
+    private static void kibu$onFreeze(LivingEntity entity, World world, BlockPos blockPos, int level, CallbackInfo ci) {
         if (WorldPhysicsHooks.FROST_WALKER_FREEZE.invoker().onFreeze(world, blockPos, entity))
             ci.cancel();
     }

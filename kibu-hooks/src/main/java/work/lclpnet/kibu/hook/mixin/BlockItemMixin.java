@@ -25,7 +25,7 @@ public class BlockItemMixin {
             cancellable = true,
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    public void onPlaceBlock(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> cir, ItemPlacementContext modifiedContext, BlockState newState) {
+    public void kibu$onPlaceBlock(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> cir, ItemPlacementContext modifiedContext, BlockState newState) {
         final PlayerEntity player = context.getPlayer();
 
         if (BlockModificationHooks.PLACE_BLOCK.invoker().onPlace(context.getWorld(), context.getBlockPos(), player, newState)) {

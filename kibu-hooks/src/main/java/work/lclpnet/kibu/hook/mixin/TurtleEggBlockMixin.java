@@ -22,7 +22,7 @@ public class TurtleEggBlockMixin {
             ),
             cancellable = true
     )
-    public void onBreakEgg(World world, BlockState state, BlockPos pos, Entity entity, int inverseChance, CallbackInfo ci) {
+    public void kibu$onBreakEgg(World world, BlockState state, BlockPos pos, Entity entity, int inverseChance, CallbackInfo ci) {
         if (BlockModificationHooks.TRAMPLE_TURTLE_EGG.invoker().onModify(world, pos, entity)) {
             ci.cancel();
         }

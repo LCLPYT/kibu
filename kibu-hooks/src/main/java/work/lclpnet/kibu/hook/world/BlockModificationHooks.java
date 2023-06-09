@@ -142,6 +142,14 @@ public class BlockModificationHooks {
         return false;
     });
 
+    public static final Hook<BlockModifyHook> EDIT_SIGN = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        for (var callback : callbacks)
+            if (callback.onModify(world, pos, entity))
+                return true;
+
+        return false;
+    });
+
     public interface PlaceBlockHook {
         boolean onPlace(World world, BlockPos pos, Entity entity, BlockState newState);
     }

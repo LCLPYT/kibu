@@ -25,7 +25,7 @@ public class CandleBlockMixin {
             ),
             cancellable = true
     )
-    public void interceptExtinguish(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$interceptExtinguish(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (BlockModificationHooks.EXTINGUISH_CANDLE.invoker().onModify(world, pos, player)) {
             cir.setReturnValue(ActionResult.PASS);
         }

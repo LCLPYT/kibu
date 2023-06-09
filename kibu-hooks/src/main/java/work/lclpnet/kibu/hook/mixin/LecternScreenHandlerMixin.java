@@ -25,7 +25,7 @@ public class LecternScreenHandlerMixin implements BlockPosAware {
             ),
             cancellable = true
     )
-    public void onTakeBook(PlayerEntity player, int id, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onTakeBook(PlayerEntity player, int id, CallbackInfoReturnable<Boolean> cir) {
         if (BlockModificationHooks.TAKE_LECTERN_BOOK.invoker().onModify(player.getWorld(), blockPosition, player)) {
             cir.setReturnValue(false);
         }

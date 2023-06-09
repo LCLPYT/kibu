@@ -22,16 +22,30 @@ public class AbstractSignBlockMixin {
             method = "onUse",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"
+                    target = "Lnet/minecraft/item/SignChangingItem;canUseOnSignText(Lnet/minecraft/block/entity/SignText;Lnet/minecraft/entity/player/PlayerEntity;)Z"
             ),
             cancellable = true
     )
-    public void interceptOnUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$interceptOnUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         var ctx = new ItemUsageContext(player, hand, hit);
         var result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(ctx);
 
         if (result != null) {
             cir.setReturnValue(result);
+        }
+    }
+
+    @Inject(
+            method = "onUse",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/block/AbstractSignBlock;openEditScreen(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/block/entity/SignBlockEntity;Z)V"
+            ),
+            cancellable = true
+    )
+    public void kibu$onEditSign(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+        if (BlockModificationHooks.EDIT_SIGN.invoker().onModify(world, pos, player)) {
+            cir.setReturnValue(ActionResult.PASS);
         }
     }
 }

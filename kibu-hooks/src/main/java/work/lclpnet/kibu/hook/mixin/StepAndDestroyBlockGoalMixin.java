@@ -32,7 +32,7 @@ public abstract class StepAndDestroyBlockGoalMixin {
             ),
             cancellable = true
     )
-    public void onDestroyBlock(CallbackInfo ci) {
+    public void kibu$onDestroyBlock(CallbackInfo ci) {
         final var world = this.stepAndDestroyMob.getWorld();
         final var pos = tweakToProperPos(this.stepAndDestroyMob.getBlockPos(), world);
 
@@ -47,7 +47,7 @@ public abstract class StepAndDestroyBlockGoalMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void interceptCanStart(CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$interceptCanStart(CallbackInfoReturnable<Boolean> cir) {
         if (BlockModificationHooks.CAN_MOB_GRIEF.invoker().onModify(this.stepAndDestroyMob.getWorld(), this.stepAndDestroyMob.getBlockPos(), this.stepAndDestroyMob)) {
             cir.setReturnValue(false);
         }

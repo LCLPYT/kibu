@@ -27,7 +27,7 @@ public abstract class FarmlandBlockMixin extends Block {
             ),
             cancellable = true
     )
-    public void onTrample(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
+    public void kibu$onTrample(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
         if (BlockModificationHooks.TRAMPLE_FARMLAND.invoker().onModify(world, pos, entity)) {
             ci.cancel();
 

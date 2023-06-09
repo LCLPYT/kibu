@@ -25,7 +25,7 @@ public class ComposterBlockMixin {
             ),
             cancellable = true
     )
-    public void onAddToComposter(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onAddToComposter(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (BlockModificationHooks.COMPOSTER.invoker().onModify(world, pos, player)) {
             cir.setReturnValue(ActionResult.PASS);
         }
@@ -39,7 +39,7 @@ public class ComposterBlockMixin {
             ),
             cancellable = true
     )
-    public void onEmptyComposter(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onEmptyComposter(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (BlockModificationHooks.COMPOSTER.invoker().onModify(world, pos, player)) {
             cir.setReturnValue(ActionResult.PASS);
         }

@@ -20,7 +20,9 @@ public class ItemEntityMixin {
             cancellable = true
     )
     public void kibu$onItemPickup(PlayerEntity player, CallbackInfo ci) {
+        @SuppressWarnings("DataFlowIssue")
         ItemEntity self = (ItemEntity) (Object) this;
+
         boolean cancel = PlayerInventoryHooks.PLAYER_PICKUP.invoker().onPickup(player, self);
         if (cancel) {
             ci.cancel();
@@ -35,7 +37,9 @@ public class ItemEntityMixin {
             )
     )
     public void kibu$onItemPickedUp(PlayerEntity player, CallbackInfo ci) {
+        @SuppressWarnings("DataFlowIssue")
         ItemEntity self = (ItemEntity) (Object) this;
+
         PlayerInventoryHooks.PLAYER_PICKED_UP.invoker().onPickedUp(player, self);
     }
 }

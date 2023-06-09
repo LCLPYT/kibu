@@ -38,7 +38,7 @@ public class BucketItemMixin {
             cancellable = true,
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    public void onPickupFluid(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir,
+    public void kibu$onPickupFluid(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir,
                               ItemStack itemStack, BlockHitResult blockHitResult, BlockPos pos, Direction direction, BlockPos blockPos2, BlockState blockState, FluidDrainable fluidDrainable) {
 
         if (BlockModificationHooks.PICKUP_FLUID.invoker().onTransfer(world, pos, player, fluid)) {
@@ -59,12 +59,12 @@ public class BucketItemMixin {
             ),
             cancellable = true
     )
-    public void onPlaceFluid(PlayerEntity player, World world, BlockPos pos, BlockHitResult blockHitResult, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onPlaceFluid(PlayerEntity player, World world, BlockPos pos, BlockHitResult blockHitResult, CallbackInfoReturnable<Boolean> cir) {
         if (BlockModificationHooks.PLACE_FLUID.invoker().onTransfer(world, pos, player, fluid)) {
             cir.setReturnValue(false);
 
             if (player instanceof ServerPlayerEntity) {
-                ((ServerPlayerEntity) player).networkHandler.sendPacket(new BlockUpdateS2CPacket(player.world, pos));
+                ((ServerPlayerEntity) player).networkHandler.sendPacket(new BlockUpdateS2CPacket(player.getWorld(), pos));
                 PlayerUtils.syncPlayerItems(player);
             }
         }

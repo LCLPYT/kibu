@@ -32,7 +32,7 @@ public class HungerManagerMixin implements PlayerAware {
                     opcode = Opcodes.PUTFIELD
             )
     )
-    public void onChangeFoodLevel(HungerManager HungerManager, int foodLevel) {
+    public void kibu$onChangeFoodLevel(HungerManager HungerManager, int foodLevel) {
         boolean cancel = PlayerFoodHooks.LEVEL_CHANGE.invoker().onChange(player, this.foodLevel, foodLevel);
         if (!cancel) this.foodLevel = foodLevel;
     }
@@ -45,7 +45,7 @@ public class HungerManagerMixin implements PlayerAware {
                     opcode = Opcodes.PUTFIELD
             )
     )
-    public void onChangeExhaustion(HungerManager HungerManager, float exhaustion) {
+    public void kibu$onChangeExhaustion(HungerManager HungerManager, float exhaustion) {
         boolean cancel = PlayerFoodHooks.EXHAUSTION_CHANGE.invoker().onChange(player, this.exhaustion, exhaustion);
         if (!cancel) this.exhaustion = exhaustion;
     }
@@ -58,7 +58,7 @@ public class HungerManagerMixin implements PlayerAware {
                     opcode = Opcodes.PUTFIELD
             )
     )
-    public void onChangeFoodSaturationLevel(HungerManager HungerManager, float foodSaturationLevel) {
+    public void kibu$onChangeFoodSaturationLevel(HungerManager HungerManager, float foodSaturationLevel) {
         boolean cancel = PlayerFoodHooks.SATURATION_CHANGE.invoker().onChange(player, this.saturationLevel, foodSaturationLevel);
         if (!cancel) this.saturationLevel = foodSaturationLevel;
     }

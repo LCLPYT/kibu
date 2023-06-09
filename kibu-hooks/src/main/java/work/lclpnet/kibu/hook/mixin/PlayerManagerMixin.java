@@ -32,7 +32,7 @@ public abstract class PlayerManagerMixin {
                     target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"
             )
     )
-    public void sendJoinMessage(PlayerManager instance, Text message, boolean overlay) {
+    public void kibu$sendJoinMessage(PlayerManager instance, Text message, boolean overlay) {
         // ignore default join message
     }
 
@@ -43,9 +43,12 @@ public abstract class PlayerManagerMixin {
                     target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"
             )
     )
-    public void sendCustomJoinMessage(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    public void kibu$sendCustomJoinMessage(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         GameProfile gameprofile = player.getGameProfile();
         UserCache userCache = this.server.getUserCache();
+
+        if (userCache == null) return;
+
         GameProfile byUuid = userCache.getByUuid(gameprofile.getId()).orElse(null);
         String s = byUuid == null ? gameprofile.getName() : byUuid.getName();
 

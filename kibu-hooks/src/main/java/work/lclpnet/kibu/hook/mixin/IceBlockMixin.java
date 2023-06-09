@@ -18,7 +18,7 @@ public class IceBlockMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void onMelt(BlockState state, World world, BlockPos pos, CallbackInfo ci) {
+    public void kibu$onMelt(BlockState state, World world, BlockPos pos, CallbackInfo ci) {
         if (WorldPhysicsHooks.MELT.invoker().onFade(world, pos))
             ci.cancel();
     }

@@ -18,7 +18,7 @@ public class PlayerEntityMixin {
             method = "<init>*",
             at = @At("RETURN")
     )
-    public void onInit(CallbackInfo ci) {
+    public void kibu$onInit(CallbackInfo ci) {
         //noinspection DataFlowIssue
         ((PlayerAware) hungerManager).kibu$setPlayer((PlayerEntity) (Object) this);
     }

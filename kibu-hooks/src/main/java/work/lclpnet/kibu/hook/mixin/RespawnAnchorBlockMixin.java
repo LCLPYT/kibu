@@ -26,7 +26,7 @@ public class RespawnAnchorBlockMixin {
             ),
             cancellable = true
     )
-    public void onCharge(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onCharge(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (BlockModificationHooks.CHARGE_RESPAWN_ANCHOR.invoker().onModify(world, pos, player)) {
             cir.setReturnValue(ActionResult.PASS);
         }
@@ -40,7 +40,7 @@ public class RespawnAnchorBlockMixin {
             ),
             cancellable = true
     )
-    public void onExplode(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onExplode(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (BlockModificationHooks.EXPLODE_RESPAWN_LOCATION.invoker().onModify(world, pos, player)) {
             cir.setReturnValue(ActionResult.PASS);
         }
@@ -54,7 +54,7 @@ public class RespawnAnchorBlockMixin {
             ),
             cancellable = true
     )
-    public void onSetSpawnPoint(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onSetSpawnPoint(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (PlayerSpawnPointChangeCallback.HOOK.invoker().onChange(player, world, pos)) {
             cir.setReturnValue(ActionResult.PASS);
         }

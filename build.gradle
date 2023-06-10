@@ -123,7 +123,7 @@ tasks.register("github", GithubDeploymentTask) {
 
     config {
         token = env.get("GITHUB_TOKEN")
-        repository = env.get("GITHUB_REPO")
+        repository = env.get("GITHUB_REPOSITORY")
     }
 
     release {

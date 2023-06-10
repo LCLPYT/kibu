@@ -26,9 +26,7 @@ jobs:
         id: vars
         run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
       - name: Publish to Repository
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: 'publish --stacktrace'
+        run: ./gradlew build publish github --stacktrace -Porg.gradle.parallel.threads=4
         env:
           CI_VERSION: ${{ steps.vars.outputs.tag }}
           DEPLOY_URL: ${{ secrets.DEPLOY_URL }}

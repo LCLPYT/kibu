@@ -1,17 +1,16 @@
 plugins {
     id 'fabric-loom' version '1.2.5' apply false
     id 'maven-publish'
-    id 'gradle-build-utils' version '1.2.1'
+    id 'gradle-build-utils' version '1.4.0'
 }
 
-Properties props = loadProperties.call('publish.properties') as Properties
+Properties props = buildUtils.loadProperties('publish.properties')
 
 ext {
     versionPattern = "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][a-zA-Z0-9.]+)?\$"
 }
 
-boolean local = System.getProperty("build.local") == "true"
-version = gitVersion.call() + (local ? '+local' : '')
+version = buildUtils.gitVersion()
 
 allprojects {
     group = project.maven_group
@@ -115,7 +114,26 @@ subprojects {
     }
 }
 
-// configure the maven publication
+import work.lclpnet.build.task.GithubDeploymentTask
+
+def env = System.getenv()
+
+tasks.register("github", GithubDeploymentTask) {
+    dependsOn tasks.remapJar
+
+    config {
+        token = env.get("GITHUB_TOKEN")
+        repository = env.get("GITHUB_REPO")
+    }
+
+    release {
+        title = "[$project.minecraft_version] Kibu $project.version"
+        tag = buildUtils.latestTag()
+    }
+
+    assets.add(tasks.remapJar.archiveFile.get())
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {

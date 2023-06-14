@@ -21,11 +21,6 @@ jobs:
       # validate gradle wrapper signature
       - uses: gradle/wrapper-validation-action@v1
 
-      # capture the latest tag
-      - name: Set environment variables
-        id: vars
-        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
-
       # Gradle caching and more
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2

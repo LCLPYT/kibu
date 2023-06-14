@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.2.7' apply false
     id 'maven-publish'
-    id 'gradle-build-utils' version '1.4.0'
+    id 'gradle-build-utils' version '1.5.0'
 }
 
 Properties props = buildUtils.loadProperties('publish.properties')
@@ -67,7 +67,7 @@ allprojects {
     }
 
     tasks.withType(JavaCompile).configureEach {
-        it.options.release = 17
+        it.options.release.convention(17)
     }
 
     java {
@@ -82,7 +82,7 @@ allprojects {
     }
 
     publishing {
-        setupPublishRepositories(repositories, props)
+        buildUtils.setupPublishRepository(it, props)
     }
 }
 
@@ -245,26 +245,6 @@ static def configureNonLoomProject(Project project) {
     // add the project artifacts to the namedElements configuration
     project.apply {
         project.artifacts(artifactHandler -> artifactHandler.add("namedElements", project.getTasks().named("jar")));
-    }
-}
-
-def setupPublishRepositories(RepositoryHandler repositories, Properties props) {
-    repositories.maven {
-        Map<String, String> env = System.getenv()
-
-        if (Arrays.stream("DEPLOY_USER", "DEPLOY_PASSWORD").allMatch(env.&containsKey)) {
-            credentials {
-                username env.get("DEPLOY_USER")
-                password env.get("DEPLOY_PASSWORD")
-            }
-        } else if (Arrays.stream("mavenUser", "mavenPassword").allMatch(props.&containsKey)) {
-            credentials {
-                username props.getProperty('mavenUser')
-                password props.getProperty('mavenPassword')
-            }
-        }
-
-        url getDeployUrl(props)
     }
 }
 

@@ -15,6 +15,7 @@
     "CandleBlockMixin",
     "CauldronBlockMixin",
     "ComposterBlockMixin",
+    "EntityMixin",
     "ExplosionMixin",
     "FarmlandBlockMixin",
     "FrostWalkerEnchantmentMixin",

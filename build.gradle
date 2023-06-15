@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.2.7' apply false
     id 'maven-publish'
-    id 'gradle-build-utils' version '1.5.0'
+    id 'gradle-build-utils' version '1.5.2'
 }
 
 Properties props = buildUtils.loadProperties('publish.properties')

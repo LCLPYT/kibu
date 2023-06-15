@@ -29,7 +29,6 @@ jobs:
       - name: Execute Gradle Build
         run: ./gradlew build publish github --stacktrace -Porg.gradle.parallel.threads=4
         env:
-          CI_VERSION: ${{ steps.vars.outputs.tag }}
           DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}

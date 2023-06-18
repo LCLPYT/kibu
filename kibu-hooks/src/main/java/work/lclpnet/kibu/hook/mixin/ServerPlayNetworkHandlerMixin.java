@@ -59,6 +59,8 @@ public abstract class ServerPlayNetworkHandlerMixin {
         if (text != null) {
             instance.broadcast(text, overlay);
         }
+
+        PlayerConnectionHooks.QUIT.invoker().act(player);
     }
 
     @Inject(

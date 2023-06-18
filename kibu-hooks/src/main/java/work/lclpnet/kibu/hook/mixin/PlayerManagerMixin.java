@@ -61,5 +61,7 @@ public abstract class PlayerManagerMixin {
             this.broadcast(text, false);
             player.sendMessage(text, false);
         }
+
+        PlayerConnectionHooks.JOIN.invoker().act(player);
     }
 }

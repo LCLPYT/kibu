@@ -18,7 +18,7 @@ public class ServerPlayerEntityMixin {
             at = @At("RETURN")
     )
     public void kibu$onStartedRiding(Entity vehicle, boolean force, CallbackInfoReturnable<Boolean> cir) {
-        if (!cir.getReturnValue()) return;
+        if (vehicle == null || !cir.getReturnValue()) return;
 
         @SuppressWarnings("DataFlowIssue")
         ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
@@ -32,6 +32,8 @@ public class ServerPlayerEntityMixin {
             locals = LocalCapture.CAPTURE_FAILSOFT
     )
     public void kibu$onStoppedRiding(CallbackInfo ci, Entity vehicle) {
+        if (vehicle == null) return;
+
         @SuppressWarnings("DataFlowIssue")
         ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
 

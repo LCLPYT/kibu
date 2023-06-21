@@ -28,10 +28,7 @@ public class ServerPlayerEntityMixin {
 
     @Inject(
             method = "stopRiding",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/entity/player/PlayerEntity;stopRiding()V"
-            ),
+            at = @At("TAIL"),
             locals = LocalCapture.CAPTURE_FAILSOFT
     )
     public void kibu$onStoppedRiding(CallbackInfo ci, Entity vehicle) {

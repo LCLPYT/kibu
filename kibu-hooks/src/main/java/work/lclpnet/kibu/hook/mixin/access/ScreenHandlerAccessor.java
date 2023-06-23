@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.hook.mixin;
+package work.lclpnet.kibu.hook.mixin.access;
 
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerSyncHandler;

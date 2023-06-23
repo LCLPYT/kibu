@@ -6,7 +6,7 @@ import net.minecraft.network.packet.s2c.play.HealthUpdateS2CPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerSyncHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import work.lclpnet.kibu.hook.mixin.ScreenHandlerAccessor;
+import work.lclpnet.kibu.hook.mixin.access.ScreenHandlerAccessor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

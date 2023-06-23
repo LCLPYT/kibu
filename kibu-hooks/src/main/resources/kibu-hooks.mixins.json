@@ -29,9 +29,9 @@
     "PlayerEntityMixin",
     "PlayerInventoryMixin",
     "PlayerManagerMixin",
+    "PressurePlateBlockMixin",
     "ProjectileEntityMixin",
     "RespawnAnchorBlockMixin",
-    "ScreenHandlerAccessor",
     "ServerPlayerEntityMixin",
     "ServerPlayerInteractionManagerMixin",
     "ServerPlayNetworkHandlerMixin",
@@ -40,6 +40,9 @@
     "StepAndDestroyBlockGoalMixin",
     "TntBlockMixin",
     "TurtleEggBlockMixin",
-    "WorldMixin"
+    "WeightedPressurePlateBlockMixin",
+    "WorldMixin",
+    "access.AbstractPressurePlateBlockAccessor",
+    "access.ScreenHandlerAccessor"
   ]
 }

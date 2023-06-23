@@ -8,7 +8,11 @@
   },
   "mixins": [
     "ArmorStandEntityAccessor",
+    "BlockDisplayEntityAccessor",
+    "DisplayEntityAccessor",
     "EntityAccessor",
-    "ServerPlayerEntityMixin"
+    "ItemDisplayEntityAccessor",
+    "ServerPlayerEntityMixin",
+    "TextDisplayEntityAccessor"
   ]
 }

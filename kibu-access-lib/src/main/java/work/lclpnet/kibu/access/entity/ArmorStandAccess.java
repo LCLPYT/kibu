@@ -5,6 +5,8 @@ import work.lclpnet.kibu.access.mixin.ArmorStandEntityAccessor;
 
 public class ArmorStandAccess {
 
+    private ArmorStandAccess() {}
+
     public static void setSmall(ArmorStandEntity entity, boolean small) {
         ((ArmorStandEntityAccessor) entity).invokeSetSmall(small);
     }

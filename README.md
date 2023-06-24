@@ -6,7 +6,7 @@ e.g. event unregistration, which is needed when a plugin is unloaded.
 ## Gradle Dependency
 You can install kibu via Gradle.
 
-To use kibu in your project, modify your `project.gradle`:
+To use kibu in your project, modify your `build.gradle`:
 ```groovy
 repositories {
     mavenCentral()

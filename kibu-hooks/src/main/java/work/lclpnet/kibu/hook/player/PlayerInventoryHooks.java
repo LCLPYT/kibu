@@ -171,9 +171,26 @@ public class PlayerInventoryHooks {
 
     public record ClickEvent(ServerPlayerEntity player, int slot, int button, ItemStack cursorStack,
                              SlotActionType action, Int2ObjectMap<ItemStack> modified) {
-
         public boolean isDropAction() {
             return action == SlotActionType.THROW || (action == SlotActionType.PICKUP && slot == -999);
+        }
+
+        @Nullable
+        public Slot handlerSlot() {
+            if (player.currentScreenHandler == null || slot == -1 || slot == -999 || slot >= player.currentScreenHandler.slots.size()) {
+                return null;
+            }
+
+            return player.currentScreenHandler.getSlot(slot);
+        }
+
+        @Nullable
+        public ItemStack clickedStack() {
+            Slot slot = handlerSlot();
+
+            if (slot == null) return null;
+
+            return slot.getStack();
         }
 
         @Nullable
@@ -184,17 +201,12 @@ public class PlayerInventoryHooks {
                 return inv;
             }
 
-            if (slot == -1 || slot == -999 || slot >= player.currentScreenHandler.slots.size()) {
+            Slot slot = handlerSlot();
+            if (slot == null) {
                 return null;
             }
 
-            Slot slot = player.currentScreenHandler.getSlot(this.slot);
-
-            if (slot != null) {
-                return slot.inventory;
-            }
-
-            return null;
+            return slot.inventory;
         }
 
         @Nullable

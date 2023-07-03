@@ -3,11 +3,16 @@ package work.lclpnet.kibu.hook.player;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
+
+import javax.annotation.Nullable;
 
 public class PlayerInventoryHooks {
 
@@ -169,6 +174,56 @@ public class PlayerInventoryHooks {
 
         public boolean isDropAction() {
             return action == SlotActionType.THROW || (action == SlotActionType.PICKUP && slot == -999);
+        }
+
+        @Nullable
+        public Inventory inventory() {
+            PlayerInventory inv = player.getInventory();
+
+            if (player.currentScreenHandler == null) {
+                return inv;
+            }
+
+            if (slot == -1 || slot == -999 || slot >= player.currentScreenHandler.slots.size()) {
+                return null;
+            }
+
+            Slot slot = player.currentScreenHandler.getSlot(this.slot);
+
+            if (slot != null) {
+                return slot.inventory;
+            }
+
+            return null;
+        }
+
+        @Nullable
+        public Inventory targetInventory() {
+            if (action != SlotActionType.QUICK_MOVE) return null;
+
+            Inventory src = inventory();
+            if (src == null) return null;
+
+            boolean srcChange = false;
+
+            for (int i : modified().keySet()) {
+                Slot slot = player.currentScreenHandler.getSlot(i);
+                if (slot == null) continue;
+
+                if (!src.equals(slot.inventory)) {
+                    return slot.inventory;
+                }
+
+                // skip the source inventory once
+                if (!srcChange) {
+                    srcChange = true;
+                    continue;
+                }
+
+                return slot.inventory;
+            }
+
+            return null;
         }
 
         @Override

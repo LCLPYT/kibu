@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-inventory-api",
+	"version": "${version}",
+	"name": "Kibu Inventory API",
+	"description": "An API to easily use inventory screens.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-inventory-api/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["work.lclpnet.kibu.inv.KibuInventoryInit"]
+	},
+	"mixins": [],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "~1.20",
+		"java": ">=17",
+		"fabric-api": "*",
+		"kibu-hook-api": "*"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

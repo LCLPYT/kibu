@@ -53,7 +53,8 @@ public class ItemStackUtil {
         NbtList list = new NbtList();
 
         for (Text text : lore) {
-            String json = Text.Serializer.toJson(text.copy().fillStyle(LORE_STYLE));
+            MutableText copy = text.copy().setStyle(text.getStyle().withParent(LORE_STYLE));
+            String json = Text.Serializer.toJson(copy);
             list.add(NbtString.of(json));
         }
 

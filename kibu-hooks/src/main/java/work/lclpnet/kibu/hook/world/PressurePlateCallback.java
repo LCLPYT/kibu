@@ -9,13 +9,13 @@ import work.lclpnet.kibu.hook.HookFactory;
 public interface PressurePlateCallback {
 
     Hook<PressurePlateCallback> HOOK = HookFactory.createArrayBacked(PressurePlateCallback.class, callbacks -> (world, pos, entity) -> {
-        for (var callback : callbacks) {
-            if (callback.onPress(world, pos, entity)) {
-                return true;
-            }
-        }
+        boolean cancelled = false;
 
-        return false;
+        for (var callback : callbacks)
+            if (callback.onPress(world, pos, entity))
+                cancelled = true;
+
+        return cancelled;
     });
 
     boolean onPress(World world, BlockPos pos, Entity entity);

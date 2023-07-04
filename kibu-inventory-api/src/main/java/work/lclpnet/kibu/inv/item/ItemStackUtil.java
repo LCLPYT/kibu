@@ -3,13 +3,17 @@ package work.lclpnet.kibu.inv.item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
 
 public class ItemStackUtil {
+
+    private static final Style LORE_STYLE = Style.EMPTY.withColor(Formatting.DARK_PURPLE).withItalic(false);
 
     /**
      * Gets the lore of a {@link ItemStack}
@@ -49,7 +53,7 @@ public class ItemStackUtil {
         NbtList list = new NbtList();
 
         for (Text text : lore) {
-            String json = Text.Serializer.toJson(text);
+            String json = Text.Serializer.toJson(text.copy().fillStyle(LORE_STYLE));
             list.add(NbtString.of(json));
         }
 

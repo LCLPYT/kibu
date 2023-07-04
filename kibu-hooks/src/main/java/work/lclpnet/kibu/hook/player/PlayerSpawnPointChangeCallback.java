@@ -9,11 +9,13 @@ import work.lclpnet.kibu.hook.HookFactory;
 public interface PlayerSpawnPointChangeCallback {
 
     Hook<PlayerSpawnPointChangeCallback> HOOK = HookFactory.createArrayBacked(PlayerSpawnPointChangeCallback.class, callbacks -> (player, world, pos) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onChange(player, world, pos))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     boolean onChange(PlayerEntity player, World world, BlockPos pos);

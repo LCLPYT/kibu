@@ -8,13 +8,15 @@ import work.lclpnet.kibu.hook.util.PositionRotation;
 public interface PlayerMoveCallback {
 
     Hook<PlayerMoveCallback> HOOK = HookFactory.createArrayBacked(PlayerMoveCallback.class, hooks -> (player, from, to) -> {
+        boolean cancelled = false;
+
         for (var hook : hooks) {
             if (hook.onMove(player, from, to)) {
-                return true;
+                cancelled = true;
             }
         }
 
-        return false;
+        return cancelled;
     });
 
     boolean onMove(ServerPlayerEntity player, PositionRotation from, PositionRotation to);

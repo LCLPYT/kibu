@@ -32,13 +32,15 @@ public class PlayerInventoryHooks {
      * Can be cancelled by returning true.
      */
     public static final Hook<DropItem> DROP_ITEM = HookFactory.createArrayBacked(DropItem.class, (hooks) -> (player, slot) -> {
+        boolean cancelled = false;
+
         for (var hook : hooks) {
             if (hook.onDropItem(player, slot)) {
-                return true;
+                cancelled = true;
             }
         }
 
-        return false;
+        return cancelled;
     });
 
     /**
@@ -55,13 +57,15 @@ public class PlayerInventoryHooks {
      * Can be cancelled by returning true.
      */
     public static final Hook<SwapHands> SWAP_HANDS = HookFactory.createArrayBacked(SwapHands.class, (hooks) -> (player, slot) -> {
+        boolean cancelled = false;
+
         for (var hook : hooks) {
             if (hook.onSwapHands(player, slot)) {
-                return true;
+                cancelled = true;
             }
         }
 
-        return false;
+        return cancelled;
     });
 
     /**
@@ -78,13 +82,15 @@ public class PlayerInventoryHooks {
      * Can be cancelled by returning true.
      */
     public static final Hook<InventoryModify> MODIFY_INVENTORY = HookFactory.createArrayBacked(InventoryModify.class, (hooks) -> (event) -> {
+        boolean cancelled = false;
+
         for (var hook : hooks) {
             if (hook.onModify(event)) {
-                return true;
+                cancelled = true;
             }
         }
 
-        return false;
+        return cancelled;
     });
 
     /**
@@ -115,13 +121,15 @@ public class PlayerInventoryHooks {
     });
 
     public static final Hook<ItemPickup> PLAYER_PICKUP = HookFactory.createArrayBacked(ItemPickup.class, (hooks) -> (player, itemEntity) -> {
+        boolean cancelled = false;
+
         for (var hook : hooks) {
             if (hook.onPickup(player, itemEntity)) {
-                return true;
+                cancelled = true;
             }
         }
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<ItemPickedUp> PLAYER_PICKED_UP = HookFactory.createArrayBacked(ItemPickedUp.class, (hooks) -> (player, itemEntity) -> {

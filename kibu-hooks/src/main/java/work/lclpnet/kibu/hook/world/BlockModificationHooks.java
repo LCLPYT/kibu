@@ -14,52 +14,66 @@ import javax.annotation.Nullable;
 
 public class BlockModificationHooks {
 
+    private BlockModificationHooks() {}
+
     public static final Hook<PlaceBlockHook> PLACE_BLOCK = HookFactory.createArrayBacked(PlaceBlockHook.class, callbacks -> (world, pos, entity, newState) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onPlace(world, pos, entity, newState))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> BREAK_BLOCK = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<FluidTransferHook> PLACE_FLUID = HookFactory.createArrayBacked(FluidTransferHook.class, callbacks -> (world, pos, entity, fluid) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onTransfer(world, pos, entity, fluid))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<FluidTransferHook> PICKUP_FLUID = HookFactory.createArrayBacked(FluidTransferHook.class, callbacks -> (world, pos, entity, fluid) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onTransfer(world, pos, entity, fluid))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> TRAMPLE_FARMLAND = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> TRAMPLE_TURTLE_EGG = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     /**
@@ -79,75 +93,93 @@ public class BlockModificationHooks {
     });
 
     public static final Hook<BlockModifyHook> EAT_CAKE = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> CAN_MOB_GRIEF = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> EXTINGUISH_CANDLE = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> COMPOSTER = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> CHARGE_RESPAWN_ANCHOR = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> EXPLODE_RESPAWN_LOCATION = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> PRIME_TNT = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> TAKE_LECTERN_BOOK = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockModifyHook> EDIT_SIGN = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onModify(world, pos, entity))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public interface PlaceBlockHook {

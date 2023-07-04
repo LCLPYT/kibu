@@ -11,59 +11,73 @@ import work.lclpnet.kibu.hook.HookFactory;
 public class WorldPhysicsHooks {
 
     public static final Hook<ExplosionHook> EXPLOSION = HookFactory.createArrayBacked(ExplosionHook.class, callbacks -> exploder -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onExplode(exploder))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<FadeHook> MELT = HookFactory.createArrayBacked(FadeHook.class, callbacks -> (world, pos) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onFade(world, pos))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<FrostWalkerFreezeHook> FROST_WALKER_FREEZE = HookFactory.createArrayBacked(FrostWalkerFreezeHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onFreeze(world, pos, entity))
-                return true;
+                return cancelled;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<FadeHook> FREEZE = HookFactory.createArrayBacked(FadeHook.class, callbacks -> (world, pos) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onFade(world, pos))
-                return true;
+                return cancelled;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<SnowFallHook> SNOW_FALL = HookFactory.createArrayBacked(SnowFallHook.class, callbacks -> (world, pos) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onSnowFall(world, pos))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockStateChangeHook> CAULDRON_PRECIPITATION = HookFactory.createArrayBacked(BlockStateChangeHook.class, callbacks -> (world, pos, newState) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onChange(world, pos, newState))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public static final Hook<BlockStateChangeHook> CAULDRON_DRIP_STONE = HookFactory.createArrayBacked(BlockStateChangeHook.class, callbacks -> (world, pos, newState) -> {
+        boolean cancelled = false;
+
         for (var callback : callbacks)
             if (callback.onChange(world, pos, newState))
-                return true;
+                cancelled = true;
 
-        return false;
+        return cancelled;
     });
 
     public interface ExplosionHook {

@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-translation-api",
+	"version": "${version}",
+	"name": "Kibu Translation API",
+	"description": "An API for server-sided translations.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-translation-api/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "~1.20",
+		"java": ">=17",
+		"kibu-access-lib": ">=0.4.0"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

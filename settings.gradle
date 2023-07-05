@@ -26,4 +26,5 @@ include 'kibu-schematic-fabric'
 include 'kibu-title-api'
 include 'kibu-access-lib'
 include 'kibu-inventory-api'
+include 'kibu-translation-api'
 

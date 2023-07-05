@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = "kibu-translation-api"
+
+moduleDependencies(project, [
+        'kibu-access-lib'
+])
+
+dependencies {
+    def implInclude = { String dep ->
+        implementation dep
+        include dep
+    }
+
+    implInclude "work.lclpnet:translations4j:${rootProject.translations4j_version}"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'kibu-translation-api'
+                description = 'An API for server-sided translations.'
+            }
+        }
+    }
+}

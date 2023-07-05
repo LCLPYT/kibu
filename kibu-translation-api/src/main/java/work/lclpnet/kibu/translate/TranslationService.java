@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.translate;
 
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import work.lclpnet.kibu.access.PlayerLanguage;
@@ -19,10 +20,16 @@ public class TranslationService {
     private final Translator translator;
     private final TextFormatter textFormatter = new TextFormatter();
     private final LanguagePreferenceProvider languagePreferenceProvider;
+    private final String defaultLanguage;
 
     public TranslationService(Translator translator, LanguagePreferenceProvider languagePreferenceProvider) {
+        this(translator, languagePreferenceProvider, "en_us");
+    }
+
+    public TranslationService(Translator translator, LanguagePreferenceProvider languagePreferenceProvider, String defaultLanguage) {
         this.translator = translator;
         this.languagePreferenceProvider = languagePreferenceProvider;
+        this.defaultLanguage = defaultLanguage;
     }
 
     public Translator getTranslator() {
@@ -45,6 +52,26 @@ public class TranslationService {
         return translator.translate(language, key, args);
     }
 
+    public String translate(ServerCommandSource source, String key) {
+        ServerPlayerEntity player = source.getPlayer();
+
+        if (player != null) {
+            return translate(player, key);
+        }
+
+        return translator.translate(defaultLanguage, key);
+    }
+
+    public String translate(ServerCommandSource source, String key, Object... args) {
+        ServerPlayerEntity player = source.getPlayer();
+
+        if (player != null) {
+            return translate(player, key, args);
+        }
+
+        return translator.translate(defaultLanguage, key, args);
+    }
+
     public RootText translateText(ServerPlayerEntity player, String key, Object... args) {
         return translateText(getLanguage(player), key, args);
     }
@@ -53,6 +80,16 @@ public class TranslationService {
         String raw = translator.translate(language, key);  // do not replace format specifiers just yet
 
         return textFormatter.formatText(raw, args);
+    }
+
+    public RootText translateText(ServerCommandSource source, String key, Object... args) {
+        ServerPlayerEntity player = source.getPlayer();
+
+        if (player != null) {
+            return translateText(player, key, args);
+        }
+
+        return translateText(defaultLanguage, key, args);
     }
 
     public TranslatedText translateText(String key, Object... args) {

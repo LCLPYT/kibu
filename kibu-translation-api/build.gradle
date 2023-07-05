@@ -8,15 +8,6 @@ moduleDependencies(project, [
         'kibu-access-lib'
 ])
 
-dependencies {
-    def apiInclude = { String dep ->
-        api dep
-        include dep
-    }
-
-    apiInclude "work.lclpnet:translations4j:${rootProject.translations4j_version}"
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -26,4 +17,18 @@ publishing {
             }
         }
     }
+}
+
+dependencies {
+    "work.lclpnet:translations4j:${rootProject.translations4j_version}".with {
+        api it
+        include it
+    }
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
 }

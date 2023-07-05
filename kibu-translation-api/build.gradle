@@ -9,12 +9,12 @@ moduleDependencies(project, [
 ])
 
 dependencies {
-    def implInclude = { String dep ->
-        implementation dep
+    def apiInclude = { String dep ->
+        api dep
         include dep
     }
 
-    implInclude "work.lclpnet:translations4j:${rootProject.translations4j_version}"
+    apiInclude "work.lclpnet:translations4j:${rootProject.translations4j_version}"
 }
 
 publishing {

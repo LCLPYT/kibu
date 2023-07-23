@@ -15,7 +15,9 @@
 	"icon": "assets/kibu-translation-api/icon.png",
 	"environment": "*",
 	"entrypoints": {},
-	"mixins": [],
+	"mixins": [
+		"kibu-translation-api.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "~1.20",

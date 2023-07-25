@@ -6,21 +6,25 @@ import net.minecraft.util.Identifier;
 import work.lclpnet.kibu.access.PlayerLanguage;
 import work.lclpnet.kibu.translate.bossbar.BossBarProvider;
 import work.lclpnet.kibu.translate.bossbar.TranslatedBossBar;
+import work.lclpnet.kibu.translate.hook.LanguageChangedCallback;
 import work.lclpnet.kibu.translate.pref.LanguagePreferenceProvider;
 import work.lclpnet.kibu.translate.text.RootText;
 import work.lclpnet.kibu.translate.text.TextFormatter;
 import work.lclpnet.kibu.translate.text.TranslatedText;
 import work.lclpnet.kibu.translate.util.Partial;
+import work.lclpnet.kibu.translate.util.WeakList;
 import work.lclpnet.translations.Translator;
 
 import javax.annotation.Nonnull;
 
 public class TranslationService {
 
+    private static final WeakList<TranslationService> services = new WeakList<>();
     private final Translator translator;
     private final TextFormatter textFormatter = new TextFormatter();
     private final LanguagePreferenceProvider languagePreferenceProvider;
     private final String defaultLanguage;
+    private final WeakList<TranslatedBossBar> translatedBars = new WeakList<>();
 
     public TranslationService(Translator translator, LanguagePreferenceProvider languagePreferenceProvider) {
         this(translator, languagePreferenceProvider, "en_us");
@@ -30,6 +34,8 @@ public class TranslationService {
         this.translator = translator;
         this.languagePreferenceProvider = languagePreferenceProvider;
         this.defaultLanguage = defaultLanguage;
+
+        services.add(this);
     }
 
     public Translator getTranslator() {
@@ -97,6 +103,20 @@ public class TranslationService {
     }
 
     public Partial<TranslatedBossBar, BossBarProvider> translateBossBar(Identifier id, String key, Object... args) {
-        return handler -> new TranslatedBossBar(handler, id, this, key, args);
+        return handler -> {
+            TranslatedBossBar bar = new TranslatedBossBar(handler, id, this, key, args);
+            translatedBars.add(bar);
+            return bar;
+        };
+    }
+
+    static {
+        LanguageChangedCallback.HOOK.register((player, language, reason) -> {
+            for (TranslationService service : services) {
+                for (TranslatedBossBar bossBar : service.translatedBars) {
+                    bossBar.updatePlayerLanguage(player);
+                }
+            }
+        });
     }
 }

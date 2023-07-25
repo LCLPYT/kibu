@@ -91,6 +91,13 @@ public class TranslatedBossBar extends ServerBossBar implements CustomBossBar {
         players.clear();
     }
 
+    public void updatePlayerLanguage(ServerPlayerEntity player) {
+        if (!players.containsKey(player.getUuid())) return;
+
+        // adding the player will update the language
+        addPlayer(player);
+    }
+
     @Nonnull
     private CommandBossBar getLocalizedBar(String language) {
         return localizedBars.computeIfAbsent(language, this::createLocalizedBar);

@@ -7,6 +7,7 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -45,6 +46,8 @@ public abstract class ServerPlayNetworkHandlerMixin {
     private float lastYaw = Float.NaN, lastPitch = Float.NaN;
     @Unique
     private boolean teleporting = false;
+    @Unique
+    private double modifiedVelocityY = Double.NaN;
 
     @Redirect(
             method = "onDisconnected",
@@ -189,6 +192,8 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
         teleporting = false;
 
+        double motionY = player.getVelocity().getY();
+
         if (PlayerMoveCallback.HOOK.invoker().onMove(player, from, to)) {
             // movement disallowed; reset
             requestTeleport(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch(), Set.of());
@@ -203,11 +208,44 @@ public abstract class ServerPlayNetworkHandlerMixin {
             return;
         }
 
+        // in case a hook modified the y-velocity and the hook was not cancelled
+        double newMotionY = player.getVelocity().getY();
+
+        if (Math.abs(newMotionY - motionY) > 1e-9d) {
+            modifiedVelocityY = newMotionY;
+        }
+
         lastX = toX;
         lastY = toY;
         lastZ = toZ;
         lastYaw = toYaw;
         lastPitch = toPitch;
+    }
+
+    @Inject(
+            method = "onPlayerMove",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;jump()V",
+                    shift = At.Shift.AFTER
+            )
+    )
+    public void kibu$onJump(PlayerMoveC2SPacket packet, CallbackInfo ci) {
+        if (Double.isNaN(modifiedVelocityY)) return;
+
+        Vec3d velocity = player.getVelocity();
+        player.setVelocity(velocity.getX(), modifiedVelocityY, velocity.getZ());
+    }
+
+    @Inject(
+            method = "onPlayerMove",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V"
+            )
+    )
+    public void kibu$resetModifiedVelocityY(PlayerMoveC2SPacket packet, CallbackInfo ci) {
+        modifiedVelocityY = Double.NaN;
     }
 
     @SuppressWarnings("InvalidInjectorMethodSignature")

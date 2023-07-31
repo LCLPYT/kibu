@@ -2,6 +2,7 @@ package work.lclpnet.kibu.cmd.util;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.server.command.CommandManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +17,7 @@ class DeferredProxyCommandRegisterTest {
         assertFalse(future.isDone());
 
         var dispatcher = new CommandDispatcher<String>();
-        var target = new DirectCommandRegister<>(dispatcher);
+        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
         proxy.setTarget(target);  // will register deferred
 
         assertTrue(future.isDone());

@@ -2,6 +2,7 @@ package work.lclpnet.kibu.cmd.util;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import work.lclpnet.kibu.cmd.type.CommandFactory;
 import work.lclpnet.kibu.cmd.type.CommandRegister;
 
 import java.util.ArrayList;
@@ -10,7 +11,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class DeferredProxyCommandRegister<S> implements CommandRegister<S> {
 
-    private final List<DeferredRegisterItem<S>> deferred = new ArrayList<>();
+    private final List<DeferredRegisterItem<S, LiteralArgumentBuilder<S>>> deferred = new ArrayList<>();
+    private final List<DeferredRegisterItem<S, CommandFactory<S>>> deferredFactories = new ArrayList<>();
     private final Object mutex = new Object();
     private CommandRegister<S> target = null;
 
@@ -29,10 +31,17 @@ public class DeferredProxyCommandRegister<S> implements CommandRegister<S> {
     private void registerDeferred() {
         deferred.forEach(defer -> {
             final var future = defer.future();
-            proxyRegister(defer.command()).thenAccept(future::complete);
+            proxyRegister(defer.item()).thenAccept(future::complete);
         });
 
         deferred.clear();
+
+        deferredFactories.forEach(defer -> {
+            final var future = defer.future();
+            proxyRegister(defer.item()).thenAccept(future::complete);
+        });
+
+        deferredFactories.clear();
     }
 
     @Override
@@ -48,8 +57,24 @@ public class DeferredProxyCommandRegister<S> implements CommandRegister<S> {
         return proxyRegister(command);
     }
 
+    @Override
+    public CompletableFuture<LiteralCommandNode<S>> register(CommandFactory<S> factory) {
+        synchronized (mutex) {
+            if (target == null) {
+                var future = new CompletableFuture<LiteralCommandNode<S>>();
+                deferredFactories.add(new DeferredRegisterItem<>(factory, future));
+            }
+        }
+
+        return proxyRegister(factory);
+    }
+
     protected CompletableFuture<LiteralCommandNode<S>> proxyRegister(LiteralArgumentBuilder<S> command) {
         return target.register(command);
+    }
+
+    protected CompletableFuture<LiteralCommandNode<S>> proxyRegister(CommandFactory<S> factory) {
+        return target.register(factory);
     }
 
     @Override
@@ -61,8 +86,5 @@ public class DeferredProxyCommandRegister<S> implements CommandRegister<S> {
         return true;
     }
 
-    private record DeferredRegisterItem<S>(
-            LiteralArgumentBuilder<S> command,
-            CompletableFuture<LiteralCommandNode<S>> future
-    ) {}
+    private record DeferredRegisterItem<S, T>(T item, CompletableFuture<LiteralCommandNode<S>> future) {}
 }

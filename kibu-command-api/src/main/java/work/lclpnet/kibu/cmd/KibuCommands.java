@@ -4,6 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.command.ServerCommandSource;
+import work.lclpnet.kibu.cmd.type.CommandFactory;
 import work.lclpnet.kibu.cmd.util.DeferredProxyCommandRegister;
 import work.lclpnet.kibu.cmd.util.MinecraftCommandRegister;
 
@@ -23,6 +24,10 @@ public class KibuCommands implements ModInitializer {
 
     public static CompletableFuture<LiteralCommandNode<ServerCommandSource>> register(LiteralArgumentBuilder<ServerCommandSource> command) {
         return PROXY.register(command);
+    }
+
+    public static CompletableFuture<LiteralCommandNode<ServerCommandSource>> register(CommandFactory<ServerCommandSource> factory) {
+        return PROXY.register(factory);
     }
 
     public static boolean unregister(LiteralCommandNode<ServerCommandSource> command) {

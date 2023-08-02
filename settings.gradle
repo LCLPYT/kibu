@@ -27,4 +27,5 @@ include 'kibu-title-api'
 include 'kibu-access-lib'
 include 'kibu-inventory-api'
 include 'kibu-translation-api'
+include 'kibu-world-api'
 

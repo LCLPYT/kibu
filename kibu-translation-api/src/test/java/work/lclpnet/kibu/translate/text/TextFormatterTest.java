@@ -59,6 +59,14 @@ public class TextFormatterTest {
         assertEquals("#55FF55§lCount #FFFF55§l3.14", debugString(text));
     }
 
+    @Test
+    void formatText_insufficientArgs() {
+        var service = new TextFormatter();
+
+        String text = service.formatText("%s: %s", 123).getString();
+        assertEquals("123: %s", text);
+    }
+
     private String debugString(Text text) {
         StringBuilder builder = new StringBuilder();
 

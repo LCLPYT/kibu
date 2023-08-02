@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "kibu-world-api",
+  "version": "${version}",
+  "name": "Kibu World API",
+  "description": "API for loading / unloading worlds with the fantasy mod",
+  "authors": [
+    "LCLP"
+  ],
+  "contact": {
+    "homepage": "https://github.com/LCLPYT/kibu",
+    "sources": "https://github.com/LCLPYT/kibu"
+  },
+  "license": "MIT",
+  "icon": "assets/kibu-world-api/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["work.lclpnet.kibu.world.KibuWorldsInit"]
+  },
+  "mixins": [
+    "kibu-world-api.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "~1.20",
+    "java": ">=17",
+    "fabric-api": "*",
+    "fantasy": "*"
+  },
+  "suggests": {},
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "kibu"
+    }
+  }
+}

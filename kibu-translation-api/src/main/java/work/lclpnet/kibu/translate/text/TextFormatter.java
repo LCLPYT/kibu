@@ -40,7 +40,10 @@ public class TextFormatter {
             }
 
             int argIndex = i / 2;
-            if (argIndex >= args.length) continue;
+            if (argIndex >= args.length) {
+                texts[i] = Text.literal(part).setStyle(defaultStyle);
+                continue;
+            }
 
             Object arg = args[argIndex];
 

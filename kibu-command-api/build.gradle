@@ -4,10 +4,6 @@ plugins {
 
 archivesBaseName = "kibu-command-api"
 
-moduleDependencies(project, [
-        'kibu-hook-api'
-])
-
 publishing {
     publications {
         mavenJava(MavenPublication) {

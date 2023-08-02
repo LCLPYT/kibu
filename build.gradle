@@ -169,6 +169,13 @@ subprojects.each {
     }
 }
 
+// repositories only for the rootProject
+repositories {
+    maven {
+        url = 'https://maven.nucleoid.xyz/'
+    }
+}
+
 dependencies {
     afterEvaluate {
         subprojects.each {
@@ -177,6 +184,8 @@ dependencies {
             }
         }
     }
+
+    modLocalRuntime "xyz.nucleoid:fantasy:${project.fantasy_version}"
 }
 
 // add subprojects as nested jar to the main jar

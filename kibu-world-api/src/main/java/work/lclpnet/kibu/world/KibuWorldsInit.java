@@ -12,6 +12,7 @@ public class KibuWorldsInit implements ModInitializer {
     private static final String FANTASY_MOD_ID = "fantasy";
     private static final String KIBU_WORLD_API_MOD_ID = "kibu-world-api";
     private static final Logger LOGGER = LoggerFactory.getLogger(FANTASY_MOD_ID);
+    private static boolean funtional = false;
 
     @Override
     public void onInitialize() {
@@ -21,9 +22,24 @@ public class KibuWorldsInit implements ModInitializer {
         }
 
         new SafeKibuWorldsInit().initSafe();
+
+        funtional = true;
     }
 
     private static boolean isFantasyPresent() {
         return FabricLoader.getInstance().isModLoaded(FANTASY_MOD_ID);
+    }
+
+    /**
+     * Check whether kibu-world-api is functional.
+     * The mod might not be functional, if:
+     * <ul>
+     *     <li>it wasn't loaded yet</li>
+     *     <li>dynamic dependencies, such as the 'fantasy' mod are not loaded</li>
+     * </ul>
+     * @return Whether the mod is functional.
+     */
+    public static boolean isFunctional() {
+        return funtional;
     }
 }

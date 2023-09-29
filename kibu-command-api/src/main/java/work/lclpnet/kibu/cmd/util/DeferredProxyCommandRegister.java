@@ -2,77 +2,55 @@ package work.lclpnet.kibu.cmd.util;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import work.lclpnet.kibu.cmd.type.CommandConsumer;
 import work.lclpnet.kibu.cmd.type.CommandFactory;
 import work.lclpnet.kibu.cmd.type.CommandRegister;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
+import java.util.function.BiConsumer;
 
 public class DeferredProxyCommandRegister<S> implements CommandRegister<S> {
 
     private final List<DeferredRegisterItem<S, LiteralArgumentBuilder<S>>> deferred = new ArrayList<>();
     private final List<DeferredRegisterItem<S, CommandFactory<S>>> deferredFactories = new ArrayList<>();
     private final Object mutex = new Object();
+    private final boolean keepReferences;
     private CommandRegister<S> target = null;
+
+    public DeferredProxyCommandRegister() {
+        this(false);
+    }
+
+    public DeferredProxyCommandRegister(boolean keepReferences) {
+        this.keepReferences = keepReferences;
+    }
 
     public void setTarget(CommandRegister<S> target) {
         synchronized (mutex) {
-            boolean init = this.target == null && target != null;
-
             this.target = target;
-
-            if (init) {
-                registerDeferred();
-            }
+            registerDeferred();
         }
     }
 
     private void registerDeferred() {
-        deferred.forEach(defer -> {
-            final var future = defer.future();
-            proxyRegister(defer.item()).thenAccept(future::complete);
-        });
+        deferred.forEach(defer -> target.register(defer.item(), defer.consumer()));
+        deferredFactories.forEach(defer -> target.register(defer.item(), defer.consumer()));
 
-        deferred.clear();
-
-        deferredFactories.forEach(defer -> {
-            final var future = defer.future();
-            proxyRegister(defer.item()).thenAccept(future::complete);
-        });
-
-        deferredFactories.clear();
-    }
-
-    @Override
-    public CompletableFuture<LiteralCommandNode<S>> register(LiteralArgumentBuilder<S> command) {
-        return register(command, deferred, this::proxyRegister);
-    }
-
-    @Override
-    public CompletableFuture<LiteralCommandNode<S>> register(CommandFactory<S> factory) {
-        return register(factory, deferredFactories, this::proxyRegister);
-    }
-
-    private <T> CompletableFuture<LiteralCommandNode<S>> register(T obj, List<DeferredRegisterItem<S, T>> list, Function<T, CompletableFuture<LiteralCommandNode<S>>> proxyRegister) {
-        synchronized (mutex) {
-            if (target == null) {
-                var future = new CompletableFuture<LiteralCommandNode<S>>();
-                list.add(new DeferredRegisterItem<>(obj, future));
-                return future;
-            }
+        if (!keepReferences) {
+            deferred.clear();
+            deferredFactories.clear();
         }
-
-        return proxyRegister.apply(obj);
     }
 
-    protected CompletableFuture<LiteralCommandNode<S>> proxyRegister(LiteralArgumentBuilder<S> command) {
-        return target.register(command);
+    @Override
+    public boolean register(LiteralArgumentBuilder<S> command, CommandConsumer<S> consumer) {
+        return register(command, consumer, deferred, (cmd, cmdConsumer) -> target.register(cmd, cmdConsumer));
     }
 
-    protected CompletableFuture<LiteralCommandNode<S>> proxyRegister(CommandFactory<S> factory) {
-        return target.register(factory);
+    @Override
+    public boolean register(CommandFactory<S> factory, CommandConsumer<S> consumer) {
+        return register(factory, consumer, deferredFactories, (fac, cmdConsumer) -> target.register(fac, cmdConsumer));
     }
 
     @Override
@@ -84,5 +62,23 @@ public class DeferredProxyCommandRegister<S> implements CommandRegister<S> {
         return true;
     }
 
-    private record DeferredRegisterItem<S, T>(T item, CompletableFuture<LiteralCommandNode<S>> future) {}
+    private <T> boolean register(T obj, CommandConsumer<S> reference, List<DeferredRegisterItem<S, T>> list, BiConsumer<T, CommandConsumer<S>> proxy) {
+        synchronized (mutex) {
+            boolean noTarget = target == null;
+
+            if (noTarget || keepReferences) {
+                list.add(new DeferredRegisterItem<>(obj, reference));
+
+                if (noTarget) {
+                    return false;
+                }
+            }
+        }
+
+        proxy.accept(obj, reference);
+
+        return true;
+    }
+
+    private record DeferredRegisterItem<S, T>(T item, CommandConsumer<S> consumer) {}
 }

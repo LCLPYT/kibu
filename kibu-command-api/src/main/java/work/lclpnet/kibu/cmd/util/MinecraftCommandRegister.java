@@ -3,6 +3,7 @@ package work.lclpnet.kibu.cmd.util;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -10,19 +11,21 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import work.lclpnet.kibu.cmd.type.CommandFactory;
-import work.lclpnet.kibu.cmd.type.Initializable;
+import work.lclpnet.kibu.cmd.type.*;
 
-import java.util.concurrent.CompletableFuture;
-
-public class MinecraftCommandRegister extends DeferredProxyCommandRegister<ServerCommandSource> implements Initializable {
+public class MinecraftCommandRegister implements CommandRegister<ServerCommandSource>, Initializable {
 
     private final Object mutex = new Object();
+    private final DeferredProxyCommandRegister<ServerCommandSource> deferredRegister;
     private MinecraftServer server = null;
     private CommandDispatcher<ServerCommandSource> dispatcher = null;
     private CommandRegistryAccess registryAccess = null;
     private CommandManager.RegistrationEnvironment environment = null;
     private boolean ready = false;
+
+    public MinecraftCommandRegister(boolean isClient) {
+        this.deferredRegister = new DeferredProxyCommandRegister<>(isClient);
+    }
 
     @Override
     public void init() {
@@ -33,6 +36,8 @@ public class MinecraftCommandRegister extends DeferredProxyCommandRegister<Serve
 
             this.update();
         });
+
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> this.reset());
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             synchronized (mutex) {
@@ -45,44 +50,54 @@ public class MinecraftCommandRegister extends DeferredProxyCommandRegister<Serve
         });
     }
 
+    private void reset() {
+        synchronized (this) {
+            this.ready = false;
+            this.server = null;
+            this.registryAccess = null;
+            this.environment = null;
+        }
+    }
+
     private void update() {
         synchronized (mutex) {
             if (ready || dispatcher == null || registryAccess == null || environment == null || server == null) return;
 
             ready = true;
-            setTarget(new DirectCommandRegister<>(dispatcher, registryAccess, environment));
+            deferredRegister.setTarget(new DirectCommandRegister<>(dispatcher, registryAccess, environment));
         }
+
+        syncCommandTree();
     }
 
     @Override
-    protected CompletableFuture<LiteralCommandNode<ServerCommandSource>> proxyRegister(LiteralArgumentBuilder<ServerCommandSource> command) {
-        var future = super.proxyRegister(command);
+    public boolean register(LiteralArgumentBuilder<ServerCommandSource> command, CommandConsumer<ServerCommandSource> consumer) {
+        if (deferredRegister.register(command, consumer)) {
+            syncCommandTree();
+            return true;
+        }
 
-        // future will be completed, because proxyRegister() is only invoked on MinecraftCommandRegister if ready
-        syncCommandTree();
-
-        return future;
+        return false;
     }
 
     @Override
-    protected CompletableFuture<LiteralCommandNode<ServerCommandSource>> proxyRegister(CommandFactory<ServerCommandSource> factory) {
-        var future = super.proxyRegister(factory);
+    public boolean register(CommandFactory<ServerCommandSource> factory, CommandConsumer<ServerCommandSource> consumer) {
+        if (deferredRegister.register(factory, consumer)) {
+            syncCommandTree();
+            return true;
+        }
 
-        // future will be completed, because proxyRegister() is only invoked on MinecraftCommandRegister if ready
-        syncCommandTree();
-
-        return future;
+        return false;
     }
 
     @Override
     public boolean unregister(LiteralCommandNode<ServerCommandSource> command) {
-        boolean unregistered = super.unregister(command);
-
-        if (unregistered) {
+        if (deferredRegister.unregister(command)) {
             syncCommandTree();
+            return true;
         }
 
-        return unregistered;
+        return false;
     }
 
     private void syncCommandTree() {

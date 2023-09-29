@@ -5,9 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
-import work.lclpnet.kibu.cmd.type.CommandFactory;
-import work.lclpnet.kibu.cmd.type.CommandRegister;
-import work.lclpnet.kibu.cmd.type.CommandRegistrationContext;
+import work.lclpnet.kibu.cmd.type.*;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -26,15 +24,17 @@ public class DirectCommandRegister<S> implements CommandRegister<S>, CommandRegi
     }
 
     @Override
-    public CompletableFuture<LiteralCommandNode<S>> register(LiteralArgumentBuilder<S> command) {
+    public boolean register(LiteralArgumentBuilder<S> command, CommandConsumer<S> consumer) {
         var cmd = CommandDispatcherUtils.register(dispatcher, command);
-        return CompletableFuture.completedFuture(cmd);
+        consumer.acceptCommand(cmd);
+        return true;
     }
 
     @Override
-    public CompletableFuture<LiteralCommandNode<S>> register(CommandFactory<S> factory) {
+    public boolean register(CommandFactory<S> factory, CommandConsumer<S> consumer) {
         LiteralArgumentBuilder<S> builder = factory.create(this);
-        return register(builder);
+        register(builder, consumer);
+        return true;
     }
 
     @Override

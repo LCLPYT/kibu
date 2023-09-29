@@ -19,7 +19,7 @@ public class KibuCommandsTest {
 
         KibuCommands.PROXY.setTarget(register);
 
-        var cmd = KibuCommands.register(literal("test")).join();
+        var cmd = KibuCommands.register(literal("test")).getCommand().orElseThrow();
         var registered = dispatcher.getRoot().getChild("test");
 
         assertNotNull(cmd);
@@ -33,7 +33,7 @@ public class KibuCommandsTest {
 
         KibuCommands.PROXY.setTarget(register);
 
-        var cmd = KibuCommands.register(context -> literal("test")).join();
+        var cmd = KibuCommands.register(context -> literal("test")).getCommand().orElseThrow();
         var registered = dispatcher.getRoot().getChild("test");
 
         assertNotNull(cmd);
@@ -47,7 +47,7 @@ public class KibuCommandsTest {
 
         KibuCommands.PROXY.setTarget(register);
 
-        var cmd = KibuCommands.register(literal("test")).join();
+        var cmd = KibuCommands.register(literal("test")).getCommand().orElseThrow();
         var registered = dispatcher.getRoot().getChild("test");
 
         assertNotNull(cmd);

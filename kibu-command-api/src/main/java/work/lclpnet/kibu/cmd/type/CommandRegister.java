@@ -3,13 +3,11 @@ package work.lclpnet.kibu.cmd.type;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
-import java.util.concurrent.CompletableFuture;
-
 public interface CommandRegister<S> {
 
-    CompletableFuture<LiteralCommandNode<S>> register(LiteralArgumentBuilder<S> command);
+    boolean register(LiteralArgumentBuilder<S> command, CommandConsumer<S> consumer);
 
-    CompletableFuture<LiteralCommandNode<S>> register(CommandFactory<S> factory);
+    boolean register(CommandFactory<S> factory, CommandConsumer<S> consumer);
 
     boolean unregister(LiteralCommandNode<S> command);
 }

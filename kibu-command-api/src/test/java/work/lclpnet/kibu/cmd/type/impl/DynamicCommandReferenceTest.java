@@ -73,4 +73,14 @@ class DynamicCommandReferenceTest {
 
         assertTrue(executed.get());
     }
+
+    @Test
+    void unregister_notEmpty_willBeEmpty() {
+        var ref = new DynamicCommandReference<>(cmd -> {});
+
+        ref.acceptCommand(mock());
+        ref.unregister();
+
+        assertTrue(ref.getCommand().isEmpty());
+    }
 }

@@ -44,7 +44,10 @@ public class DynamicCommandReference<S> implements CommandReference<S>, CommandC
 
     @Override
     public void unregister() {
-        getCommand().ifPresent(unregisterAction);
+        if (command == null) return;
+
+        unregisterAction.accept(command);
+        command = null;
     }
 
     @Override

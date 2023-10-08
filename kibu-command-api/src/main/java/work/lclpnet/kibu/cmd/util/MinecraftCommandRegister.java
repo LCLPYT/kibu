@@ -3,7 +3,6 @@ package work.lclpnet.kibu.cmd.util;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -11,7 +10,10 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import work.lclpnet.kibu.cmd.type.*;
+import work.lclpnet.kibu.cmd.type.CommandConsumer;
+import work.lclpnet.kibu.cmd.type.CommandFactory;
+import work.lclpnet.kibu.cmd.type.CommandRegister;
+import work.lclpnet.kibu.cmd.type.Initializable;
 
 public class MinecraftCommandRegister implements CommandRegister<ServerCommandSource>, Initializable {
 
@@ -106,6 +108,8 @@ public class MinecraftCommandRegister implements CommandRegister<ServerCommandSo
         synchronized (mutex) {
             server = this.server;
         }
+
+        if (server == null) return;
 
         var commandManager = server.getCommandManager();
 

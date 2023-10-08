@@ -9,7 +9,7 @@ public class KibuWorldsInit implements ModInitializer {
 
     private static final String FANTASY_MOD_ID = "fantasy";
     private static final String KIBU_WORLD_API_MOD_ID = "kibu-world-api";
-    public static final Logger LOGGER = LoggerFactory.getLogger(FANTASY_MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(KIBU_WORLD_API_MOD_ID);
     private static boolean funtional = false;
 
     @Override

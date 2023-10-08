@@ -9,6 +9,7 @@
   "mixins": [
     "FantasyMixin",
     "GameRulesMixin",
+    "LevelStorageAccessor",
     "MinecraftServerAccessor"
   ]
 }

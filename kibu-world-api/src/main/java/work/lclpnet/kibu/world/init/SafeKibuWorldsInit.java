@@ -21,35 +21,5 @@ public class SafeKibuWorldsInit {
                 tracker.unregisterWorld(runtimeWorld);
             }
         });
-
-//        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-//            dispatcher.register(CommandManager.literal("world")
-//                    .requires(s -> s.hasPermissionLevel(4))
-//                    .executes(this::testWorld));
-//        });
     }
-
-//    private int testWorld(CommandContext<ServerCommandSource> ctx) {
-//        ServerCommandSource source = ctx.getSource();
-//        MinecraftServer server = source.getServer();
-//
-//        server.execute(() -> {
-//            WorldManager worldManager = KibuWorlds.getInstance().getWorldManager(server);
-//
-//            worldManager.openPersistentWorld(new Identifier("kibu", "test2"))
-//                    .ifPresent(handle -> {
-//                        System.out.println("Successfully opened persisted world " + handle.getRegistryKey().getValue());
-//
-//                        ServerPlayerEntity player = source.getPlayer();
-//                        if (player != null) {
-//                            ServerWorld world = handle.asWorld();
-//                            BlockPos pos = world.getSpawnPos();
-//
-//                            player.teleport(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Set.of(), 0, 0);
-//                        }
-//                    });
-//        });
-//
-//        return 1;
-//    }
 }

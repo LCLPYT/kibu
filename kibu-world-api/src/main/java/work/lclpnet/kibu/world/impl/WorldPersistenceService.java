@@ -6,14 +6,12 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.nbt.*;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryOps;
+import net.minecraft.registry.*;
 import net.minecraft.resource.DataConfiguration;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.WorldSavePath;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.SaveProperties;
@@ -21,13 +19,17 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionOptionsRegistryHolder;
 import net.minecraft.world.gen.GeneratorOptions;
+import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
+import net.minecraft.world.level.WorldGenSettings;
 import net.minecraft.world.level.storage.LevelStorage;
+import net.minecraft.world.level.storage.SaveVersionInfo;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import work.lclpnet.kibu.world.GameRuleAccess;
+import work.lclpnet.kibu.world.mixin.LevelStorageAccessor;
 import work.lclpnet.kibu.world.mixin.MinecraftServerAccessor;
 import xyz.nucleoid.fantasy.Fantasy;
 import xyz.nucleoid.fantasy.RuntimeWorldConfig;
@@ -88,15 +90,15 @@ public class WorldPersistenceService {
     private RuntimeWorldConfig restoreConfig(NbtCompound levelData) {
         var levelPropertiesPair = getLevelPropertiesPair(levelData);
 
-        if (levelPropertiesPair == null) {
-            return null;
-        }
-
         SaveProperties properties = levelPropertiesPair.getFirst();
         DimensionOptionsRegistryHolder.DimensionsConfig dimensionsConfig = levelPropertiesPair.getSecond();
 
-        // TODO find suitable dimension: overworld first, then any other
-        DimensionOptions dimension = dimensionsConfig.dimensions().iterator().next();
+        DimensionOptions dimension = findMainDimension(dimensionsConfig);
+
+        if (dimension == null) {
+            logger.error("Could not find main dimension for level {}", properties.getLevelName());
+            return null;
+        }
 
         RuntimeWorldConfig config = new RuntimeWorldConfig()
                 .setDimensionType(dimension.dimensionTypeEntry())
@@ -133,21 +135,65 @@ public class WorldPersistenceService {
     }
 
     @Nullable
+    private DimensionOptions findMainDimension(DimensionOptionsRegistryHolder.DimensionsConfig config) {
+        Registry<DimensionOptions> dimensions = config.dimensions();
+
+        if (dimensions.contains(DimensionOptions.OVERWORLD)) {
+            DimensionOptions overworld = dimensions.get(DimensionOptions.OVERWORLD);
+
+            if (overworld != null) {
+                return overworld;
+            }
+        }
+
+        // there is no overworld entry, accept any other dimension
+        var iterator = dimensions.iterator();
+
+        if (iterator.hasNext()) {
+            return iterator.next();
+        }
+
+        return null;
+    }
+
     private Pair<SaveProperties, DimensionOptionsRegistryHolder.DimensionsConfig> getLevelPropertiesPair(NbtCompound levelData) {
-        NbtCompound data = levelData.getCompound("Data");
-
-        RegistryOps<NbtElement> ops = RegistryOps.of(NbtOps.INSTANCE, server.getRegistryManager());
-
-        LevelStorage.Session session = ((MinecraftServerAccessor) server).getSession();
-
-        DataConfiguration dataConfiguration = getDataConfiguration(data, server.getDataFixer());
-
         var registryManager = server.getRegistryManager();
 
-        Registry<DimensionOptions> dimensionOptionsRegistry = registryManager.get(RegistryKeys.DIMENSION);
         Lifecycle registryLifecycle = registryManager.getRegistryLifecycle();
+        DataFixer dataFixer = server.getDataFixer();
 
-        return session.readLevelProperties(ops, dataConfiguration, dimensionOptionsRegistry, registryLifecycle);
+        // from net.minecraft.world.level.storage.LevelStorage#createLevelDataParser
+        NbtCompound data = levelData.getCompound("Data");
+
+        NbtCompound player = data.contains("Player", NbtElement.COMPOUND_TYPE) ? data.getCompound("Player") : null;
+        data.remove("Player");
+
+        int dataVersion = NbtHelper.getDataVersion(data, -1);
+
+        var ops = RegistryOps.of(NbtOps.INSTANCE, server.getRegistryManager());
+        var dynamic = DataFixTypes.LEVEL.update(dataFixer, new Dynamic<>(ops, data), dataVersion);
+
+        WorldGenSettings worldGenSettings = LevelStorageAccessor.invokeReadGeneratorProperties(dynamic, dataFixer, dataVersion)
+                .getOrThrow(false, Util.addPrefix("WorldGenSettings: ", logger::error));
+
+        SaveVersionInfo saveVersionInfo = SaveVersionInfo.fromDynamic(dynamic);
+
+        DataConfiguration dataConfiguration = getDataConfiguration(data, server.getDataFixer());
+        LevelInfo levelInfo = LevelInfo.fromDynamic(dynamic, dataConfiguration);
+
+        // use an empty registry to only read the entries from the nbt
+        Registry<DimensionOptions> existingDimOptions = new SimpleRegistry<>(RegistryKeys.DIMENSION, registryLifecycle);
+
+        var dimensionsConfig = worldGenSettings.dimensionOptionsRegistryHolder()
+                .toConfig(existingDimOptions);
+
+        Lifecycle propsLifecycle = dimensionsConfig.getLifecycle().add(registryLifecycle);
+
+        LevelProperties levelProperties = LevelProperties.readProperties(dynamic, dataFixer, dataVersion, player,
+                levelInfo, saveVersionInfo, dimensionsConfig.specialWorldProperty(),
+                worldGenSettings.generatorOptions(), propsLifecycle);
+
+        return Pair.of(levelProperties, dimensionsConfig);
     }
 
     @NotNull
@@ -168,6 +214,7 @@ public class WorldPersistenceService {
         Path levelDat = directory.resolve(WorldSavePath.LEVEL_DAT.getRelativePath());
 
         if (!Files.exists(levelDat)) {
+            logger.warn("Level data file does not exist at {}", levelDat);
             return null;
         }
 

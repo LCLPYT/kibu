@@ -64,13 +64,14 @@ public class WorldPersistenceService {
             return Optional.of(handle);
         }
 
-        // try to restore ChunkGenerator and DimensionType
+        // try to read levelData
         NbtCompound levelData = readLevelData(registryKey);
 
         if (levelData == null) {
             return Optional.empty();
         }
 
+        // try to restore config from levelData nbt
         RuntimeWorldConfig config;
 
         try {
@@ -158,9 +159,8 @@ public class WorldPersistenceService {
 
     private Pair<SaveProperties, DimensionOptionsRegistryHolder.DimensionsConfig> getLevelPropertiesPair(NbtCompound levelData) {
         var registryManager = server.getRegistryManager();
-
-        Lifecycle registryLifecycle = registryManager.getRegistryLifecycle();
         DataFixer dataFixer = server.getDataFixer();
+        Lifecycle registryLifecycle = registryManager.getRegistryLifecycle();
 
         // from net.minecraft.world.level.storage.LevelStorage#createLevelDataParser
         NbtCompound data = levelData.getCompound("Data");
@@ -170,7 +170,7 @@ public class WorldPersistenceService {
 
         int dataVersion = NbtHelper.getDataVersion(data, -1);
 
-        var ops = RegistryOps.of(NbtOps.INSTANCE, server.getRegistryManager());
+        var ops = RegistryOps.of(NbtOps.INSTANCE, registryManager);
         var dynamic = DataFixTypes.LEVEL.update(dataFixer, new Dynamic<>(ops, data), dataVersion);
 
         WorldGenSettings worldGenSettings = LevelStorageAccessor.invokeReadGeneratorProperties(dynamic, dataFixer, dataVersion)
@@ -178,7 +178,7 @@ public class WorldPersistenceService {
 
         SaveVersionInfo saveVersionInfo = SaveVersionInfo.fromDynamic(dynamic);
 
-        DataConfiguration dataConfiguration = getDataConfiguration(data, server.getDataFixer());
+        DataConfiguration dataConfiguration = getDataConfiguration(data, dataFixer);
         LevelInfo levelInfo = LevelInfo.fromDynamic(dynamic, dataConfiguration);
 
         // use an empty registry to only read the entries from the nbt

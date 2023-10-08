@@ -15,7 +15,9 @@
   "icon": "assets/kibu-world-api/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["work.lclpnet.kibu.world.KibuWorldsInit"]
+    "main": [
+      "work.lclpnet.kibu.world.init.KibuWorldsInit"
+    ]
   },
   "mixins": [
     "kibu-world-api-fantasy.mixins.json"

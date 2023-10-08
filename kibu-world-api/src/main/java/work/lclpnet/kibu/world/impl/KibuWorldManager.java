@@ -1,15 +1,25 @@
-package work.lclpnet.kibu.world;
+package work.lclpnet.kibu.world.impl;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
+import work.lclpnet.kibu.world.WorldHandleTracker;
+import work.lclpnet.kibu.world.WorldManager;
+import work.lclpnet.kibu.world.init.KibuWorldsInit;
 import xyz.nucleoid.fantasy.RuntimeWorldHandle;
 
 import java.util.*;
 
-public final class KibuWorldsImpl implements KibuWorlds {
+@ApiStatus.Internal
+public class KibuWorldManager implements WorldManager, WorldHandleTracker {
 
     private final Map<ServerWorld, RuntimeWorldHandle> worlds = new HashMap<>();
+    private final WorldPersistenceService worldPersistenceService;
 
-    private KibuWorldsImpl() {}
+    public KibuWorldManager(MinecraftServer server) {
+        this.worldPersistenceService = new WorldPersistenceService(server, KibuWorldsInit.LOGGER);
+    }
 
     public Set<RuntimeWorldHandle> getRuntimeWorldHandles() {
         synchronized (this) {
@@ -28,24 +38,22 @@ public final class KibuWorldsImpl implements KibuWorlds {
         return Optional.ofNullable(handle);
     }
 
+    @Override
+    public Optional<RuntimeWorldHandle> openPersistentWorld(Identifier identifier) {
+        return worldPersistenceService.tryRecreateWorld(identifier);
+    }
+
+    @Override
     public void registerWorldHandle(RuntimeWorldHandle handle) {
         synchronized (this) {
             worlds.put(handle.asWorld(), handle);
         }
     }
 
+    @Override
     public void unregisterWorld(ServerWorld world) {
         synchronized (this) {
             worlds.remove(world);
         }
-    }
-
-    static KibuWorldsImpl getInstance() {
-        return Holder.INSTANCE;
-    }
-
-    // lazy, thread-safe singleton
-    private static class Holder {
-        private static final KibuWorldsImpl INSTANCE = new KibuWorldsImpl();
     }
 }

@@ -1,16 +1,11 @@
 package work.lclpnet.kibu.world;
 
-import net.minecraft.server.world.ServerWorld;
-import xyz.nucleoid.fantasy.RuntimeWorldHandle;
-
-import java.util.Optional;
-import java.util.Set;
+import net.minecraft.server.MinecraftServer;
+import work.lclpnet.kibu.world.impl.KibuWorldsImpl;
 
 public interface KibuWorlds {
 
-    Set<RuntimeWorldHandle> getRuntimeWorldHandles();
-
-    Optional<RuntimeWorldHandle> getRuntimeWorldHandle(ServerWorld world);
+    WorldManager getWorldManager(MinecraftServer server);
 
     static KibuWorlds getInstance() {
         return KibuWorldsImpl.getInstance();

@@ -1,17 +1,15 @@
-package work.lclpnet.kibu.world;
+package work.lclpnet.kibu.world.init;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.nucleoid.fantasy.RuntimeWorld;
 
 public class KibuWorldsInit implements ModInitializer {
 
     private static final String FANTASY_MOD_ID = "fantasy";
     private static final String KIBU_WORLD_API_MOD_ID = "kibu-world-api";
-    private static final Logger LOGGER = LoggerFactory.getLogger(FANTASY_MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(FANTASY_MOD_ID);
     private static boolean funtional = false;
 
     @Override

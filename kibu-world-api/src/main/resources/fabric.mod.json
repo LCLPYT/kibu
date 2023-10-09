@@ -20,6 +20,7 @@
     ]
   },
   "mixins": [
+    "kibu-world-api.mixins.json",
     "kibu-world-api-fantasy.mixins.json"
   ],
   "depends": {

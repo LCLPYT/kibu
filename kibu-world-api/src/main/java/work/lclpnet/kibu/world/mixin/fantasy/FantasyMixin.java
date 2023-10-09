@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.world.mixin;
+package work.lclpnet.kibu.world.mixin.fantasy;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;

@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'work.lclpnet.mods.kibu:kibu:0.6.0'  // replace with your version
+    modImplementation 'work.lclpnet.mods.kibu:kibu:0.6.0'  // replace with your version
 }
 ```
 All available versions can be found [here](https://repo.lclpnet.work/#artifact/work.lclpnet.mods.kibu/kibu).

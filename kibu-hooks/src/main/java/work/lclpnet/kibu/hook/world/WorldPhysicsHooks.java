@@ -80,6 +80,19 @@ public class WorldPhysicsHooks {
         return cancelled;
     });
 
+    /**
+     * Hook invoked when a coral water check is done.
+     */
+    public static final Hook<FadeHook> CORAL_DEATH = HookFactory.createArrayBacked(FadeHook.class, callbacks -> (world, pos) -> {
+        boolean cancelled = false;
+
+        for (var callback : callbacks)
+            if (callback.onFade(world, pos))
+                cancelled = true;
+
+        return cancelled;
+    });
+
     public interface ExplosionHook {
         boolean onExplode(Entity exploder);
     }

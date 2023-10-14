@@ -15,6 +15,7 @@
     "CandleBlockMixin",
     "CauldronBlockMixin",
     "ComposterBlockMixin",
+    "CoralParentBlockMixin",
     "EntityMixin",
     "ExplosionMixin",
     "FarmlandBlockMixin",

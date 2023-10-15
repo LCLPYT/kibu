@@ -28,7 +28,7 @@ public class FormatSplitter {
             cursor = end;
         }
 
-        if (cursor < string.length() - 1) {
+        if (cursor < string.length()) {
             parts.add(string.substring(cursor));
         }
 

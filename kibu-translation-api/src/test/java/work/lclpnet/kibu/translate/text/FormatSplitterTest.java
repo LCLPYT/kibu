@@ -41,4 +41,11 @@ class FormatSplitterTest {
         var parts = new FormatSplitter().split("");
         assertEquals(List.of(), parts);
     }
+
+    @Test
+    void split_offByOne() {
+        var parts = new FormatSplitter().split("Hi \"%s\", this is \"%s\"");
+
+        assertEquals(List.of("Hi \"", "%s", "\", this is \"", "%s", "\""), parts);
+    }
 }

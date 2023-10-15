@@ -67,6 +67,15 @@ public class TextFormatterTest {
         assertEquals("123: %s", text);
     }
 
+    @Test
+    void formatText_offByOne() {
+        var service = new TextFormatter();
+
+        String text = service.formatText("Hi \"%s\", this is \"%s\"", "Marc", "Paul").getString();
+
+        assertEquals("Hi \"Marc\", this is \"Paul\"", text);
+    }
+
     private String debugString(Text text) {
         StringBuilder builder = new StringBuilder();
 

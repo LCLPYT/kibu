@@ -79,7 +79,7 @@ public class WorldPersistenceService {
     }
 
     @Nullable
-    private RuntimeWorldConfig restoreConfig(RegistryKey<World> registryKey) {
+    public RuntimeWorldConfig restoreConfig(RegistryKey<World> registryKey) {
         // try to read levelData
         LevelDataDeserializer.Result levelData = readLevelData(registryKey);
 

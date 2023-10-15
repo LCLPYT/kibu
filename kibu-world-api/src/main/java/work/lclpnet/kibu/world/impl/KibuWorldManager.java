@@ -2,6 +2,8 @@ package work.lclpnet.kibu.world.impl;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -10,6 +12,7 @@ import work.lclpnet.kibu.world.WorldHandleTracker;
 import work.lclpnet.kibu.world.WorldManager;
 import work.lclpnet.kibu.world.data.LevelDataWriter;
 import work.lclpnet.kibu.world.init.KibuWorldsInit;
+import xyz.nucleoid.fantasy.RuntimeWorldConfig;
 import xyz.nucleoid.fantasy.RuntimeWorldHandle;
 
 import java.io.IOException;
@@ -49,6 +52,15 @@ public class KibuWorldManager implements WorldManager, WorldHandleTracker, Level
     @Override
     public Optional<RuntimeWorldHandle> openPersistentWorld(Identifier identifier) {
         return worldPersistenceService.tryRecreateWorld(identifier);
+    }
+
+    @Override
+    public Optional<RuntimeWorldConfig> getWorldConfig(Identifier identifier) {
+        var registryKey = RegistryKey.of(RegistryKeys.WORLD, identifier);
+
+        RuntimeWorldConfig config = worldPersistenceService.restoreConfig(registryKey);
+
+        return Optional.ofNullable(config);
     }
 
     @Override

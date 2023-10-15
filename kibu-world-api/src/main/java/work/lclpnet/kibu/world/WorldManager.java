@@ -26,4 +26,12 @@ public interface WorldManager {
      * This is why the consumer is responsible for re-creating the world.
      */
     Optional<RuntimeWorldHandle> openPersistentWorld(Identifier identifier);
+
+    /**
+     * Attempts to create a {@link RuntimeWorldConfig} from level data on disk.
+     * If the level.dat file exists, this method tries to parse it and create a world config.
+     * @param identifier The dimension identifier.
+     * @return The runtime world config, or empty if there is no level data to load.
+     */
+    Optional<RuntimeWorldConfig> getWorldConfig(Identifier identifier);
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Scheduler {
+public class Scheduler implements TaskScheduler {
 
     private final List<ScheduledTask> tasks = new ArrayList<>();
     private final List<ScheduledTask> upcomingTasks = new ArrayList<>();
@@ -16,6 +16,7 @@ public class Scheduler {
         this.logger = logger;
     }
 
+    @Override
     public TaskHandle schedule(ScheduledTask task) {
         Objects.requireNonNull(task);
 
@@ -60,34 +61,42 @@ public class Scheduler {
         return new TimeoutScheduledTask(handle -> action.run());
     }
 
+    @Override
     public TaskHandle immediate(SchedulerAction action) {
         return schedule(createTask(action));
     }
 
+    @Override
     public TaskHandle immediate(Runnable action) {
         return schedule(createTask(action));
     }
 
+    @Override
     public TaskHandle timeout(SchedulerAction action, long timeoutTicks) {
         return schedule(createTask(action).setTimeout(timeoutTicks));
     }
 
+    @Override
     public TaskHandle timeout(Runnable action, long timeoutTicks) {
         return schedule(createTask(action).setTimeout(timeoutTicks));
     }
 
+    @Override
     public TaskHandle interval(SchedulerAction action, long intervalTicks) {
         return interval(action, intervalTicks, 0);
     }
 
+    @Override
     public TaskHandle interval(Runnable action, long intervalTicks) {
         return interval(action, intervalTicks, 0);
     }
 
+    @Override
     public TaskHandle interval(SchedulerAction action, long intervalTicks, long timeoutTicks) {
         return schedule(createTask(action).setTimeout(timeoutTicks).setInterval(intervalTicks));
     }
 
+    @Override
     public TaskHandle interval(Runnable action, long intervalTicks, long timeoutTicks) {
         return schedule(createTask(action).setTimeout(timeoutTicks).setInterval(intervalTicks));
     }

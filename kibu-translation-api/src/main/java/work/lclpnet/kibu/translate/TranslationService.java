@@ -86,17 +86,25 @@ public class TranslationService {
     public RootText translateText(String language, String key, Object... args) {
         String raw = translator.translate(language, key);  // do not replace format specifiers just yet
 
-        transformArgs(language, args);
+        Object[] transformed = transformArgs(language, args);
 
-        return textFormatter.formatText(raw, args);
+        return textFormatter.formatText(raw, transformed);
     }
 
-    private void transformArgs(String language, Object[] args) {
+    private Object[] transformArgs(String language, final Object[] args) {
+        if (args.length == 0) {
+            return args;
+        }
+
+        Object[] modifiedArgs = new Object[args.length];
+
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
 
+            modifiedArgs[i] = arg;
+
             if (arg instanceof TextTranslatable translatable) {
-                args[i] = translatable.translateTo(language);
+                modifiedArgs[i] = translatable.translateTo(language);
             } else if (arg instanceof FormatWrapper wrapper) {
                 if (wrapper.getWrapped() instanceof TextTranslatable translatable) {
                     Text text = translatable.translateTo(language);
@@ -108,10 +116,12 @@ public class TranslationService {
                         text = mutableText.setStyle(style);
                     }
 
-                    args[i] = text;
+                    modifiedArgs[i] = text;
                 }
             }
         }
+
+        return modifiedArgs;
     }
 
     public RootText translateText(ServerCommandSource source, String key, Object... args) {

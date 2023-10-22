@@ -13,27 +13,36 @@ import java.util.function.UnaryOperator;
 
 public class TranslatedText {
 
-    private final Function<ServerPlayerEntity, RootText> textFactory;
+    private final Function<String, RootText> textFactory;
+    private final Function<ServerPlayerEntity, String> languageGetter;
     private Style style;
     @Nullable
     private Text prefix = null;
 
-    private TranslatedText(Function<ServerPlayerEntity, RootText> textFactory, Style style) {
+    private TranslatedText(Function<String, RootText> textFactory,
+                           Function<ServerPlayerEntity, String> languageGetter, Style style) {
         this.textFactory = textFactory;
+        this.languageGetter = languageGetter;
         this.style = style;
     }
 
-    public static TranslatedText create(Function<ServerPlayerEntity, RootText> textFactory) {
-        return create(textFactory, Style.EMPTY);
+    public static TranslatedText create(Function<String, RootText> textFactory,
+                                        Function<ServerPlayerEntity, String> languageGetter) {
+        return create(textFactory, languageGetter, Style.EMPTY);
     }
 
-    public static TranslatedText create(Function<ServerPlayerEntity, RootText> textFactory, Style style) {
-        return new TranslatedText(textFactory, style);
+    public static TranslatedText create(Function<String, RootText> textFactory,
+                                        Function<ServerPlayerEntity, String> languageGetter, Style style) {
+        return new TranslatedText(textFactory, languageGetter, style);
+    }
+
+    private String getLanguage(ServerPlayerEntity player) {
+        return languageGetter.apply(player);
     }
 
     public void acceptEach(Iterable<ServerPlayerEntity> players, BiConsumer<ServerPlayerEntity, Text> action) {
         for (ServerPlayerEntity player : players) {
-            RootText text = textFactory.apply(player);
+            RootText text = textFactory.apply(getLanguage(player));
             text.setStyle(style.withParent(text.getStyle()));
 
             Text result = prefix != null ? prefix.copy().append(text) : text;
@@ -107,5 +116,9 @@ public class TranslatedText {
     public TranslatedText formatted(Formatting formatting) {
         this.setStyle(this.getStyle().withFormatting(formatting));
         return this;
+    }
+
+    public Text translatedTo(String language) {
+        return textFactory.apply(language);
     }
 }

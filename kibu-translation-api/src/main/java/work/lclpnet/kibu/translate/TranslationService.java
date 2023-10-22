@@ -85,7 +85,19 @@ public class TranslationService {
     public RootText translateText(String language, String key, Object... args) {
         String raw = translator.translate(language, key);  // do not replace format specifiers just yet
 
+        transformArgs(language, args);
+
         return textFormatter.formatText(raw, args);
+    }
+
+    private void transformArgs(String language, Object[] args) {
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+
+            if (arg instanceof TranslatedText translatedText) {
+                args[i] = translatedText.translatedTo(language);
+            }
+        }
     }
 
     public RootText translateText(ServerCommandSource source, String key, Object... args) {
@@ -99,7 +111,7 @@ public class TranslationService {
     }
 
     public TranslatedText translateText(String key, Object... args) {
-        return TranslatedText.create(player -> translateText(player, key, args));
+        return TranslatedText.create(language -> translateText(language, key, args), this::getLanguage);
     }
 
     public Partial<TranslatedBossBar, BossBarProvider> translateBossBar(Identifier id, String key, Object... args) {

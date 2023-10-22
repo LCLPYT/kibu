@@ -10,6 +10,7 @@ import work.lclpnet.kibu.translate.hook.LanguageChangedCallback;
 import work.lclpnet.kibu.translate.pref.LanguagePreferenceProvider;
 import work.lclpnet.kibu.translate.text.RootText;
 import work.lclpnet.kibu.translate.text.TextFormatter;
+import work.lclpnet.kibu.translate.text.TextTranslatable;
 import work.lclpnet.kibu.translate.text.TranslatedText;
 import work.lclpnet.kibu.translate.util.Partial;
 import work.lclpnet.kibu.translate.util.WeakList;
@@ -94,8 +95,8 @@ public class TranslationService {
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
 
-            if (arg instanceof TranslatedText translatedText) {
-                args[i] = translatedText.translatedTo(language);
+            if (arg instanceof TextTranslatable translatable) {
+                args[i] = translatable.translateTo(language);
             }
         }
     }

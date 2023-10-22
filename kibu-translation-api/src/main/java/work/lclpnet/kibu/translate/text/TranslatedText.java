@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class TranslatedText {
+public class TranslatedText implements TextTranslatable {
 
     private final Function<String, RootText> textFactory;
     private final Function<ServerPlayerEntity, String> languageGetter;
@@ -118,7 +118,8 @@ public class TranslatedText {
         return this;
     }
 
-    public Text translatedTo(String language) {
+    @Override
+    public Text translateTo(String language) {
         return textFactory.apply(language);
     }
 }

@@ -2,16 +2,16 @@ package work.lclpnet.kibu.translate;
 
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import work.lclpnet.kibu.access.PlayerLanguage;
 import work.lclpnet.kibu.translate.bossbar.BossBarProvider;
 import work.lclpnet.kibu.translate.bossbar.TranslatedBossBar;
 import work.lclpnet.kibu.translate.hook.LanguageChangedCallback;
 import work.lclpnet.kibu.translate.pref.LanguagePreferenceProvider;
-import work.lclpnet.kibu.translate.text.RootText;
-import work.lclpnet.kibu.translate.text.TextFormatter;
-import work.lclpnet.kibu.translate.text.TextTranslatable;
-import work.lclpnet.kibu.translate.text.TranslatedText;
+import work.lclpnet.kibu.translate.text.*;
 import work.lclpnet.kibu.translate.util.Partial;
 import work.lclpnet.kibu.translate.util.WeakList;
 import work.lclpnet.translations.Translator;
@@ -97,6 +97,19 @@ public class TranslationService {
 
             if (arg instanceof TextTranslatable translatable) {
                 args[i] = translatable.translateTo(language);
+            } else if (arg instanceof FormatWrapper wrapper) {
+                if (wrapper.getWrapped() instanceof TextTranslatable translatable) {
+                    Text text = translatable.translateTo(language);
+                    Style style = wrapper.getStyle();
+
+                    if (text instanceof RootText rootText) {
+                        text = rootText.setStyle(style);
+                    } else if (text instanceof MutableText mutableText) {
+                        text = mutableText.setStyle(style);
+                    }
+
+                    args[i] = text;
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ public class Scheduler implements TaskScheduler {
     private final List<ScheduledTask> tasks = new ArrayList<>();
     private final List<ScheduledTask> upcomingTasks = new ArrayList<>();
     private final Logger logger;
+    private SchedulerExceptionHandler exceptionHandler = null;
 
     public Scheduler(Logger logger) {
         this.logger = logger;
@@ -46,11 +47,21 @@ public class Scheduler implements TaskScheduler {
             try {
                 done = scheduledTask.tick();
             } catch (Throwable t) {
+                if (exceptionHandler != null) {
+                    if (exceptionHandler.handleException(t)) {
+                        return false;
+                    }
+                }
+
                 logger.error("Error executing scheduler task", t);
                 return true;
             }
             return done;
         });
+    }
+
+    public void setExceptionHandler(SchedulerExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
 
     public TimeoutScheduledTask createTask(SchedulerAction action) {

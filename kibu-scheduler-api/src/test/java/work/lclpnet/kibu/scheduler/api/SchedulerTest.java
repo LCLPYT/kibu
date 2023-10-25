@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SchedulerTest {
 
@@ -76,6 +76,82 @@ public class SchedulerTest {
                 .cancel(), 20, 0);
 
         assertTrue(executed.get());
+    }
+
+    @Test
+    public void testExceptionHandlerHandledContinues() {
+        var scheduler = new Scheduler(logger);
+        var handled = new AtomicReference<Throwable>(null);
+        var executed = new AtomicBoolean(false);
+
+        scheduler.setExceptionHandler(throwable -> {
+            handled.set(throwable);
+            return true;
+        });
+
+        RuntimeException test = new RuntimeException("test");
+
+        scheduler.interval(new SchedulerAction() {
+            int t = 0;
+
+            @Override
+            public void run(RunningTask info) {
+                int tick = t++;
+
+                if (tick == 0) {
+                    throw test;
+                } else if (tick == 1) {
+                    executed.set(true);
+                    info.cancel();
+                }
+            }
+        }, 1);
+
+        scheduler.tick();
+
+        assertEquals(test, handled.get());
+
+        scheduler.tick();
+
+        assertTrue(executed.get());
+    }
+
+    @Test
+    public void testExceptionHandlerNotHandledAborts() {
+        var scheduler = new Scheduler(logger);
+        var handled = new AtomicReference<Throwable>(null);
+        var executed = new AtomicBoolean(false);
+
+        scheduler.setExceptionHandler(throwable -> {
+            handled.set(throwable);
+            return false;
+        });
+
+        RuntimeException test = new RuntimeException("test");
+
+        scheduler.interval(new SchedulerAction() {
+            int t = 0;
+
+            @Override
+            public void run(RunningTask info) {
+                int tick = t++;
+
+                if (tick == 0) {
+                    throw test;
+                } else if (tick == 1) {
+                    executed.set(true);
+                    info.cancel();
+                }
+            }
+        }, 1);
+
+        scheduler.tick();
+
+        assertEquals(test, handled.get());
+
+        scheduler.tick();
+
+        assertFalse(executed.get());
     }
 
     private static void assertExecCount(BiConsumer<Scheduler, Runnable> function, int simulatedTicks, int expectedExecCount) {

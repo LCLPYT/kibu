@@ -67,8 +67,6 @@ public abstract class PlayerManagerMixin {
             this.broadcast(text, false);
             player.sendMessage(text, false);
         }
-
-        PlayerConnectionHooks.JOIN.invoker().act(player);
     }
 
     @Inject(
@@ -76,6 +74,8 @@ public abstract class PlayerManagerMixin {
             at = @At("TAIL")
     )
     public void kibu$afterConnected(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+        PlayerConnectionHooks.JOIN.invoker().act(player);
+
         var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.getServerWorld(),
                 player.getPos(), player.getYaw(), player.getPitch());
 

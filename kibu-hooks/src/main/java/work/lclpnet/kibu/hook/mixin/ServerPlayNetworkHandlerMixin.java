@@ -62,7 +62,16 @@ public abstract class ServerPlayNetworkHandlerMixin {
         if (text != null) {
             instance.broadcast(text, overlay);
         }
+    }
 
+    @Inject(
+            method = "onDisconnected",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;isHost()Z"
+            )
+    )
+    public void kibu$afterQuit(Text reason, CallbackInfo ci) {
         PlayerConnectionHooks.QUIT.invoker().act(player);
     }
 

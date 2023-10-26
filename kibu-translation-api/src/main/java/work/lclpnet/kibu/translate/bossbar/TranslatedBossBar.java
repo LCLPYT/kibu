@@ -115,14 +115,7 @@ public class TranslatedBossBar extends ServerBossBar implements CustomBossBar {
 
     @Nonnull
     private Text getLocalizedTitle(String language) {
-        String titleLang = language;
-
-        // if there is no translation for the language, fallback to default language
-        if (!translations.getTranslator().hasTranslation(language, translationKey)) {
-            titleLang = defaultLanguage;
-        }
-
-        RootText rootText = translations.translateText(titleLang, translationKey, args);
+        RootText rootText = translations.translateText(language, translationKey, args);
         rootText.setStyle(titleStyle);
 
         return rootText;

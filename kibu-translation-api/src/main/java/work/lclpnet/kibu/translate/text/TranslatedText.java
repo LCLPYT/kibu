@@ -43,7 +43,6 @@ public class TranslatedText implements TextTranslatable {
     public void acceptEach(Iterable<ServerPlayerEntity> players, BiConsumer<ServerPlayerEntity, Text> action) {
         for (ServerPlayerEntity player : players) {
             RootText text = translateFor(player);
-            text.setStyle(style.withParent(text.getStyle()));
 
             Text result = prefix != null ? prefix.copy().append(text) : text;
 
@@ -119,11 +118,16 @@ public class TranslatedText implements TextTranslatable {
     }
 
     @Override
-    public Text translateTo(String language) {
-        return textFactory.apply(language);
+    public RootText translateTo(String language) {
+        RootText text = textFactory.apply(language);
+
+        text.setStyle(style.withParent(text.getStyle()));
+
+        return text;
     }
 
     public RootText translateFor(ServerPlayerEntity player) {
-        return textFactory.apply(getLanguage(player));
+        String language = getLanguage(player);
+        return translateTo(language);
     }
 }

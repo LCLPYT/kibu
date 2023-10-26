@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.player.PlayerConnectionHooks;
 import work.lclpnet.kibu.hook.player.PlayerSpawnLocationCallback;
 
@@ -76,6 +77,24 @@ public abstract class PlayerManagerMixin {
     )
     public void kibu$afterConnected(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.getServerWorld(),
+                player.getPos(), player.getYaw(), player.getPitch());
+
+        PlayerSpawnLocationCallback.HOOK.invoker().onSpawn(data);
+
+        if (data.isDirty()) {
+            Vec3d pos = data.getPosition();
+            player.teleport(data.getWorld(), pos.getX(), pos.getY(), pos.getZ(), data.getYaw(), data.getPitch());
+        }
+    }
+
+    @Inject(
+            method = "respawnPlayer",
+            at = @At("RETURN")
+    )
+    public void kibu$afterRespawn(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir) {
+        ServerPlayerEntity player = cir.getReturnValue();
+
+        var data = new PlayerSpawnLocationCallback.LocationData(player, false, player.getServerWorld(),
                 player.getPos(), player.getYaw(), player.getPitch());
 
         PlayerSpawnLocationCallback.HOOK.invoker().onSpawn(data);

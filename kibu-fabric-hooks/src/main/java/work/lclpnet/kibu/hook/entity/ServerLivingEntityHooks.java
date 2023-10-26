@@ -1,8 +1,6 @@
 package work.lclpnet.kibu.hook.entity;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -33,7 +31,7 @@ public class ServerLivingEntityHooks {
                 return true;
             });
 
-    public static final Event<ServerLivingEntityEvents.AfterDeath> AFTER_DEATH = EventFactory.createArrayBacked(ServerLivingEntityEvents.AfterDeath.class,
+    public static final Hook<ServerLivingEntityEvents.AfterDeath> AFTER_DEATH = HookFactory.createArrayBacked(ServerLivingEntityEvents.AfterDeath.class,
             callbacks -> (entity, damageSource) -> {
                 for (ServerLivingEntityEvents.AfterDeath callback : callbacks) {
                     callback.afterDeath(entity, damageSource);

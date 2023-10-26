@@ -1,8 +1,6 @@
 package work.lclpnet.kibu.hook.entity;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -18,7 +16,7 @@ public class ServerPlayerHooks {
                 }
             });
 
-    public static final Event<ServerPlayerEvents.AfterRespawn> AFTER_RESPAWN = EventFactory.createArrayBacked(ServerPlayerEvents.AfterRespawn.class,
+    public static final Hook<ServerPlayerEvents.AfterRespawn> AFTER_RESPAWN = HookFactory.createArrayBacked(ServerPlayerEvents.AfterRespawn.class,
             callbacks -> (oldPlayer, newPlayer, alive) -> {
                 for (ServerPlayerEvents.AfterRespawn callback : callbacks) {
                     callback.afterRespawn(oldPlayer, newPlayer, alive);

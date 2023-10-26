@@ -9,6 +9,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.UserCache;
+import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.hook.player.PlayerConnectionHooks;
+import work.lclpnet.kibu.hook.player.PlayerSpawnLocationCallback;
 
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
@@ -66,5 +68,21 @@ public abstract class PlayerManagerMixin {
         }
 
         PlayerConnectionHooks.JOIN.invoker().act(player);
+    }
+
+    @Inject(
+            method = "onPlayerConnect",
+            at = @At("TAIL")
+    )
+    public void kibu$afterConnected(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+        var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.getServerWorld(),
+                player.getPos(), player.getYaw(), player.getPitch());
+
+        PlayerSpawnLocationCallback.HOOK.invoker().onSpawn(data);
+
+        if (data.isDirty()) {
+            Vec3d pos = data.getPosition();
+            player.teleport(data.getWorld(), pos.getX(), pos.getY(), pos.getZ(), data.getYaw(), data.getPitch());
+        }
     }
 }

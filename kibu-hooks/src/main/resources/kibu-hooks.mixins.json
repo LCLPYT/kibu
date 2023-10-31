@@ -11,6 +11,7 @@
     "AbstractSignBlockMixin",
     "BedBlockMixin",
     "BlockItemMixin",
+    "BlockMixin",
     "BucketItemMixin",
     "CandleBlockMixin",
     "CauldronBlockMixin",

@@ -3,6 +3,7 @@ package work.lclpnet.kibu.hook.world;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import work.lclpnet.kibu.hook.Hook;
@@ -93,6 +94,26 @@ public class WorldPhysicsHooks {
         return cancelled;
     });
 
+    public static final Hook<TileDropHook> BLOCK_ITEM_DROP = HookFactory.createArrayBacked(TileDropHook.class, callbacks -> (world, pos, stack) -> {
+        boolean cancelled = false;
+
+        for (var callback : callbacks)
+            if (callback.onTileDrop(world, pos, stack))
+                cancelled = true;
+
+        return cancelled;
+    });
+
+    public static final Hook<TileDropXpHook> BLOCK_XP_DROP = HookFactory.createArrayBacked(TileDropXpHook.class, callbacks -> (world, pos, experience) -> {
+        boolean cancelled = false;
+
+        for (var callback : callbacks)
+            if (callback.onTileDropExperience(world, pos, experience))
+                cancelled = true;
+
+        return cancelled;
+    });
+
     public interface ExplosionHook {
         boolean onExplode(Entity exploder);
     }
@@ -111,5 +132,13 @@ public class WorldPhysicsHooks {
 
     public interface BlockStateChangeHook {
         boolean onChange(World world, BlockPos pos, BlockState newState);
+    }
+
+    public interface TileDropHook {
+        boolean onTileDrop(World world, BlockPos pos, ItemStack stack);
+    }
+
+    public interface TileDropXpHook {
+        boolean onTileDropExperience(World world, BlockPos pos, int xp);
     }
 }

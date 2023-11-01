@@ -1,7 +1,11 @@
 package work.lclpnet.kibu.hook.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
@@ -11,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import work.lclpnet.kibu.hook.type.CancellableExplosion;
+import work.lclpnet.kibu.hook.world.BlockBreakParticleCallback;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 
 @Mixin(World.class)
@@ -31,5 +36,20 @@ public class WorldMixin {
 
         ((CancellableExplosion) explosion).kibu$setCancelled(true);
         cir.setReturnValue(explosion);
+    }
+
+    @WrapOperation(
+            method = "breakBlock",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/World;syncWorldEvent(ILnet/minecraft/util/math/BlockPos;I)V"
+            )
+    )
+    public void kibu$onBreakBlockParticles(World world, int eventId, BlockPos pos, int rawId, Operation<Void> original) {
+        BlockState state = world.getBlockState(pos);
+
+        if (BlockBreakParticleCallback.HOOK.invoker().onSpawnParticles(world, pos, state)) return;
+
+        original.call(world, eventId, pos, rawId);
     }
 }

@@ -8,6 +8,10 @@ moduleDependencies(project, [
         'kibu-hook-api'
 ])
 
+dependencies {
+    modImplementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${rootProject.mixin_extras_version}"))
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {

@@ -1,6 +1,8 @@
 package work.lclpnet.kibu.hook.mixin;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -11,6 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import work.lclpnet.kibu.hook.world.BlockBreakParticleCallback;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 
 @Mixin(Block.class)
@@ -58,6 +61,17 @@ public class BlockMixin {
     )
     public void kibu$onTileXpDrop(ServerWorld world, BlockPos pos, int size, CallbackInfo ci) {
         if (WorldPhysicsHooks.BLOCK_XP_DROP.invoker().onTileDropExperience(world, pos, size)) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(
+            method = "spawnBreakParticles",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public void kibu$onSpawnBreakParticles(World world, PlayerEntity player, BlockPos pos, BlockState state, CallbackInfo ci) {
+        if (BlockBreakParticleCallback.HOOK.invoker().onSpawnParticles(world, pos, state)) {
             ci.cancel();
         }
     }

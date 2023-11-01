@@ -27,7 +27,8 @@
 		"minecraft": "~1.20",
 		"java": ">=17",
 		"fabric-api": "*",
-		"kibu-hook-api": "*"
+		"kibu-hook-api": "*",
+		"com_github_llamalad7_mixinextras": ">=0.2.0"
 	},
 	"suggests": {},
 	"custom": {

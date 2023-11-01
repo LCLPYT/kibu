@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.schematic.sponge;
 
 import work.lclpnet.kibu.jnbt.CompoundTag;
-import work.lclpnet.kibu.mc.BlockPos;
-import work.lclpnet.kibu.mc.BlockState;
 import work.lclpnet.kibu.mc.BlockStateAdapter;
+import work.lclpnet.kibu.mc.KibuBlockPos;
+import work.lclpnet.kibu.mc.KibuBlockState;
 import work.lclpnet.kibu.schematic.api.SchematicDeserializer;
 import work.lclpnet.kibu.schematic.io.VarIntReader;
 import work.lclpnet.kibu.structure.BlockStructure;
@@ -32,7 +32,7 @@ class DeserializerV2 implements SchematicDeserializer {
 
         // parse palette
         final CompoundTag paletteTag = nbt.getCompound(PALETTE);
-        final Map<Integer, BlockState> palette = new HashMap<>();
+        final Map<Integer, KibuBlockState> palette = new HashMap<>();
 
         for (var blockString : paletteTag.keySet()) {
             var blockState = blockStateAdapter.getBlockState(blockString);
@@ -61,7 +61,7 @@ class DeserializerV2 implements SchematicDeserializer {
             int z = (posIdx % (width * length)) / width;
             int x = (posIdx % (width * length)) % width;
 
-            var worldPos = new BlockPos(x + offset[0], y + offset[1], z + offset[2]);
+            var worldPos = new KibuBlockPos(x + offset[0], y + offset[1], z + offset[2]);
             container.setBlockState(worldPos, state);
 
             // TODO read block entity, if there is one

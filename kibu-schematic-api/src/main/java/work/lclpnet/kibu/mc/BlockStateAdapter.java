@@ -5,5 +5,5 @@ import javax.annotation.Nullable;
 public interface BlockStateAdapter {
 
     @Nullable
-    BlockState getBlockState(String string);
+    KibuBlockState getBlockState(String string);
 }

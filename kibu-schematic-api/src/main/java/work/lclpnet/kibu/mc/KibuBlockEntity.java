@@ -2,7 +2,7 @@ package work.lclpnet.kibu.mc;
 
 import work.lclpnet.kibu.jnbt.CompoundTag;
 
-public interface BlockEntity {
+public interface KibuBlockEntity {
 
     CompoundTag createNbt();
 }

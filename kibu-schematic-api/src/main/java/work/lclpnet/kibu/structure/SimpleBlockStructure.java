@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.structure;
 
-import work.lclpnet.kibu.mc.BlockEntity;
-import work.lclpnet.kibu.mc.BlockPos;
-import work.lclpnet.kibu.mc.BlockState;
-import work.lclpnet.kibu.mc.BuiltinBlockState;
+import work.lclpnet.kibu.mc.BuiltinKibuBlockState;
+import work.lclpnet.kibu.mc.KibuBlockEntity;
+import work.lclpnet.kibu.mc.KibuBlockPos;
+import work.lclpnet.kibu.mc.KibuBlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,17 +14,17 @@ import java.util.Objects;
 
 public class SimpleBlockStructure implements BlockStructure {
 
-    private final Map<BlockPos, BlockState> blocks = new HashMap<>();
+    private final Map<KibuBlockPos, KibuBlockState> blocks = new HashMap<>();
     private final int dataVersion;
-    private final transient BlockPos.Mutable minPos = new BlockPos.Mutable(Integer.MAX_VALUE);
-    private final transient BlockPos.Mutable maxPos = new BlockPos.Mutable(Integer.MIN_VALUE);
+    private final transient KibuBlockPos.Mutable minPos = new KibuBlockPos.Mutable(Integer.MAX_VALUE);
+    private final transient KibuBlockPos.Mutable maxPos = new KibuBlockPos.Mutable(Integer.MIN_VALUE);
 
     public SimpleBlockStructure(int dataVersion) {
         this.dataVersion = dataVersion;
     }
 
     @Override
-    public void setBlockState(BlockPos pos, @Nullable BlockState state) {
+    public void setBlockState(KibuBlockPos pos, @Nullable KibuBlockState state) {
         synchronized (blocks) {
             if (state == null || state.isAir()) {
                 if (blocks.remove(pos) == null) return;  // nothing removed
@@ -41,13 +41,13 @@ public class SimpleBlockStructure implements BlockStructure {
                 return;
             }
 
-            blocks.put(new BlockPos(pos), state);
+            blocks.put(new KibuBlockPos(pos), state);
 
             updateBounds(pos);
         }
     }
 
-    private void updateBounds(BlockPos pos) {
+    private void updateBounds(KibuBlockPos pos) {
         minPos.set(
                 Math.min(minPos.getX(), pos.getX()),
                 Math.min(minPos.getY(), pos.getY()),
@@ -63,22 +63,22 @@ public class SimpleBlockStructure implements BlockStructure {
 
     @Nonnull
     @Override
-    public BlockState getBlockState(BlockPos pos) {
+    public KibuBlockState getBlockState(KibuBlockPos pos) {
         if (!isWithinBox(pos)) {
-            return BuiltinBlockState.AIR;
+            return BuiltinKibuBlockState.AIR;
         }
 
-        BlockState blockState;
+        KibuBlockState kibuBlockState;
 
         synchronized (blocks) {
-            blockState = blocks.get(pos);
+            kibuBlockState = blocks.get(pos);
         }
 
-        return blockState == null ? BuiltinBlockState.AIR : blockState;
+        return kibuBlockState == null ? BuiltinKibuBlockState.AIR : kibuBlockState;
     }
 
     @Override
-    public @Nullable BlockEntity getBlockEntity(BlockPos pos) {
+    public @Nullable KibuBlockEntity getBlockEntity(KibuBlockPos pos) {
         return null;  // block entities are not supported yet
     }
 
@@ -88,8 +88,8 @@ public class SimpleBlockStructure implements BlockStructure {
     }
 
     @Override
-    public Iterable<BlockPos> getBlockPositions() {
-        Iterable<BlockPos> copy;
+    public Iterable<KibuBlockPos> getBlockPositions() {
+        Iterable<KibuBlockPos> copy;
 
         synchronized (blocks) {
             copy = new HashSet<>(blocks.keySet());
@@ -106,10 +106,10 @@ public class SimpleBlockStructure implements BlockStructure {
     }
 
     @Override
-    public BlockPos getOrigin() {
+    public KibuBlockPos getOrigin() {
         synchronized (blocks) {
-            if (blocks.isEmpty()) return new BlockPos(0);
-            return new BlockPos(minPos);
+            if (blocks.isEmpty()) return new KibuBlockPos(0);
+            return new KibuBlockPos(minPos);
         }
     }
 
@@ -143,7 +143,7 @@ public class SimpleBlockStructure implements BlockStructure {
         if (o == null || getClass() != o.getClass()) return false;
         SimpleBlockStructure that = (SimpleBlockStructure) o;
 
-        Map<BlockPos, BlockState> thatBlocks;
+        Map<KibuBlockPos, KibuBlockState> thatBlocks;
         synchronized (that.blocks) {
             thatBlocks = that.blocks;
         }
@@ -160,7 +160,7 @@ public class SimpleBlockStructure implements BlockStructure {
         }
     }
 
-    public boolean isWithinBox(BlockPos pos) {
+    public boolean isWithinBox(KibuBlockPos pos) {
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();
@@ -176,7 +176,7 @@ public class SimpleBlockStructure implements BlockStructure {
         }
     }
 
-    private boolean isOnSurfaceInternal(BlockPos pos) {
+    private boolean isOnSurfaceInternal(KibuBlockPos pos) {
         // synchronization on blocks is done by the caller
         if ((minPos.getX() > maxPos.getX()) || (minPos.getY() > maxPos.getY()) || (minPos.getZ() > maxPos.getZ())) {
             return false;
@@ -191,7 +191,7 @@ public class SimpleBlockStructure implements BlockStructure {
                 || (z == minPos.getZ() || z == maxPos.getZ());
     }
 
-    public boolean isOnSurface(BlockPos pos) {
+    public boolean isOnSurface(KibuBlockPos pos) {
         synchronized (blocks) {
             return isOnSurfaceInternal(pos);
         }

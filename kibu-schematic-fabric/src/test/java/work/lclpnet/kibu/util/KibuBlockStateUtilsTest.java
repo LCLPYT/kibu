@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-class BlockStateUtilsTest {
+class KibuBlockStateUtilsTest {
 
     @BeforeAll
     public static void setup() {

@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.mc;
 
-public interface BlockState {
+public interface KibuBlockState {
 
     String getAsString();
 

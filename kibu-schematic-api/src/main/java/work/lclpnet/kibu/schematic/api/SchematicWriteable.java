@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.schematic.api;
 
-import work.lclpnet.kibu.mc.BlockEntity;
-import work.lclpnet.kibu.mc.BlockPos;
-import work.lclpnet.kibu.mc.BlockState;
+import work.lclpnet.kibu.mc.KibuBlockEntity;
+import work.lclpnet.kibu.mc.KibuBlockPos;
+import work.lclpnet.kibu.mc.KibuBlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,10 +10,10 @@ import javax.annotation.Nullable;
 public interface SchematicWriteable extends Cuboid {
 
     @Nonnull
-    BlockState getBlockState(BlockPos pos);
+    KibuBlockState getBlockState(KibuBlockPos pos);
 
     @Nullable
-    BlockEntity getBlockEntity(BlockPos pos);
+    KibuBlockEntity getBlockEntity(KibuBlockPos pos);
 
     int getDataVersion();
 }

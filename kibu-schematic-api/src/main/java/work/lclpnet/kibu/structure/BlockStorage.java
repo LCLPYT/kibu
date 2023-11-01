@@ -1,15 +1,15 @@
 package work.lclpnet.kibu.structure;
 
-import work.lclpnet.kibu.mc.BlockPos;
-import work.lclpnet.kibu.mc.BlockState;
+import work.lclpnet.kibu.mc.KibuBlockPos;
+import work.lclpnet.kibu.mc.KibuBlockState;
 
 public interface BlockStorage {
 
-    void setBlockState(BlockPos pos, BlockState state);
+    void setBlockState(KibuBlockPos pos, KibuBlockState state);
 
-    BlockState getBlockState(BlockPos pos);
+    KibuBlockState getBlockState(KibuBlockPos pos);
 
-    Iterable<BlockPos> getBlockPositions();
+    Iterable<KibuBlockPos> getBlockPositions();
 
     int getBlockCount();
 

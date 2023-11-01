@@ -5,25 +5,25 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class BlockPos {
+public class KibuBlockPos {
 
     private int x, y, z;
 
-    public BlockPos() {
+    public KibuBlockPos() {
         this(0);
     }
 
-    public BlockPos(int v) {
+    public KibuBlockPos(int v) {
         this(v, v, v);
     }
 
-    public BlockPos(int x, int y, int z) {
+    public KibuBlockPos(int x, int y, int z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public BlockPos(BlockPos other) {
+    public KibuBlockPos(KibuBlockPos other) {
         this.x = other.x;
         this.y = other.y;
         this.z = other.z;
@@ -49,8 +49,8 @@ public class BlockPos {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BlockPos blockPos)) return false;
-        return x == blockPos.x && y == blockPos.y && z == blockPos.z;
+        if (!(o instanceof KibuBlockPos kibuBlockPos)) return false;
+        return x == kibuBlockPos.x && y == kibuBlockPos.y && z == kibuBlockPos.z;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class BlockPos {
         return Objects.hash(x, y, z);
     }
 
-    public static class Mutable extends BlockPos {
+    public static class Mutable extends KibuBlockPos {
 
         public Mutable() {
             super();
@@ -72,7 +72,7 @@ public class BlockPos {
             super(x, y, z);
         }
 
-        public Mutable(BlockPos pos) {
+        public Mutable(KibuBlockPos pos) {
             super(pos);
         }
 
@@ -87,22 +87,22 @@ public class BlockPos {
         }
     }
 
-    public static Stream<BlockPos> streamCuboid(BlockPos from, BlockPos to) {
+    public static Stream<KibuBlockPos> streamCuboid(KibuBlockPos from, KibuBlockPos to) {
         return StreamSupport.stream(iterateCuboid(from, to).spliterator(), false);
     }
 
-    public static Iterable<BlockPos> iterateCuboid(BlockPos from, BlockPos to) {
+    public static Iterable<KibuBlockPos> iterateCuboid(KibuBlockPos from, KibuBlockPos to) {
         return () -> cuboidIterator(from, to);
     }
 
-    public static Iterator<BlockPos> cuboidIterator(BlockPos from, BlockPos to) {
-        final var min = new BlockPos(
+    public static Iterator<KibuBlockPos> cuboidIterator(KibuBlockPos from, KibuBlockPos to) {
+        final var min = new KibuBlockPos(
                 Math.min(from.x, to.x),
                 Math.min(from.y, to.y),
                 Math.min(from.z, to.z)
         );
 
-        final var max = new BlockPos(
+        final var max = new KibuBlockPos(
                 Math.max(from.x, to.x),
                 Math.max(from.y, to.y),
                 Math.max(from.z, to.z)
@@ -115,16 +115,16 @@ public class BlockPos {
         return new CuboidPosIterator(min, width, length, height);
     }
 
-    private static class CuboidPosIterator implements Iterator<BlockPos> {
+    private static class CuboidPosIterator implements Iterator<KibuBlockPos> {
 
-        private final BlockPos offset;
+        private final KibuBlockPos offset;
         private final int width;
         private final int length;
         private final int maxIndex;
-        private final Mutable pos = new BlockPos.Mutable();
+        private final Mutable pos = new KibuBlockPos.Mutable();
         private int i = 0;
 
-        private CuboidPosIterator(BlockPos offset, int width, int height, int length) {
+        private CuboidPosIterator(KibuBlockPos offset, int width, int height, int length) {
             this.offset = Objects.requireNonNull(offset);
             this.width = width;
             this.length = length;
@@ -145,7 +145,7 @@ public class BlockPos {
         }
 
         @Override
-        public BlockPos next() {
+        public KibuBlockPos next() {
             this.advance();
             i++;
 

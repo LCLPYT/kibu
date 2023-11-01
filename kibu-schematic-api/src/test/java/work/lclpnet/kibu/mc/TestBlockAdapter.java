@@ -6,11 +6,11 @@ import java.util.Map;
 
 public class TestBlockAdapter implements BlockStateAdapter {
 
-    private final Map<String, BlockState> records = new HashMap<>();
+    private final Map<String, KibuBlockState> records = new HashMap<>();
 
     @Nullable
     @Override
-    public BlockState getBlockState(String string) {
-        return records.computeIfAbsent(string, BuiltinBlockState::new);
+    public KibuBlockState getBlockState(String string) {
+        return records.computeIfAbsent(string, BuiltinKibuBlockState::new);
     }
 }

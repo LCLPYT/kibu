@@ -8,12 +8,12 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BlockPosTest {
+class KibuBlockPosTest {
 
     @Test
     void testCuboidIterator() {
-        BlockPos start = new BlockPos(0);
-        BlockPos end = new BlockPos(2);
+        KibuBlockPos start = new KibuBlockPos(0);
+        KibuBlockPos end = new KibuBlockPos(2);
 
         int width = end.getX() - start.getX() + 1;
         int height = end.getY() - start.getY() + 1;
@@ -22,10 +22,10 @@ class BlockPosTest {
         boolean[] checks = new boolean[width * height * length];
         Arrays.fill(checks, false);
 
-        var iterator = BlockPos.cuboidIterator(start, end);
+        var iterator = KibuBlockPos.cuboidIterator(start, end);
 
         while (iterator.hasNext()) {
-            BlockPos pos = iterator.next();
+            KibuBlockPos pos = iterator.next();
             int x = pos.getX();
             int y = pos.getY();
             int z = pos.getZ();
@@ -40,8 +40,8 @@ class BlockPosTest {
 
     @Test
     public void mutable_immutable_equal() {
-        var immutable = new BlockPos(1);
-        var mutable = new BlockPos.Mutable(1);
+        var immutable = new KibuBlockPos(1);
+        var mutable = new KibuBlockPos.Mutable(1);
 
         assertEquals(immutable, mutable);
         assertEquals(mutable, immutable);

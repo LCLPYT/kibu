@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.structure;
 
 import org.junit.jupiter.api.Test;
-import work.lclpnet.kibu.mc.BlockPos;
-import work.lclpnet.kibu.mc.BuiltinBlockState;
+import work.lclpnet.kibu.mc.BuiltinKibuBlockState;
+import work.lclpnet.kibu.mc.KibuBlockPos;
 
 import java.util.stream.Collectors;
 
@@ -13,51 +13,51 @@ class SimpleBlockStructureTest {
     @Test
     void isWithinBox_insideEven_true() {
         var struct = new SimpleBlockStructure(0);
-        struct.setBlockState(new BlockPos(0), new BuiltinBlockState("foo"));
-        struct.setBlockState(new BlockPos(1), new BuiltinBlockState("bar"));
+        struct.setBlockState(new KibuBlockPos(0), new BuiltinKibuBlockState("foo"));
+        struct.setBlockState(new KibuBlockPos(1), new BuiltinKibuBlockState("bar"));
 
-        assertAllWithin(struct, new BlockPos(0), new BlockPos(1));
-        assertFalse(struct.isWithinBox(new BlockPos(2)));
-        assertFalse(struct.isWithinBox(new BlockPos(-1)));
+        assertAllWithin(struct, new KibuBlockPos(0), new KibuBlockPos(1));
+        assertFalse(struct.isWithinBox(new KibuBlockPos(2)));
+        assertFalse(struct.isWithinBox(new KibuBlockPos(-1)));
     }
 
     @Test
     void isWithinBox_insideOdd_true() {
         var struct = new SimpleBlockStructure(0);
-        struct.setBlockState(new BlockPos(0), new BuiltinBlockState("foo"));
-        struct.setBlockState(new BlockPos(1), new BuiltinBlockState("bar"));
-        struct.setBlockState(new BlockPos(-1), new BuiltinBlockState("baz"));
+        struct.setBlockState(new KibuBlockPos(0), new BuiltinKibuBlockState("foo"));
+        struct.setBlockState(new KibuBlockPos(1), new BuiltinKibuBlockState("bar"));
+        struct.setBlockState(new KibuBlockPos(-1), new BuiltinKibuBlockState("baz"));
 
-        assertAllWithin(struct, new BlockPos(-1), new BlockPos(1));
-        assertFalse(struct.isWithinBox(new BlockPos(2)));
-        assertFalse(struct.isWithinBox(new BlockPos(-2)));
+        assertAllWithin(struct, new KibuBlockPos(-1), new KibuBlockPos(1));
+        assertFalse(struct.isWithinBox(new KibuBlockPos(2)));
+        assertFalse(struct.isWithinBox(new KibuBlockPos(-2)));
     }
 
-    private void assertAllWithin(SimpleBlockStructure structure, BlockPos from, BlockPos to) {
-        assertTrue(BlockPos.streamCuboid(from, to).allMatch(structure::isWithinBox));
+    private void assertAllWithin(SimpleBlockStructure structure, KibuBlockPos from, KibuBlockPos to) {
+        assertTrue(KibuBlockPos.streamCuboid(from, to).allMatch(structure::isWithinBox));
     }
 
     @Test
     void isOnSurface_surfaceEvent_correct() {
-        BlockPos start = new BlockPos(0);
-        BlockPos end = new BlockPos(3);
+        KibuBlockPos start = new KibuBlockPos(0);
+        KibuBlockPos end = new KibuBlockPos(3);
 
         var struct = new SimpleBlockStructure(0);
-        struct.setBlockState(start, new BuiltinBlockState("foo"));
-        struct.setBlockState(end, new BuiltinBlockState("bar"));
+        struct.setBlockState(start, new BuiltinKibuBlockState("foo"));
+        struct.setBlockState(end, new BuiltinKibuBlockState("bar"));
 
-        assertTrue(struct.isOnSurface(new BlockPos(0, 2, 0)));
-        assertTrue(struct.isOnSurface(new BlockPos(1, 0, 3)));
-        assertTrue(struct.isOnSurface(new BlockPos(0, 2, 1)));
+        assertTrue(struct.isOnSurface(new KibuBlockPos(0, 2, 0)));
+        assertTrue(struct.isOnSurface(new KibuBlockPos(1, 0, 3)));
+        assertTrue(struct.isOnSurface(new KibuBlockPos(0, 2, 1)));
 
-        assertFalse(struct.isOnSurface(new BlockPos(1, 2, 2)));
-        assertFalse(struct.isOnSurface(new BlockPos(2, 1, 1)));
+        assertFalse(struct.isOnSurface(new KibuBlockPos(1, 2, 2)));
+        assertFalse(struct.isOnSurface(new KibuBlockPos(2, 1, 1)));
 
-        var inner = BlockPos.streamCuboid(new BlockPos(1), new BlockPos(2))
-                .map(BlockPos::new)  // clone iteration position object
+        var inner = KibuBlockPos.streamCuboid(new KibuBlockPos(1), new KibuBlockPos(2))
+                .map(KibuBlockPos::new)  // clone iteration position object
                 .collect(Collectors.toUnmodifiableSet());
 
-        BlockPos.streamCuboid(start, end)
+        KibuBlockPos.streamCuboid(start, end)
                 .forEach(pos -> assertNotEquals(inner.contains(pos), struct.isOnSurface(pos)));
     }
 
@@ -73,22 +73,22 @@ class SimpleBlockStructureTest {
     void setBlockPos_sizeIncrease_correct() {
         var struct = new SimpleBlockStructure(0);
 
-        struct.setBlockState(new BlockPos(0), new BuiltinBlockState("foo"));
+        struct.setBlockState(new KibuBlockPos(0), new BuiltinKibuBlockState("foo"));
         assertEquals(1, struct.getWidth());
         assertEquals(1, struct.getHeight());
         assertEquals(1, struct.getLength());
 
-        struct.setBlockState(new BlockPos(0, 1, 0), new BuiltinBlockState("bar"));
+        struct.setBlockState(new KibuBlockPos(0, 1, 0), new BuiltinKibuBlockState("bar"));
         assertEquals(1, struct.getWidth());
         assertEquals(2, struct.getHeight());
         assertEquals(1, struct.getLength());
 
-        struct.setBlockState(new BlockPos(1, 0, 0), new BuiltinBlockState("baz"));
+        struct.setBlockState(new KibuBlockPos(1, 0, 0), new BuiltinKibuBlockState("baz"));
         assertEquals(2, struct.getWidth());
         assertEquals(2, struct.getHeight());
         assertEquals(1, struct.getLength());
 
-        struct.setBlockState(new BlockPos(0, 0, 1), new BuiltinBlockState("idk"));
+        struct.setBlockState(new KibuBlockPos(0, 0, 1), new BuiltinKibuBlockState("idk"));
         assertEquals(2, struct.getWidth());
         assertEquals(2, struct.getHeight());
         assertEquals(2, struct.getLength());
@@ -98,18 +98,18 @@ class SimpleBlockStructureTest {
     void setBlockPos_sizeDecrease_correct() {
         var struct = new SimpleBlockStructure(0);
 
-        struct.setBlockState(new BlockPos(0, 1, 0), new BuiltinBlockState("bar"));
-        struct.setBlockState(new BlockPos(1, 1, 0), new BuiltinBlockState("baz"));
+        struct.setBlockState(new KibuBlockPos(0, 1, 0), new BuiltinKibuBlockState("bar"));
+        struct.setBlockState(new KibuBlockPos(1, 1, 0), new BuiltinKibuBlockState("baz"));
         assertEquals(2, struct.getWidth());
         assertEquals(1, struct.getHeight());
         assertEquals(1, struct.getLength());
 
-        struct.setBlockState(new BlockPos(0, 1, 0), null);
+        struct.setBlockState(new KibuBlockPos(0, 1, 0), null);
         assertEquals(1, struct.getWidth());
         assertEquals(1, struct.getHeight());
         assertEquals(1, struct.getLength());
 
-        struct.setBlockState(new BlockPos(1, 1, 0), BuiltinBlockState.AIR);
+        struct.setBlockState(new KibuBlockPos(1, 1, 0), BuiltinKibuBlockState.AIR);
         assertEquals(0, struct.getWidth());
         assertEquals(0, struct.getHeight());
         assertEquals(0, struct.getLength());
@@ -125,13 +125,13 @@ class SimpleBlockStructureTest {
     void getBlockCount_filled_correct() {
         var struct = new SimpleBlockStructure(0);
 
-        struct.setBlockState(new BlockPos(2), new BuiltinBlockState("foo"));
+        struct.setBlockState(new KibuBlockPos(2), new BuiltinKibuBlockState("foo"));
         assertEquals(1, struct.getBlockCount());
 
-        struct.setBlockState(new BlockPos(2), new BuiltinBlockState("bar"));
+        struct.setBlockState(new KibuBlockPos(2), new BuiltinKibuBlockState("bar"));
         assertEquals(1, struct.getBlockCount());
 
-        struct.setBlockState(new BlockPos(1), new BuiltinBlockState("foo"));
+        struct.setBlockState(new KibuBlockPos(1), new BuiltinKibuBlockState("foo"));
         assertEquals(2, struct.getBlockCount());
     }
 
@@ -144,7 +144,7 @@ class SimpleBlockStructureTest {
     @Test
     void isEmpty_notEmpty_false() {
         var struct = new SimpleBlockStructure(0);
-        struct.setBlockState(new BlockPos(2), new BuiltinBlockState("foo"));
+        struct.setBlockState(new KibuBlockPos(2), new BuiltinKibuBlockState("foo"));
         assertFalse(struct.isEmpty());
     }
 }

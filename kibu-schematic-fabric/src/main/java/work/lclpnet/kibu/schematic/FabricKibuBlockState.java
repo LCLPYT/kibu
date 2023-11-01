@@ -1,16 +1,16 @@
 package work.lclpnet.kibu.schematic;
 
-import work.lclpnet.kibu.mc.BlockState;
+import work.lclpnet.kibu.mc.KibuBlockState;
 import work.lclpnet.kibu.util.BlockStateUtils;
 
 import javax.annotation.Nonnull;
 
-public class FabricBlockState implements BlockState {
+public class FabricKibuBlockState implements KibuBlockState {
 
     private transient final net.minecraft.block.BlockState state;
     private volatile String string = null;
 
-    public FabricBlockState(net.minecraft.block.BlockState state) {
+    public FabricKibuBlockState(net.minecraft.block.BlockState state) {
         this.state = state;
     }
 

@@ -2,7 +2,7 @@ package work.lclpnet.kibu.schematic.sponge;
 
 import work.lclpnet.kibu.jnbt.CompoundTag;
 import work.lclpnet.kibu.jnbt.ListTag;
-import work.lclpnet.kibu.mc.BlockPos;
+import work.lclpnet.kibu.mc.KibuBlockPos;
 import work.lclpnet.kibu.schematic.api.SchematicSerializer;
 import work.lclpnet.kibu.schematic.api.SchematicWriteable;
 
@@ -25,7 +25,7 @@ class SerializerV2 implements SchematicSerializer {
         final var dataBuffer = new ByteArrayOutputStream(width * height * length);
         final var palette = new HashMap<String, Integer>();
         final var blockEntities = new ArrayList<CompoundTag>();
-        final var pos = new BlockPos.Mutable();
+        final var pos = new KibuBlockPos.Mutable();
 
         int nextId = 0;
 

@@ -5,12 +5,12 @@ import net.minecraft.SharedConstants;
 import net.minecraft.block.Blocks;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import work.lclpnet.kibu.mc.BlockState;
+import work.lclpnet.kibu.mc.KibuBlockState;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FabricBlockStateAdapterTest {
+class FabricKibuBlockStateAdapterTest {
 
     @BeforeAll
     public static void setup() {
@@ -22,14 +22,14 @@ class FabricBlockStateAdapterTest {
     void testAdapt() {
         var adapter = FabricBlockStateAdapter.getInstance();
 
-        BlockState state = adapter.getBlockState("minecraft:dirt");
-        assertTrue(state instanceof FabricBlockState);
-        assertEquals(Blocks.DIRT.getDefaultState(), ((FabricBlockState) state).getState());
+        KibuBlockState state = adapter.getBlockState("minecraft:dirt");
+        assertTrue(state instanceof FabricKibuBlockState);
+        assertEquals(Blocks.DIRT.getDefaultState(), ((FabricKibuBlockState) state).getState());
     }
 
     @Test
     void testRevert() {
         var adapter = FabricBlockStateAdapter.getInstance();
-        assertEquals(Blocks.DIRT.getDefaultState(), adapter.revert(new FabricBlockState(Blocks.DIRT.getDefaultState())));
+        assertEquals(Blocks.DIRT.getDefaultState(), adapter.revert(new FabricKibuBlockState(Blocks.DIRT.getDefaultState())));
     }
 }

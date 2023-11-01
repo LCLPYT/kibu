@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.2.7' apply false
     id 'maven-publish'
-    id 'gradle-build-utils' version '1.5.2'
+    id 'gradle-build-utils' version '1.6.0'
 }
 
 Properties props = buildUtils.loadProperties('publish.properties')
@@ -82,7 +82,7 @@ allprojects {
     }
 
     publishing {
-        buildUtils.setupPublishRepository(it, props)
+        buildUtils.setupPublishRepository(repositories, props)
     }
 }
 
@@ -199,6 +199,34 @@ remapJar {
                 nestedJars.from project(it.path).tasks.named("jar")
             }
         }
+    }
+}
+
+sourceSets {
+    testmod {
+        compileClasspath += main.compileClasspath + main.getOutput()
+        runtimeClasspath += main.runtimeClasspath + main.getOutput()
+    }
+}
+
+loom {
+    runs {
+        named('server') {
+            source 'testmod'
+        }
+
+        named('client') {
+            source 'testmod'
+        }
+    }
+}
+
+processTestmodResources {
+    inputs.property "version", project.version
+    inputs.property "loader_version", project.loader_version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version, "loader_version": project.loader_version
     }
 }
 

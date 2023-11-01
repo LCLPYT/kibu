@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.hook.mixin;
 
+import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.network.packet.c2s.play.*;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.PlayerManager;
@@ -19,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import work.lclpnet.kibu.hook.player.PlayerConnectionHooks;
 import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 import work.lclpnet.kibu.hook.player.PlayerMoveCallback;
+import work.lclpnet.kibu.hook.player.PlayerToggleFlightCallback;
 import work.lclpnet.kibu.hook.util.PositionRotation;
 
 import java.util.Set;
@@ -274,5 +276,28 @@ public abstract class ServerPlayNetworkHandlerMixin {
         lastZ = z;
         lastYaw = yaw;
         lastPitch = pitch;
+    }
+
+    @Inject(
+            method = "onUpdatePlayerAbilities",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/network/packet/c2s/play/UpdatePlayerAbilitiesC2SPacket;isFlying()Z"
+            ),
+            cancellable = true
+    )
+    public void kibu$onToggleFlight(UpdatePlayerAbilitiesC2SPacket packet, CallbackInfo ci) {
+        PlayerAbilities abilities = player.getAbilities();
+
+        if (!abilities.allowFlying) return;
+
+        boolean fly = packet.isFlying();
+
+        if (abilities.flying == fly) return;
+
+        if (PlayerToggleFlightCallback.HOOK.invoker().onToggleFlight(player, fly)) {
+            ci.cancel();
+            player.sendAbilitiesUpdate();
+        }
     }
 }

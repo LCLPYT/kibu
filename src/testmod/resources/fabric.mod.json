@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "kibu-test-mod",
+  "version": "${version}",
+  "name": "Kibu Test Mod",
+  "description": "A modding library for FabricMC.",
+  "authors": [
+    "LCLP"
+  ],
+  "contact": {
+    "homepage": "https://github.com/LCLPYT/kibu",
+    "sources": "https://github.com/LCLPYT/kibu"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["work.lclpnet.test.KibuTestMod"]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "~1.20",
+    "java": ">=17",
+    "fabric-api": "*",
+    "kibu": "*"
+  },
+  "suggests": {},
+  "custom": {
+    "modmenu": {
+      "badges": ["library"]
+    }
+  }
+}

@@ -260,6 +260,7 @@ def getDeployUrl(Properties props) {
 
 static def getSubprojectVersion(Project project) {
     def version = project.getProperties()["${project.getName()}-version"]
+
     if (!version) {
         throw new IllegalStateException("Could not find version for project ${project.getName()}")
     }
@@ -269,9 +270,16 @@ static def getSubprojectVersion(Project project) {
 
     if (!project.ext.isMc) {
         return version + suffix
-    } else {
-        return version + "+" + project.minecraft_version + suffix
     }
+
+    def versionString = version.toString()
+    def snapshotSuffix = "-SNAPSHOT"
+
+    if (versionString.endsWith(snapshotSuffix)) {
+        return versionString.substring(0, versionString.length() - snapshotSuffix.length()) + "+" + project.minecraft_version + suffix + snapshotSuffix
+    }
+
+    return versionString + "+" + project.minecraft_version + suffix
 }
 
 static def configureNonLoomProject(Project project) {

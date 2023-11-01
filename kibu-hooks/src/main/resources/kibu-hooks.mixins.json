@@ -28,6 +28,7 @@
     "LecternBlockEntityMixin",
     "LecternScreenHandlerMixin",
     "LeveledCauldronBlockMixin",
+    "LivingEntityMixin",
     "PlayerEntityMixin",
     "PlayerInventoryMixin",
     "PlayerManagerMixin",

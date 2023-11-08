@@ -20,6 +20,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.player.PlayerDeathCallback;
+import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
@@ -54,6 +55,18 @@ public class KibuHooks implements ModInitializer {
             if (entity instanceof ServerPlayerEntity player) {
                 PlayerDeathCallback.HOOK.invoker().onDeath(player, damageSource);
             }
+        });
+
+        PlayerInventoryHooks.MODIFY_INVENTORY.register(event -> {
+            if (!event.isDropAction()) return false;
+
+            return PlayerInventoryHooks.DROP_ITEM.invoker().onDropItem(event.player(), event.slot());
+        });
+
+        PlayerInventoryHooks.MODIFIED_INVENTORY.register(event -> {
+            if (!event.isDropAction()) return;
+
+            PlayerInventoryHooks.DROPPED_ITEM.invoker().onDroppedItem(event.player(), event.slot());
         });
     }
 

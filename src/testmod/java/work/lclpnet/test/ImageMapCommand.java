@@ -1,6 +1,7 @@
 package work.lclpnet.test;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.item.FilledMapItem;
@@ -28,15 +29,17 @@ public class ImageMapCommand {
     public void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("kibu:imagemap")
                 .requires(s -> s.hasPermissionLevel(2))
-                .executes(this::giveMap));
+                .then(CommandManager.argument("name", StringArgumentType.string())
+                        .executes(this::giveMap)));
     }
 
     private int giveMap(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        String name = StringArgumentType.getString(ctx, "name");
         ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
 
         ctx.getSource().sendMessage(Text.literal("Generating image map..."));
 
-        readImage()
+        readImage(name)
                 .thenAccept(img -> processImage(player, img))
                 .exceptionally(throwable -> {
                     ctx.getSource().sendError(Text.literal("Failed to load image: " + throwable.getMessage()));
@@ -46,10 +49,10 @@ public class ImageMapCommand {
         return 1;
     }
 
-    private CompletableFuture<BufferedImage> readImage() {
+    private CompletableFuture<BufferedImage> readImage(String name) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                InputStream in = getClass().getClassLoader().getResourceAsStream("img.png");
+                InputStream in = getClass().getClassLoader().getResourceAsStream(name);
 
                 if (in == null) throw new FileNotFoundException();
 

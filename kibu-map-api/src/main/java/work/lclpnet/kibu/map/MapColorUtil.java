@@ -36,7 +36,7 @@ public class MapColorUtil {
             argb += Byte.toUnsignedInt(pixels[i + 2]) << 8;
             argb += Byte.toUnsignedInt(pixels[i + 3]) << 16;
         } else {
-            argb = 0xFF;
+            argb = 0xFF << 24;
             argb += Byte.toUnsignedInt(pixels[i]);
             argb += Byte.toUnsignedInt(pixels[i + 1]) << 8;
             argb += Byte.toUnsignedInt(pixels[i + 2]) << 16;
@@ -100,7 +100,7 @@ public class MapColorUtil {
         for (int i = 0, x = 0, y = 0; i + offset < pixels.length; i += elements) {
             int argb = getArgb(alpha, pixels, i);
 
-            data[y * width + x] = mapColor(argb);
+            data[y * width + x] = mapColor0(argb);
 
             if (++x == width) {
                 x = 0;

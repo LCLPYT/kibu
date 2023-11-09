@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-map-api",
+	"version": "${version}",
+	"name": "Kibu Map API",
+	"description": "API for interacting with filled map items.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-map-api/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [
+		"kibu-map-api.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "~1.20",
+		"java": ">=17"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

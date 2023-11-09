@@ -1,6 +1,7 @@
 package work.lclpnet.test;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
@@ -14,6 +15,12 @@ public class KibuTestMod implements ModInitializer {
     public void onInitialize() {
         doubleJump();
         preventHealing();
+        testCommands();
+    }
+
+    private void testCommands() {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment)
+                -> new ImageMapCommand().register(dispatcher));
     }
 
     private void preventHealing() {

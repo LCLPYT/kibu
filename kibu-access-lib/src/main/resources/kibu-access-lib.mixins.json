@@ -11,6 +11,7 @@
     "BlockDisplayEntityAccessor",
     "DisplayEntityAccessor",
     "EntityAccessor",
+    "FallingBlockEntityAccessor",
     "ItemDisplayEntityAccessor",
     "ServerPlayerEntityMixin",
     "TextDisplayEntityAccessor"

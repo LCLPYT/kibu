@@ -22,9 +22,20 @@ public class MapColorUtil {
 
             for (var brightness : brightnesses) {
                 int idx = Byte.toUnsignedInt(color.getRenderColorByte(brightness));
-                renderColors[idx] = color.getRenderColor(brightness);
+                int abgr = color.getRenderColor(brightness);
+
+                renderColors[idx] = abgr2argb(abgr);
             }
         }
+    }
+
+    public static int abgr2argb(int abgr) {
+        int r = abgr & 0xff;
+        int g = (abgr >> 8) & 0xff;
+        int b = (abgr >> 16) & 0xff;
+        int a = (abgr >> 24) & 0xff;
+
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     private static int getArgb(boolean alpha, byte[] pixels, int i) {
@@ -57,7 +68,8 @@ public class MapColorUtil {
         int xr = (x >> 16) & 0xFF, xg = (x >> 8) & 0xFF, xb = x & 0xFF;
         int yr = (y >> 16) & 0xFF, yg = (y >> 8) & 0xFF, yb = y & 0xFF;
 
-        // use weighted Euclidean distance from Bukkit
+        // use weighted Euclidean distance https://www.compuphase.com/cmetric.htm
+
         double rMean = (xr + yr) * 0.5;
         double r = xr - yr, g = xg - yg, b = xb - yb;
 
@@ -76,7 +88,12 @@ public class MapColorUtil {
         double best = Double.MAX_VALUE;
 
         for (int i = 4; i < renderColors.length; i++) {
-            double distance = colorDifference(argb, renderColors[i]);
+            int renderColor = renderColors[i];
+            int renderAlpha = (renderColor >> 24) & 0xFF;
+
+            if (renderAlpha < 128) continue;  // color would be invisible
+
+            double distance = colorDifference(argb, renderColor);
 
             if (distance < best) {
                 best = distance;

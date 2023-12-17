@@ -39,6 +39,7 @@
     "LivingEntityMixin",
     "MobEntityMixin",
     "PersistentProjectileEntityMixin",
+    "PlayerAdvancementHandlerMixin",
     "PlayerEntityMixin",
     "PlayerInventoryMixin",
     "PlayerManagerMixin",

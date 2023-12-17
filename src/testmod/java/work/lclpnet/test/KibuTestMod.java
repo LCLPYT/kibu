@@ -45,7 +45,7 @@ public class KibuTestMod implements ModInitializer {
     }
 
     private void preventWithStick() {
-        DecorationEntityDamageCallback.HOOK.register((entity, source, amount) -> {
+        NonLivingDamageCallback.HOOK.register((entity, source, amount) -> {
             if (!(source.getSource() instanceof ServerPlayerEntity player)) return false;
 
             ItemStack stack = player.getMainHandStack();
@@ -59,28 +59,14 @@ public class KibuTestMod implements ModInitializer {
             return stack.isOf(Items.STICK);
         });
 
-        ItemFrameDamageCallback.HOOK.register((itemFrame, source, amount) -> {
-            if (!(source.getSource() instanceof ServerPlayerEntity player)) return false;
+        ItemFrameRemoveItemCallback.HOOK.register((itemFrame, attacker) -> {
+            if (!(attacker instanceof ServerPlayerEntity player)) return false;
 
             ItemStack stack = player.getMainHandStack();
             return stack.isOf(Items.STICK);
         });
 
         ArmorStandManipulateCallback.HOOK.register((armorStand, player, slot, stack, hand) -> player.getStackInHand(hand).isOf(Items.STICK));
-
-        MinecartDamageCallback.HOOK.register((minecart, source, amount) -> {
-            if (!(source.getSource() instanceof ServerPlayerEntity player)) return false;
-
-            ItemStack stack = player.getMainHandStack();
-            return stack.isOf(Items.STICK);
-        });
-
-        BoatDamageCallback.HOOK.register((boat, source, amount) -> {
-            if (!(source.getSource() instanceof ServerPlayerEntity player)) return false;
-
-            ItemStack stack = player.getMainHandStack();
-            return stack.isOf(Items.STICK);
-        });
 
         ItemUseOnEntityCallback.HOOK.register((player, entity, hand, stack) -> player.getOffHandStack().isOf(Items.STICK));
 
@@ -93,5 +79,7 @@ public class KibuTestMod implements ModInitializer {
         UnleashEntityCallback.HOOK.register((player, entity) -> player.getOffHandStack().isOf(Items.STICK));
 
         LeashEntityToBlockCallback.HOOK.register((player, entity, leashKnot) -> player.getOffHandStack().isOf(Items.STICK));
+
+        ProjectilePickupCallback.HOOK.register((player, projectile) -> player.getMainHandStack().isOf(Items.STICK));
     }
 }

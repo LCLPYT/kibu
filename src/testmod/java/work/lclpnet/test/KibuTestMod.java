@@ -67,5 +67,19 @@ public class KibuTestMod implements ModInitializer {
         });
 
         ArmorStandManipulateCallback.HOOK.register((armorStand, player, slot, stack, hand) -> player.getStackInHand(hand).isOf(Items.STICK));
+
+        MinecartDamageCallback.HOOK.register((minecart, source, amount) -> {
+            if (!(source.getSource() instanceof ServerPlayerEntity player)) return false;
+
+            ItemStack stack = player.getMainHandStack();
+            return stack.isOf(Items.STICK);
+        });
+
+        BoatDamageCallback.HOOK.register((boat, source, amount) -> {
+            if (!(source.getSource() instanceof ServerPlayerEntity player)) return false;
+
+            ItemStack stack = player.getMainHandStack();
+            return stack.isOf(Items.STICK);
+        });
     }
 }

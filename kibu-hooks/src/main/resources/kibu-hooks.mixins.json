@@ -9,11 +9,13 @@
   "mixins": [
     "AbstractCauldronBlockMixin",
     "AbstractDecorationEntityMixin",
+    "AbstractMinecartEntityMixin",
     "AbstractSignBlockMixin",
     "ArmorStandEntityMixin",
     "BedBlockMixin",
     "BlockItemMixin",
     "BlockMixin",
+    "BoatEntityMixin",
     "BucketItemMixin",
     "CandleBlockMixin",
     "CauldronBlockMixin",

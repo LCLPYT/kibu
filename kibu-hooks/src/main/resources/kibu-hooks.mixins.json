@@ -49,6 +49,7 @@
     "ServerPlayerEntityMixin",
     "ServerPlayerInteractionManagerMixin",
     "ServerPlayNetworkHandlerMixin",
+    "ServerRecipeBookMixin",
     "ServerWorldMixin",
     "ShulkerBulletEntityMixin",
     "SnowBlockMixin",

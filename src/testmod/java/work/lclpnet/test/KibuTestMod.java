@@ -9,6 +9,7 @@ import net.minecraft.util.Hand;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.PlayerAdvancementPacketCallback;
+import work.lclpnet.kibu.hook.player.PlayerRecipePacketCallback;
 import work.lclpnet.kibu.hook.player.PlayerToggleFlightCallback;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
@@ -88,5 +89,7 @@ public class KibuTestMod implements ModInitializer {
                 -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(Items.STICK));
 
         PlayerAdvancementPacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(Items.STICK));
+
+        PlayerRecipePacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(Items.STICK));
     }
 }

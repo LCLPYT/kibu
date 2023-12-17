@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import work.lclpnet.kibu.hook.entity.DecorationEntityDamageCallback;
+import work.lclpnet.kibu.hook.entity.NonLivingDamageCallback;
 
 @Mixin(AbstractDecorationEntity.class)
 public class AbstractDecorationEntityMixin {
@@ -19,7 +19,7 @@ public class AbstractDecorationEntityMixin {
     public void kibu$beforeDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         AbstractDecorationEntity self = (AbstractDecorationEntity) (Object) this;
 
-        if (DecorationEntityDamageCallback.HOOK.invoker().onDamage(self, source, amount)) {
+        if (NonLivingDamageCallback.HOOK.invoker().onDamage(self, source, amount)) {
             cir.setReturnValue(false);
         }
     }

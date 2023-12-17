@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import work.lclpnet.kibu.hook.entity.ItemFrameDamageCallback;
 import work.lclpnet.kibu.hook.entity.ItemFramePutItemCallback;
+import work.lclpnet.kibu.hook.entity.ItemFrameRemoveItemCallback;
 import work.lclpnet.kibu.hook.entity.ItemFrameRotateCallback;
 
 @Mixin(ItemFrameEntity.class)
@@ -20,13 +20,16 @@ public class ItemFrameEntityMixin {
 
     @Inject(
             method = "damage",
-            at = @At("HEAD"),
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/decoration/ItemFrameEntity;dropHeldStack(Lnet/minecraft/entity/Entity;Z)V"
+            ),
             cancellable = true
     )
     public void kibu$beforeDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         ItemFrameEntity self = (ItemFrameEntity) (Object) this;
 
-        if (ItemFrameDamageCallback.HOOK.invoker().onDamage(self, source, amount)) {
+        if (ItemFrameRemoveItemCallback.HOOK.invoker().onRemoveItem(self, source.getAttacker())) {
             cir.setReturnValue(false);
         }
     }

@@ -2,11 +2,12 @@ package work.lclpnet.test;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import work.lclpnet.kibu.access.VelocityModifier;
-import work.lclpnet.kibu.hook.entity.EntityHealthCallback;
+import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.PlayerToggleFlightCallback;
 
 public class KibuTestMod implements ModInitializer {
@@ -16,6 +17,7 @@ public class KibuTestMod implements ModInitializer {
         doubleJump();
         preventHealing();
         testCommands();
+        preventWithStick();
     }
 
     private void testCommands() {
@@ -40,5 +42,30 @@ public class KibuTestMod implements ModInitializer {
 
             return false;
         });
+    }
+
+    private void preventWithStick() {
+        DecorationEntityDamageCallback.HOOK.register((entity, source, amount) -> {
+            if (!(source.getSource() instanceof ServerPlayerEntity player)) return false;
+
+            ItemStack stack = player.getMainHandStack();
+            return stack.isOf(Items.STICK);
+        });
+
+        ItemFramePutItemCallback.HOOK.register((itemFrame, stack, player, hand) -> stack.isOf(Items.STICK));
+
+        ItemFrameRotateCallback.HOOK.register((itemFrame, player, hand) -> {
+            ItemStack stack = player.getStackInHand(hand);
+            return stack.isOf(Items.STICK);
+        });
+
+        ItemFrameDamageCallback.HOOK.register((itemFrame, source, amount) -> {
+            if (!(source.getSource() instanceof ServerPlayerEntity player)) return false;
+
+            ItemStack stack = player.getMainHandStack();
+            return stack.isOf(Items.STICK);
+        });
+
+        ArmorStandManipulateCallback.HOOK.register((armorStand, player, slot, stack, hand) -> player.getStackInHand(hand).isOf(Items.STICK));
     }
 }

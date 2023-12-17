@@ -8,7 +8,9 @@
   },
   "mixins": [
     "AbstractCauldronBlockMixin",
+    "AbstractDecorationEntityMixin",
     "AbstractSignBlockMixin",
+    "ArmorStandEntityMixin",
     "BedBlockMixin",
     "BlockItemMixin",
     "BlockMixin",
@@ -24,6 +26,7 @@
     "HungerManagerMixin",
     "IceBlockMixin",
     "ItemEntityMixin",
+    "ItemFrameEntityMixin",
     "ItemStackMixin",
     "LecternBlockEntityMixin",
     "LecternScreenHandlerMixin",

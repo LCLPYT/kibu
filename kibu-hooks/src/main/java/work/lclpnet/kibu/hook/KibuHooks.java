@@ -4,10 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CakeBlock;
-import net.minecraft.block.CandleBlock;
+import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.Items;
@@ -38,6 +35,10 @@ public class KibuHooks implements ModInitializer {
 
             if (state.isOf(Blocks.CAKE)) {
                 return onUseCake(player, hand, hitResult);
+            }
+
+            if (state.isIn(BlockTags.CANDLE_CAKES)) {
+                return onUseCandleCake(player, hitResult);
             }
 
             if (state.isIn(BlockTags.FLOWER_POTS)) {
@@ -89,6 +90,18 @@ public class KibuHooks implements ModInitializer {
 
         if (player instanceof ServerPlayerEntity serverPlayer) {
             PlayerUtils.syncPlayerHealthAndHunger(serverPlayer);
+        }
+
+        return ActionResult.FAIL;
+    }
+
+    private ActionResult onUseCandleCake(PlayerEntity player, BlockHitResult hitResult) {
+        final var pos = hitResult.getBlockPos();
+        final var world = player.getWorld();
+        final var state = world.getBlockState(pos);
+
+        if (!state.get(CandleCakeBlock.LIT) || !BlockModificationHooks.EXTINGUISH_CANDLE.invoker().onModify(world, pos, player)) {
+            return ActionResult.PASS;
         }
 
         return ActionResult.FAIL;

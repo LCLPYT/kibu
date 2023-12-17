@@ -9,6 +9,7 @@ import net.minecraft.util.Hand;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.PlayerToggleFlightCallback;
+import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
 public class KibuTestMod implements ModInitializer {
 
@@ -81,5 +82,8 @@ public class KibuTestMod implements ModInitializer {
         LeashEntityToBlockCallback.HOOK.register((player, entity, leashKnot) -> player.getOffHandStack().isOf(Items.STICK));
 
         ProjectilePickupCallback.HOOK.register((player, projectile) -> player.getMainHandStack().isOf(Items.STICK));
+
+        BlockModificationHooks.EXTINGUISH_CANDLE.register((world, pos, entity)
+                -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(Items.STICK));
     }
 }

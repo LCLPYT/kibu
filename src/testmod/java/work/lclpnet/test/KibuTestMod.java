@@ -81,5 +81,17 @@ public class KibuTestMod implements ModInitializer {
             ItemStack stack = player.getMainHandStack();
             return stack.isOf(Items.STICK);
         });
+
+        ItemUseOnEntityCallback.HOOK.register((player, entity, hand, stack) -> player.getOffHandStack().isOf(Items.STICK));
+
+        LeashAttachCallback.HOOK.register((player, world, pos) -> player.getOffHandStack().isOf(Items.STICK));
+
+        LeashDetachCallback.HOOK.register((player, leashKnot) -> player.getOffHandStack().isOf(Items.STICK));
+
+        LeashEntityCallback.HOOK.register((player, entity) -> player.getOffHandStack().isOf(Items.STICK));
+
+        UnleashEntityCallback.HOOK.register((player, entity) -> player.getOffHandStack().isOf(Items.STICK));
+
+        LeashEntityToBlockCallback.HOOK.register((player, entity, leashKnot) -> player.getOffHandStack().isOf(Items.STICK));
     }
 }

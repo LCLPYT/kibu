@@ -1,17 +1,20 @@
 package work.lclpnet.kibu.hook.mixin;
 
 import net.minecraft.block.pattern.CachedBlockPosition;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import work.lclpnet.kibu.hook.entity.ItemUseOnEntityCallback;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
@@ -37,6 +40,19 @@ public class ItemStackMixin {
             }
 
             cir.setReturnValue(result);
+        }
+    }
+
+    @Inject(
+            method = "useOnEntity",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public void kibu$interceptUseOnEntity(PlayerEntity user, LivingEntity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+        ItemStack stack = (ItemStack) (Object) this;
+
+        if (ItemUseOnEntityCallback.HOOK.invoker().onUseOnEntity(user, entity, hand, stack)) {
+            cir.setReturnValue(ActionResult.PASS);
         }
     }
 }

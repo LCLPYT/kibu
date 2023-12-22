@@ -12,6 +12,7 @@
     "DisplayEntityAccessor",
     "EntityAccessor",
     "FallingBlockEntityAccessor",
+    "FireworkRocketEntityAccessor",
     "ItemDisplayEntityAccessor",
     "ServerPlayerEntityMixin",
     "TextDisplayEntityAccessor"

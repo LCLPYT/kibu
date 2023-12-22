@@ -4,14 +4,17 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.map.MapState;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.PlayerAdvancementPacketCallback;
 import work.lclpnet.kibu.hook.player.PlayerRecipePacketCallback;
 import work.lclpnet.kibu.hook.player.PlayerToggleFlightCallback;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
+import work.lclpnet.kibu.map.hook.MapStateCallback;
 
 public class KibuTestMod implements ModInitializer {
 
@@ -21,6 +24,17 @@ public class KibuTestMod implements ModInitializer {
         preventHealing();
         testCommands();
         preventWithStick();
+        useSeparateMapsForNether();
+    }
+
+    private void useSeparateMapsForNether() {
+        MapStateCallback.HOOK.register((world, id) -> {
+            if (!World.NETHER.equals(world.getRegistryKey())) {
+                return null;
+            }
+
+            return world.getPersistentStateManager().get(MapState::fromNbt, id);
+        });
     }
 
     private void testCommands() {

@@ -141,7 +141,7 @@ public class KibuBlockPos {
         final int height = max.y - min.y + 1;
         final int length = max.z - min.z + 1;
 
-        return new CuboidPosIterator(min, width, length, height);
+        return new CuboidPosIterator(min, width, height, length);
     }
 
     private static class CuboidPosIterator implements Iterator<KibuBlockPos> {
@@ -162,8 +162,8 @@ public class KibuBlockPos {
 
         private void advance() {
             int y = i / (width * length);
-            int x = (i % (width * length)) / width;
-            int z = (i % (width * length)) % width;
+            int x = (i % (width * length)) / length;
+            int z = (i % (width * length)) % length;
 
             pos.set(offset.x + x, offset.y + y, offset.z + z);
         }

@@ -35,4 +35,25 @@ public class ReaderV2Test {
         var positions = structure.getBlockPositions();
         assertEquals(81, StreamSupport.stream(positions.spliterator(), false).count());
     }
+
+    @Test
+    public void testRead_ArrayBlockStructure() throws IOException {
+        var deserializer = new DeserializerV2();
+        var reader = new ReaderV2(deserializer);
+        var adapter = new TestBlockAdapter();
+
+        var testSchematic = Path.of("src/test/resources/room.schem");
+
+        BlockStructure structure;
+        try (var in = Files.newInputStream(testSchematic)) {
+            structure = reader.read(in, adapter);
+        }
+
+        assertNotNull(structure);
+        assertEquals(3465, structure.getDataVersion());
+
+        // assert block positions are read correctly (dependent on default structure container -> SimpleBlockStructure)
+        var positions = structure.getBlockPositions();
+        assertEquals(2025, StreamSupport.stream(positions.spliterator(), false).count());
+    }
 }

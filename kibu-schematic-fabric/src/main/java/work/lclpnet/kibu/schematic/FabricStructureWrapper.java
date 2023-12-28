@@ -8,6 +8,8 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
+import work.lclpnet.kibu.mc.KibuBlockPos;
+import work.lclpnet.kibu.structure.ArrayBlockStructure;
 import work.lclpnet.kibu.structure.BlockStructure;
 import work.lclpnet.kibu.structure.SimpleBlockStructure;
 
@@ -33,8 +35,17 @@ public class FabricStructureWrapper implements FabricStructureView {
     }
 
     public static SimpleBlockStructure createSimpleStructure() {
-        int dataVersion = SharedConstants.getGameVersion().getSaveVersion().getId();
+        int dataVersion = getDataVersion();
         return new SimpleBlockStructure(dataVersion);
+    }
+
+    public static ArrayBlockStructure createArrayStructure(int width, int height, int length, KibuBlockPos origin) {
+        int dataVersion = getDataVersion();
+        return new ArrayBlockStructure(width, height, length, origin, dataVersion);
+    }
+
+    public static int getDataVersion() {
+        return SharedConstants.getGameVersion().getSaveVersion().getId();
     }
 
     @Nonnull

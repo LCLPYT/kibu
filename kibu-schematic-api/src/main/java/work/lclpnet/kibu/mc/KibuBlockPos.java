@@ -41,6 +41,26 @@ public class KibuBlockPos {
         return z;
     }
 
+    public KibuBlockPos add(int x, int y, int z) {
+        return new KibuBlockPos(this.x + x, this.y + y, this.z + z);
+    }
+
+    public KibuBlockPos add(KibuBlockPos pos) {
+        return add(pos.x, pos.y, pos.z);
+    }
+
+    public KibuBlockPos sub(int x, int y, int z) {
+        return add(-x, -y, -z);
+    }
+
+    public KibuBlockPos sub(KibuBlockPos pos) {
+        return sub(pos.x, pos.y, pos.z);
+    }
+
+    public KibuBlockPos toImmutable() {
+        return new KibuBlockPos(x, y, z);
+    }
+
     @Override
     public String toString() {
         return "BlockPos{x=%d, y=%d, z=%d}".formatted(x, y, z);
@@ -84,6 +104,15 @@ public class KibuBlockPos {
             super.x = x;
             super.y = y;
             super.z = z;
+        }
+
+        @Override
+        public KibuBlockPos add(int x, int y, int z) {
+            super.x += x;
+            super.y += y;
+            super.z += z;
+
+            return this;
         }
     }
 
@@ -133,8 +162,8 @@ public class KibuBlockPos {
 
         private void advance() {
             int y = i / (width * length);
-            int z = (i % (width * length)) / width;
-            int x = (i % (width * length)) % width;
+            int x = (i % (width * length)) / width;
+            int z = (i % (width * length)) % width;
 
             pos.set(offset.x + x, offset.y + y, offset.z + z);
         }

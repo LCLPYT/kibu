@@ -4,20 +4,20 @@ import work.lclpnet.kibu.jnbt.CompoundTag;
 import work.lclpnet.kibu.mc.BlockStateAdapter;
 import work.lclpnet.kibu.mc.KibuBlockPos;
 import work.lclpnet.kibu.mc.KibuBlockState;
+import work.lclpnet.kibu.schematic.api.BlockStructureFactory;
 import work.lclpnet.kibu.schematic.api.SchematicDeserializer;
 import work.lclpnet.kibu.schematic.io.VarIntReader;
 import work.lclpnet.kibu.structure.BlockStructure;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 import static work.lclpnet.kibu.schematic.sponge.SpongeSchematicV2.*;
 
 class DeserializerV2 implements SchematicDeserializer {
 
     @Override
-    public BlockStructure deserialize(CompoundTag nbt, BlockStateAdapter blockStateAdapter, Function<Integer, BlockStructure> containerFactory) {
+    public BlockStructure deserialize(CompoundTag nbt, BlockStateAdapter blockStateAdapter, BlockStructureFactory factory) {
         final int version = nbt.getInt(VERSION);
         if (version != FORMAT_VERSION) throw new IllegalArgumentException("Invalid nbt");
 
@@ -26,6 +26,7 @@ class DeserializerV2 implements SchematicDeserializer {
         final int width = nbt.getShort(WIDTH);
         final int length = nbt.getShort(LENGTH);
         // height is implicitly defined by the block data buffer length, if needed it can also be read in advance here
+        final int height = nbt.getShort(HEIGHT);
 
         final int[] offset = nbt.getIntArray(OFFSET);
         if (offset.length != 3) throw new IllegalArgumentException("Invalid nbt");
@@ -42,7 +43,8 @@ class DeserializerV2 implements SchematicDeserializer {
             palette.put(id, blockState);
         }
 
-        final var container = containerFactory.apply(dataVersion);
+        KibuBlockPos origin = new KibuBlockPos(offset[0], offset[1], offset[2]);
+        final BlockStructure container = factory.create(width, height, length, origin, dataVersion);
 
         // parse blocks
         final byte[] blockData = nbt.getByteArray(BLOCK_DATA);

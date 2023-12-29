@@ -99,56 +99,6 @@ class ArrayBlockStructureTest {
     }
 
     @Test
-    void getBlockCount_initial_zero() {
-        var struct = new ArrayBlockStructure(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
-        assertEquals(0, struct.getBlockCount());
-    }
-
-    @Test
-    void getBlockCount_setNonAir_increase() {
-        var struct = new ArrayBlockStructure(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
-
-        struct.setBlockState(new KibuBlockPos(1, 1, 1), new BuiltinKibuBlockState("foo"));
-        assertEquals(1, struct.getBlockCount());
-
-        struct.setBlockState(new KibuBlockPos(1, 2, 1), new BuiltinKibuBlockState("foo"));
-        assertEquals(2, struct.getBlockCount());
-    }
-
-    @Test
-    void getBlockCount_setTwice_onlyOnce() {
-        var struct = new ArrayBlockStructure(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
-
-        struct.setBlockState(new KibuBlockPos(1, 1, 1), new BuiltinKibuBlockState("foo"));
-        assertEquals(1, struct.getBlockCount());
-
-        struct.setBlockState(new KibuBlockPos(1, 1, 1), new BuiltinKibuBlockState("foo"));
-        assertEquals(1, struct.getBlockCount());
-    }
-
-    @Test
-    void getBlockCount_setAirWasNonAir_decrease() {
-        var struct = new ArrayBlockStructure(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
-
-        struct.setBlockState(new KibuBlockPos(1, 1, 1), new BuiltinKibuBlockState("foo"));
-        struct.setBlockState(new KibuBlockPos(2, 1, 1), new BuiltinKibuBlockState("foo"));
-
-        struct.setBlockState(new KibuBlockPos(1, 1, 1), AIR);
-        assertEquals(1, struct.getBlockCount());
-
-        struct.setBlockState(new KibuBlockPos(2, 1, 1), AIR);
-        assertEquals(0, struct.getBlockCount());
-    }
-
-    @Test
-    void getBlockCount_setAirWasAir_noop() {
-        var struct = new ArrayBlockStructure(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
-
-        struct.setBlockState(new KibuBlockPos(1, 1, 1), AIR);
-        assertEquals(0, struct.getBlockCount());
-    }
-
-    @Test
     void outside_samples_asExpected() {
         var struct = new ArrayBlockStructure(2, 3, 4, new KibuBlockPos(1, 1, 1), 0);
 

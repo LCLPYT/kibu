@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.schematic;
 
+import net.minecraft.block.BlockState;
 import work.lclpnet.kibu.mc.KibuBlockState;
 import work.lclpnet.kibu.util.BlockStateUtils;
 
@@ -7,10 +8,10 @@ import javax.annotation.Nonnull;
 
 public class FabricKibuBlockState implements KibuBlockState {
 
-    private transient final net.minecraft.block.BlockState state;
+    private transient final BlockState state;
     private volatile String string = null;
 
-    public FabricKibuBlockState(net.minecraft.block.BlockState state) {
+    public FabricKibuBlockState(BlockState state) {
         this.state = state;
     }
 
@@ -37,7 +38,7 @@ public class FabricKibuBlockState implements KibuBlockState {
         return state.isAir();
     }
 
-    public net.minecraft.block.BlockState getState() {
+    public BlockState getState() {
         return state;
     }
 }

@@ -15,6 +15,7 @@ import java.util.Objects;
 public class SimpleBlockStructure implements BlockStructure {
 
     private final Map<KibuBlockPos, KibuBlockState> blocks = new HashMap<>();
+    private final Map<KibuBlockPos, KibuBlockEntity> blockEntities = new HashMap<>();
     private final int dataVersion;
     private final transient KibuBlockPos.Mutable minPos = new KibuBlockPos.Mutable(Integer.MAX_VALUE);
     private final transient KibuBlockPos.Mutable maxPos = new KibuBlockPos.Mutable(Integer.MIN_VALUE);
@@ -29,6 +30,9 @@ public class SimpleBlockStructure implements BlockStructure {
             if (state == null || state.isAir()) {
                 if (blocks.remove(pos) == null) return;  // nothing removed
 
+                // remove block entity, if it exists
+                blockEntities.remove(pos);
+
                 // check if on the surface => this position is critical to the bounds
                 if (!isOnSurfaceInternal(pos)) return;
 
@@ -41,7 +45,13 @@ public class SimpleBlockStructure implements BlockStructure {
                 return;
             }
 
-            blocks.put(new KibuBlockPos(pos), state);
+            // state is non-null here
+            KibuBlockState old = blocks.put(pos.toImmutable(), state);
+
+            // reset block entity if blocks mismatch
+            if (old == null || !old.getAsString().equals(state.getAsString())) {
+                blockEntities.remove(pos);
+            }
 
             updateBounds(pos);
         }
@@ -75,11 +85,6 @@ public class SimpleBlockStructure implements BlockStructure {
         }
 
         return kibuBlockState == null ? BuiltinKibuBlockState.AIR : kibuBlockState;
-    }
-
-    @Override
-    public @Nullable KibuBlockEntity getBlockEntity(KibuBlockPos pos) {
-        return null;  // block entities are not supported yet
     }
 
     @Override
@@ -142,22 +147,36 @@ public class SimpleBlockStructure implements BlockStructure {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SimpleBlockStructure that = (SimpleBlockStructure) o;
-
-        Map<KibuBlockPos, KibuBlockState> thatBlocks;
-        synchronized (that.blocks) {
-            thatBlocks = that.blocks;
-        }
-
-        synchronized (blocks) {
-            return blocks.equals(thatBlocks);
-        }
+        return Objects.equals(blocks, that.blocks) && Objects.equals(blockEntities, that.blockEntities);
     }
 
     @Override
     public int hashCode() {
-        synchronized (blocks) {
-            return Objects.hash(blocks);
+        return Objects.hash(blocks, blockEntities);
+    }
+
+    @Override
+    public @Nullable KibuBlockEntity getBlockEntity(KibuBlockPos pos) {
+        return blockEntities.get(pos);
+    }
+
+    @Override
+    public void setBlockEntity(KibuBlockPos pos, KibuBlockEntity blockEntity) {
+        if (blockEntity == null) {
+            blockEntities.remove(pos);
+            return;
         }
+
+        KibuBlockState state = getBlockState(pos);
+
+        if (state.isAir()) return;  // block state must be stored first
+
+        blockEntities.put(pos.toImmutable(), blockEntity);
+    }
+
+    @Override
+    public int getBlockEntityCount() {
+        return blockEntities.size();
     }
 
     public boolean isWithinBox(KibuBlockPos pos) {

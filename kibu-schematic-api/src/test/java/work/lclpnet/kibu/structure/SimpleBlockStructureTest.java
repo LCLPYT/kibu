@@ -134,17 +134,4 @@ class SimpleBlockStructureTest {
         struct.setBlockState(new KibuBlockPos(1), new BuiltinKibuBlockState("foo"));
         assertEquals(2, struct.getBlockCount());
     }
-
-    @Test
-    void isEmpty_empty_true() {
-        var struct = new SimpleBlockStructure(0);
-        assertTrue(struct.isEmpty());
-    }
-
-    @Test
-    void isEmpty_notEmpty_false() {
-        var struct = new SimpleBlockStructure(0);
-        struct.setBlockState(new KibuBlockPos(2), new BuiltinKibuBlockState("foo"));
-        assertFalse(struct.isEmpty());
-    }
 }

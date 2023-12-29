@@ -58,7 +58,7 @@ public class KibuBlockPos {
     }
 
     public KibuBlockPos toImmutable() {
-        return new KibuBlockPos(x, y, z);
+        return new KibuBlockPos(this);
     }
 
     @Override

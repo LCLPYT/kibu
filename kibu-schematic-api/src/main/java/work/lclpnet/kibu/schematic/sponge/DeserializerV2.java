@@ -1,18 +1,14 @@
 package work.lclpnet.kibu.schematic.sponge;
 
-import work.lclpnet.kibu.jnbt.CompoundTag;
-import work.lclpnet.kibu.jnbt.ListTag;
-import work.lclpnet.kibu.jnbt.NBTConstants;
-import work.lclpnet.kibu.jnbt.Tag;
-import work.lclpnet.kibu.mc.BlockStateAdapter;
-import work.lclpnet.kibu.mc.KibuBlockPos;
-import work.lclpnet.kibu.mc.KibuBlockState;
+import work.lclpnet.kibu.jnbt.*;
+import work.lclpnet.kibu.mc.*;
 import work.lclpnet.kibu.schematic.api.BlockStructureFactory;
 import work.lclpnet.kibu.schematic.api.SchematicDeserializer;
 import work.lclpnet.kibu.schematic.io.VarIntReader;
 import work.lclpnet.kibu.structure.BlockStructure;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static work.lclpnet.kibu.schematic.sponge.SpongeSchematicV2.*;
@@ -72,14 +68,57 @@ class DeserializerV2 implements SchematicDeserializer {
             posIdx++;
         }
 
+        readBlockEntities(nbt, container, offset);
+
+        readEntities(nbt, container);
+
+        return container;
+    }
+
+    private static void readBlockEntities(CompoundTag nbt, BlockStructure container, int[] offset) {
         ListTag blockEntities = nbt.getList(BLOCK_ENTITIES, NBTConstants.TYPE_COMPOUND);
 
         for (Tag tag : blockEntities) {
             if (!(tag instanceof CompoundTag compoundTag)) continue;
 
+            String id = compoundTag.getString(BLOCK_ENTITY_ID);
+            int[] posArray = compoundTag.getIntArray(BLOCK_ENTITY_POS);
 
+            if (posArray.length != 3) continue;
+
+            KibuBlockPos pos = new KibuBlockPos(posArray[0] + offset[0], posArray[1] + offset[1], posArray[2] + offset[2]);
+            KibuBlockEntity blockEntity = new BuiltinKibuBlockEntity(id, pos, compoundTag);
+
+            container.setBlockEntity(pos, blockEntity);
         }
+    }
 
-        return container;
+    private static void readEntities(CompoundTag nbt, BlockStructure container) {
+        ListTag entities = nbt.getList(ENTITIES, NBTConstants.TYPE_COMPOUND);
+
+        for (Tag tag : entities) {
+            if (!(tag instanceof CompoundTag compoundTag)) continue;
+
+            String id = compoundTag.getString(ENTITY_ID);
+            ListTag posNbt = compoundTag.getList(ENTITY_POS, NBTConstants.TYPE_DOUBLE);
+            List<Tag> posList = posNbt.getValue();
+
+            double x, y, z;
+
+            Tag tmp = posList.get(0);
+            if (!(tmp instanceof DoubleTag)) continue;
+            x = ((DoubleTag) tmp).getValue();
+
+            tmp = posList.get(1);
+            if (!(tmp instanceof DoubleTag)) continue;
+            y = ((DoubleTag) tmp).getValue();
+
+            tmp = posList.get(2);
+            if (!(tmp instanceof DoubleTag)) continue;
+            z = ((DoubleTag) tmp).getValue();
+
+            KibuEntity entity = new BuiltinKibuEntity(id, x, y, z, compoundTag);
+            container.addEntity(entity);
+        }
     }
 }

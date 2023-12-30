@@ -5,6 +5,16 @@ import work.lclpnet.kibu.jnbt.CompoundTag;
 public record TestKibuBlockEntity(String id, KibuBlockPos pos, CompoundTag extraNbt) implements KibuBlockEntity {
 
     @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public KibuBlockPos getPosition() {
+        return pos;
+    }
+
+    @Override
     public CompoundTag createNbt() {
         CompoundTag nbt = new CompoundTag();
 

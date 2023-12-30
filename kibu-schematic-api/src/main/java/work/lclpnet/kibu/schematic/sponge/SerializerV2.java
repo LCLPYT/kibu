@@ -10,7 +10,7 @@ import work.lclpnet.kibu.mc.KibuEntity;
 import work.lclpnet.kibu.schematic.api.SchematicSerializer;
 import work.lclpnet.kibu.schematic.api.SchematicWriteable;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,10 +57,7 @@ class SerializerV2 implements SchematicSerializer {
                     final var blockEntity = schematic.getBlockEntity(pos);
                     if (blockEntity != null) {
                         CompoundTag blockEntityNbt = getBlockEntityNbt(blockEntity, x, y, z);
-
-                        if (blockEntityNbt != null) {
-                            blockEntities.add(blockEntityNbt);
-                        }
+                        blockEntities.add(blockEntityNbt);
                     }
 
                     // write as byte
@@ -103,13 +100,11 @@ class SerializerV2 implements SchematicSerializer {
         return nbt;
     }
 
-    @Nullable
+    @Nonnull
     private static CompoundTag getBlockEntityNbt(KibuBlockEntity blockEntity, int x, int y, int z) {
         final var nbt = blockEntity.createNbt();
 
-        if (!nbt.contains("id")) return null;
-
-        final var blockEntityId = nbt.getString("id");
+        final var blockEntityId = blockEntity.getId();
         nbt.putString(BLOCK_ENTITY_ID, blockEntityId);
 
         nbt.putIntArray(BLOCK_ENTITY_POS, new int[]{x, y, z});
@@ -141,6 +136,10 @@ class SerializerV2 implements SchematicSerializer {
         for (String key : extraNbt.keySet()) {
             nbt.put(key, extraNbt.get(key));
         }
+
+        // clean conflicting vanilla tags
+        nbt.remove("Pos");
+        nbt.remove("id");
 
         nbt.putString(ENTITY_ID, entity.getId());
 

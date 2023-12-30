@@ -23,7 +23,10 @@ public class SpongeSchematicV2 implements SchematicFormat {
             BLOCK_DATA = "BlockData",
             BLOCK_ENTITIES = "BlockEntities",
             BLOCK_ENTITY_ID = "Id",
-            BLOCK_ENTITY_POS = "Pos";
+            BLOCK_ENTITY_POS = "Pos",
+            ENTITIES = "Entities",
+            ENTITY_ID = "Id",
+            ENTITY_POS = "Pos";
 
     private volatile SchematicSerializer serializer = null;
     private volatile SchematicDeserializer deserializer = null;

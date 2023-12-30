@@ -1,11 +1,16 @@
 package work.lclpnet.kibu.schematic.sponge;
 
 import work.lclpnet.kibu.jnbt.CompoundTag;
+import work.lclpnet.kibu.jnbt.DoubleTag;
 import work.lclpnet.kibu.jnbt.ListTag;
+import work.lclpnet.kibu.jnbt.NBTConstants;
+import work.lclpnet.kibu.mc.KibuBlockEntity;
 import work.lclpnet.kibu.mc.KibuBlockPos;
+import work.lclpnet.kibu.mc.KibuEntity;
 import work.lclpnet.kibu.schematic.api.SchematicSerializer;
 import work.lclpnet.kibu.schematic.api.SchematicWriteable;
 
+import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,19 +56,9 @@ class SerializerV2 implements SchematicSerializer {
 
                     final var blockEntity = schematic.getBlockEntity(pos);
                     if (blockEntity != null) {
-                        final var blockEntityNbt = blockEntity.createNbt();
+                        CompoundTag blockEntityNbt = getBlockEntityNbt(blockEntity, x, y, z);
 
-                        if (blockEntityNbt.contains("id")) {
-                            final var blockEntityId = blockEntityNbt.getString("id");
-                            blockEntityNbt.putString(BLOCK_ENTITY_ID, blockEntityId);
-
-                            blockEntityNbt.putIntArray(BLOCK_ENTITY_POS, new int[]{x, y, z});
-
-                            blockEntityNbt.remove("id");
-                            blockEntityNbt.remove("x");
-                            blockEntityNbt.remove("y");
-                            blockEntityNbt.remove("z");
-
+                        if (blockEntityNbt != null) {
                             blockEntities.add(blockEntityNbt);
                         }
                     }
@@ -101,6 +96,60 @@ class SerializerV2 implements SchematicSerializer {
         final var blockEntityNbt = new ListTag(CompoundTag.class);
         blockEntityNbt.addAll(blockEntities);
         nbt.put(BLOCK_ENTITIES, blockEntityNbt);
+
+        final var entitiesNbt = getEntitiesNbt(schematic);
+        nbt.put(ENTITIES, entitiesNbt);
+
+        return nbt;
+    }
+
+    @Nullable
+    private static CompoundTag getBlockEntityNbt(KibuBlockEntity blockEntity, int x, int y, int z) {
+        final var nbt = blockEntity.createNbt();
+
+        if (!nbt.contains("id")) return null;
+
+        final var blockEntityId = nbt.getString("id");
+        nbt.putString(BLOCK_ENTITY_ID, blockEntityId);
+
+        nbt.putIntArray(BLOCK_ENTITY_POS, new int[]{x, y, z});
+
+        nbt.remove("id");
+        nbt.remove("x");
+        nbt.remove("y");
+        nbt.remove("z");
+
+        return nbt;
+    }
+
+    private static ListTag getEntitiesNbt(SchematicWriteable schematic) {
+        final var nbt = new ListTag(CompoundTag.class);
+
+        for (KibuEntity entity : schematic.getEntities()) {
+            CompoundTag entityNbt = getEntityNbt(entity);
+            nbt.add(entityNbt);
+        }
+
+        return nbt;
+    }
+
+    private static CompoundTag getEntityNbt(KibuEntity entity) {
+        CompoundTag nbt = new CompoundTag();
+
+        CompoundTag extraNbt = entity.getExtraNbt();
+
+        for (String key : extraNbt.keySet()) {
+            nbt.put(key, extraNbt.get(key));
+        }
+
+        nbt.putString(ENTITY_ID, entity.getId());
+
+        ListTag pos = new ListTag(NBTConstants.TYPE_DOUBLE);
+        pos.add(new DoubleTag(entity.getX()));
+        pos.add(new DoubleTag(entity.getY()));
+        pos.add(new DoubleTag(entity.getZ()));
+
+        nbt.put(ENTITY_POS, pos);
 
         return nbt;
     }

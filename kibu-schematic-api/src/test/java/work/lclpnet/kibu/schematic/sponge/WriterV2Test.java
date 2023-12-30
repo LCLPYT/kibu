@@ -24,6 +24,6 @@ public class WriterV2Test {
 
         var tag = nbt.tag();
         assertTrue(tag instanceof CompoundTag);
-        assertEquals(10, ((CompoundTag) tag).keySet().size());
+        assertEquals(11, ((CompoundTag) tag).keySet().size());
     }
 }

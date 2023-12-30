@@ -2,15 +2,10 @@ package work.lclpnet.kibu.mc;
 
 import work.lclpnet.kibu.jnbt.CompoundTag;
 
-public class TestKibuBlockEntity implements KibuBlockEntity {
+public record TestKibuBlockEntity(String id, KibuBlockPos pos, CompoundTag extraNbt) implements KibuBlockEntity {
 
-    private final CompoundTag nbt;
-
-    public TestKibuBlockEntity(String id, KibuBlockPos pos) {
-        this(id, pos, new CompoundTag());
-    }
-
-    public TestKibuBlockEntity(String id, KibuBlockPos pos, CompoundTag extraNbt) {
+    @Override
+    public CompoundTag createNbt() {
         CompoundTag nbt = new CompoundTag();
 
         for (String s : extraNbt.keySet()) {
@@ -20,11 +15,10 @@ public class TestKibuBlockEntity implements KibuBlockEntity {
         nbt.putString("Id", id);
         nbt.putIntArray("Pos", new int[] { pos.getX(), pos.getY(), pos.getZ() });
 
-        this.nbt = nbt;
+        return nbt;
     }
 
-    @Override
-    public CompoundTag createNbt() {
-        return nbt;
+    public static TestKibuBlockEntity of(String id, KibuBlockPos pos) {
+        return new TestKibuBlockEntity(id, pos, new CompoundTag());
     }
 }

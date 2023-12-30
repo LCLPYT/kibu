@@ -4,5 +4,13 @@ import work.lclpnet.kibu.jnbt.CompoundTag;
 
 public interface KibuEntity {
 
-    CompoundTag createNbt();
+    String getId();
+
+    double getX();
+
+    double getY();
+
+    double getZ();
+
+    CompoundTag getExtraNbt();
 }

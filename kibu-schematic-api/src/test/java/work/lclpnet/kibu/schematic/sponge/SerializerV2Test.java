@@ -20,7 +20,7 @@ class SerializerV2Test {
         var nbt = serializer.serialize(structure);
 
         assertNotNull(nbt);
-        assertEquals(10, nbt.keySet().size());
+        assertEquals(11, nbt.keySet().size());
     }
 
     @Test
@@ -35,7 +35,7 @@ class SerializerV2Test {
         var nbt = serializer.serialize(structure);
 
         assertNotNull(nbt);
-        assertEquals(10, nbt.keySet().size());
+        assertEquals(11, nbt.keySet().size());
         assertEquals(4, nbt.getCompound("Palette").keySet().size());
     }
 }

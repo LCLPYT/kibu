@@ -1,14 +1,10 @@
 package work.lclpnet.kibu.structure;
 
-import work.lclpnet.kibu.mc.BuiltinKibuBlockState;
-import work.lclpnet.kibu.mc.KibuBlockEntity;
-import work.lclpnet.kibu.mc.KibuBlockPos;
-import work.lclpnet.kibu.mc.KibuBlockState;
+import work.lclpnet.kibu.mc.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 public class ArrayBlockStructure implements BlockStructure {
 
@@ -16,6 +12,7 @@ public class ArrayBlockStructure implements BlockStructure {
     private final int width, height, length;
     private final KibuBlockPos origin;
     private final int dataVersion;
+    private final Collection<KibuEntity> entities = new HashSet<>();
     private int blockCount = 0, blockEntityCount = 0;
 
     public ArrayBlockStructure(int width, int height, int length, KibuBlockPos origin, int dataVersion) {
@@ -174,6 +171,21 @@ public class ArrayBlockStructure implements BlockStructure {
 
     public boolean outside(int rx, int ry, int rz) {
         return rx < 0 || rz < 0 || rx >= width || rz >= length || ry < 0 || ry >= height;
+    }
+
+    @Override
+    public boolean addEntity(KibuEntity entity) {
+        return entities.add(entity);
+    }
+
+    @Override
+    public boolean removeEntity(KibuEntity entity) {
+        return entities.remove(entity);
+    }
+
+    @Override
+    public Collection<? extends KibuEntity> getEntities() {
+        return Collections.unmodifiableCollection(entities);
     }
 
     private static class Entry {

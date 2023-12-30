@@ -1,12 +1,10 @@
 package work.lclpnet.kibu.structure;
 
-import work.lclpnet.kibu.mc.BuiltinKibuBlockState;
-import work.lclpnet.kibu.mc.KibuBlockEntity;
-import work.lclpnet.kibu.mc.KibuBlockPos;
-import work.lclpnet.kibu.mc.KibuBlockState;
+import work.lclpnet.kibu.mc.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Collections;
 
 class EmptyStructure implements BlockStructure {
@@ -61,6 +59,21 @@ class EmptyStructure implements BlockStructure {
     @Override
     public @Nullable KibuBlockEntity getBlockEntity(KibuBlockPos pos) {
         return null;
+    }
+
+    @Override
+    public boolean addEntity(KibuEntity entity) {
+        return false;
+    }
+
+    @Override
+    public boolean removeEntity(KibuEntity entity) {
+        return false;
+    }
+
+    @Override
+    public Collection<? extends KibuEntity> getEntities() {
+        return Collections.emptyList();
     }
 
     @Override

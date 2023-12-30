@@ -34,6 +34,7 @@
 package work.lclpnet.kibu.jnbt;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,7 +44,7 @@ import java.util.Objects;
  * @author Graham Edgecombe
  * 
  */
-public final class ListTag implements Tag {
+public final class ListTag implements Tag, Iterable<Tag> {
 	
 	/**
 	 * The type.
@@ -165,5 +166,10 @@ public final class ListTag implements Tag {
 	@Override
 	public int hashCode() {
 		return Objects.hash(listType, value);
+	}
+
+	@Override
+	public Iterator<Tag> iterator() {
+		return value.iterator();
 	}
 }

@@ -1,21 +1,16 @@
 package work.lclpnet.kibu.structure;
 
-import work.lclpnet.kibu.mc.BuiltinKibuBlockState;
-import work.lclpnet.kibu.mc.KibuBlockEntity;
-import work.lclpnet.kibu.mc.KibuBlockPos;
-import work.lclpnet.kibu.mc.KibuBlockState;
+import work.lclpnet.kibu.mc.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class SimpleBlockStructure implements BlockStructure {
 
     private final Map<KibuBlockPos, KibuBlockState> blocks = new HashMap<>();
     private final Map<KibuBlockPos, KibuBlockEntity> blockEntities = new HashMap<>();
+    private final Collection<KibuEntity> entities = new HashSet<>();
     private final int dataVersion;
     private final transient KibuBlockPos.Mutable minPos = new KibuBlockPos.Mutable(Integer.MAX_VALUE);
     private final transient KibuBlockPos.Mutable maxPos = new KibuBlockPos.Mutable(Integer.MIN_VALUE);
@@ -214,5 +209,20 @@ public class SimpleBlockStructure implements BlockStructure {
         synchronized (blocks) {
             return isOnSurfaceInternal(pos);
         }
+    }
+
+    @Override
+    public boolean addEntity(KibuEntity entity) {
+        return entities.add(entity);
+    }
+
+    @Override
+    public boolean removeEntity(KibuEntity entity) {
+        return entities.remove(entity);
+    }
+
+    @Override
+    public Collection<? extends KibuEntity> getEntities() {
+        return Collections.unmodifiableCollection(entities);
     }
 }

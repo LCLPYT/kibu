@@ -5,8 +5,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import work.lclpnet.kibu.mc.BuiltinKibuBlockState;
 import work.lclpnet.kibu.mc.KibuBlockPos;
 import work.lclpnet.kibu.mc.TestKibuBlockEntity;
+import work.lclpnet.kibu.mc.TestKibuEntity;
 import work.lclpnet.kibu.schematic.api.BlockStructureFactory;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +38,7 @@ public class CommonBlockStructureTests {
     void setBlockEntity_noBlockState_noop(BlockStructureFactory factory) {
         var struct = factory.create(2, 2, 2, new KibuBlockPos(0, 0, 0), 0);
         KibuBlockPos pos = new KibuBlockPos(0, 0, 0);
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("test", pos));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("test", pos));
         assertNull(struct.getBlockEntity(pos));
     }
 
@@ -46,7 +49,7 @@ public class CommonBlockStructureTests {
         KibuBlockPos pos = new KibuBlockPos(0, 0, 0);
         struct.setBlockState(pos, new BuiltinKibuBlockState("test"));
 
-        TestKibuBlockEntity blockEntity = TestKibuBlockEntity.of("test", pos);
+        TestKibuBlockEntity blockEntity =new TestKibuBlockEntity("test", pos);
         struct.setBlockEntity(pos, blockEntity);
 
         assertEquals(blockEntity, struct.getBlockEntity(pos));
@@ -70,10 +73,10 @@ public class CommonBlockStructureTests {
         struct.setBlockState(pos, new BuiltinKibuBlockState("test"));
         struct.setBlockState(pos2, new BuiltinKibuBlockState("foo"));
 
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("test", pos));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("test", pos));
         assertEquals(1, struct.getBlockEntityCount());
 
-        struct.setBlockEntity(pos2, TestKibuBlockEntity.of("foo", pos2));
+        struct.setBlockEntity(pos2,new TestKibuBlockEntity("foo", pos2));
         assertEquals(2, struct.getBlockEntityCount());
     }
 
@@ -88,8 +91,8 @@ public class CommonBlockStructureTests {
         struct.setBlockState(pos, new BuiltinKibuBlockState("test"));
         struct.setBlockState(pos2, new BuiltinKibuBlockState("foo"));
 
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("test", pos));
-        struct.setBlockEntity(pos2, TestKibuBlockEntity.of("foo", pos2));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("test", pos));
+        struct.setBlockEntity(pos2,new TestKibuBlockEntity("foo", pos2));
 
         struct.setBlockEntity(pos, null);
         assertEquals(1, struct.getBlockEntityCount());
@@ -106,7 +109,7 @@ public class CommonBlockStructureTests {
         KibuBlockPos pos = new KibuBlockPos(0, 0, 0);
 
         struct.setBlockState(pos, new BuiltinKibuBlockState("foo"));
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("foo", pos));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("foo", pos));
 
         struct.setBlockEntity(pos, null);
         assertEquals(0, struct.getBlockEntityCount());
@@ -124,10 +127,10 @@ public class CommonBlockStructureTests {
 
         struct.setBlockState(pos, new BuiltinKibuBlockState("foo"));
 
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("foo", pos));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("foo", pos));
         assertEquals(1, struct.getBlockEntityCount());
 
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("foo", pos));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("foo", pos));
         assertEquals(1, struct.getBlockEntityCount());
     }
 
@@ -139,7 +142,7 @@ public class CommonBlockStructureTests {
         KibuBlockPos pos = new KibuBlockPos(0, 0, 0);
 
         struct.setBlockState(pos, new BuiltinKibuBlockState("foo"));
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("foo", pos));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("foo", pos));
 
         assertEquals(1, struct.getBlockEntityCount());
 
@@ -155,7 +158,7 @@ public class CommonBlockStructureTests {
         KibuBlockPos pos = new KibuBlockPos(0, 0, 0);
 
         struct.setBlockState(pos, new BuiltinKibuBlockState("foo"));
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("foo", pos));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("foo", pos));
 
         assertEquals(1, struct.getBlockEntityCount());
 
@@ -171,11 +174,11 @@ public class CommonBlockStructureTests {
         KibuBlockPos pos = new KibuBlockPos(0, 0, 0);
 
         struct.setBlockState(pos, new BuiltinKibuBlockState("foo"));
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("foo", pos));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("foo", pos));
 
         assertEquals(1, struct.getBlockEntityCount());
 
-        struct.setBlockEntity(pos, TestKibuBlockEntity.of("bar", pos));
+        struct.setBlockEntity(pos,new TestKibuBlockEntity("bar", pos));
         assertEquals(1, struct.getBlockEntityCount());
     }
 
@@ -187,7 +190,7 @@ public class CommonBlockStructureTests {
         KibuBlockPos pos = new KibuBlockPos(0, 0, 0);
         struct.setBlockState(pos, new BuiltinKibuBlockState("foo"));
 
-        TestKibuBlockEntity blockEntity = TestKibuBlockEntity.of("foo", pos);
+        TestKibuBlockEntity blockEntity =new TestKibuBlockEntity("foo", pos);
         struct.setBlockEntity(pos, blockEntity);
 
         assertEquals(blockEntity, struct.getBlockEntity(pos));
@@ -204,7 +207,7 @@ public class CommonBlockStructureTests {
         KibuBlockPos pos = new KibuBlockPos(0, 0, 0);
         struct.setBlockState(pos, new BuiltinKibuBlockState("foo"));
 
-        TestKibuBlockEntity blockEntity = TestKibuBlockEntity.of("foo", pos);
+        TestKibuBlockEntity blockEntity =new TestKibuBlockEntity("foo", pos);
         struct.setBlockEntity(pos, blockEntity);
 
         assertEquals(blockEntity, struct.getBlockEntity(pos));
@@ -281,6 +284,60 @@ public class CommonBlockStructureTests {
         var struct = factory.create(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
         struct.setBlockState(new KibuBlockPos(1), new BuiltinKibuBlockState("foo"));
         assertFalse(struct.isEmpty());
+    }
+
+    @ParameterizedTest
+    @MethodSource("structures")
+    void addEntity_notContained_returnsTrue(BlockStructureFactory factory) {
+        var struct = factory.create(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
+
+        var entity = new TestKibuEntity("test", 1.0, 0.0, 0.5);
+        assertTrue(struct.addEntity(entity));
+    }
+
+    @ParameterizedTest
+    @MethodSource("structures")
+    void addEntity_contained_returnsFalse(BlockStructureFactory factory) {
+        var struct = factory.create(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
+
+        var entity = new TestKibuEntity("test", 1.0, 0.0, 0.5);
+        struct.addEntity(entity);
+        assertFalse(struct.addEntity(entity));
+    }
+
+    @ParameterizedTest
+    @MethodSource("structures")
+    void getEntities_initial_empty(BlockStructureFactory factory) {
+        var struct = factory.create(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
+        assertTrue(struct.getEntities().isEmpty());
+    }
+
+    @ParameterizedTest
+    @MethodSource("structures")
+    void getEntities_added_returned(BlockStructureFactory factory) {
+        var struct = factory.create(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
+
+        var entity = new TestKibuEntity("test", 1.0, 0.0, 0.5);
+        var entity2 = new TestKibuEntity("foo", 1.0, 0.0, 0.5);
+
+        struct.addEntity(entity);
+        struct.addEntity(entity2);
+
+        assertEquals(Set.of(entity, entity2), new HashSet<>(struct.getEntities()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("structures")
+    void getEntities_mutability_isImmutable(BlockStructureFactory factory) {
+        var struct = factory.create(2, 2, 2, new KibuBlockPos(1, 1, 1), 0);
+
+        var entity = new TestKibuEntity("test", 1.0, 0.0, 0.5);
+        var entity2 = new TestKibuEntity("foo", 1.0, 0.0, 0.5);
+
+        struct.addEntity(entity);
+        struct.addEntity(entity2);
+
+        assertThrows(RuntimeException.class, () -> struct.getEntities().remove(entity));
     }
 
     private static Stream<BlockStructureFactory> structures() {

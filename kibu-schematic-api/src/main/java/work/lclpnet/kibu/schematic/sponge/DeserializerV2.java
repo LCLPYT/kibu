@@ -1,6 +1,9 @@
 package work.lclpnet.kibu.schematic.sponge;
 
 import work.lclpnet.kibu.jnbt.CompoundTag;
+import work.lclpnet.kibu.jnbt.ListTag;
+import work.lclpnet.kibu.jnbt.NBTConstants;
+import work.lclpnet.kibu.jnbt.Tag;
 import work.lclpnet.kibu.mc.BlockStateAdapter;
 import work.lclpnet.kibu.mc.KibuBlockPos;
 import work.lclpnet.kibu.mc.KibuBlockState;
@@ -66,9 +69,15 @@ class DeserializerV2 implements SchematicDeserializer {
             var worldPos = new KibuBlockPos(x + offset[0], y + offset[1], z + offset[2]);
             container.setBlockState(worldPos, state);
 
-            // TODO read block entity, if there is one
-
             posIdx++;
+        }
+
+        ListTag blockEntities = nbt.getList(BLOCK_ENTITIES, NBTConstants.TYPE_COMPOUND);
+
+        for (Tag tag : blockEntities) {
+            if (!(tag instanceof CompoundTag compoundTag)) continue;
+
+
         }
 
         return container;

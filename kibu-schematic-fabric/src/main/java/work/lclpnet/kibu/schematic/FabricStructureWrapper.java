@@ -73,12 +73,12 @@ public class FabricStructureWrapper implements FabricStructureView {
     @Nullable
     @Override
     public BlockEntity getBlockEntity(BlockPos pos) {
-        return null;  // no block entities
+        return null;  // no minecraft block entity instances; consumers have to handle this differently
     }
 
     @Override
     public FluidState getFluidState(BlockPos pos) {
-        return Fluids.EMPTY.getDefaultState();  // no fluids
+        return Fluids.EMPTY.getDefaultState();  // no fluids; consumers have to handle this differently
     }
 
     @Override

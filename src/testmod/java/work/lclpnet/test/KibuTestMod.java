@@ -41,6 +41,7 @@ public class KibuTestMod implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             new ImageMapCommand().register(dispatcher);
             new FireworkCommand().register(dispatcher);
+            new SchematicCommand().register(dispatcher);
         });
     }
 

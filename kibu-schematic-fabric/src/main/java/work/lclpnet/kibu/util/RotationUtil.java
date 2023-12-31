@@ -3,10 +3,7 @@ package work.lclpnet.kibu.util;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Property;
+import net.minecraft.state.property.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -15,7 +12,13 @@ import org.joml.Vector3f;
 import work.lclpnet.kibu.access.entity.DecorationEntityAccess;
 import work.lclpnet.kibu.util.math.Matrix3i;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 public class RotationUtil {
+
+    private static final Set<Direction> HORIZONTAL = Set.of(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
 
     // inspired by https://github.com/EngineHub/WorldEdit/blob/master/worldedit-core/src/main/java/com/sk89q/worldedit/extent/transform/BlockTransformExtent.java#L137
     public static BlockState rotate(BlockState state, Matrix3i transformation) {
@@ -23,8 +26,74 @@ public class RotationUtil {
 
         var props = state.getProperties();
 
+        Map<String, String> directionalProps = new HashMap<>();
+
         for (var prop : props) {
-            state = rotateProperty(state, transformation, prop);
+            BlockState newState = rotateProperty(state, transformation, prop);
+
+            if (newState != state) {
+                state = newState;
+                continue;
+            }
+
+            // check for directional properties
+            state = checkDirectionalProps(state, transformation, prop, directionalProps);
+        }
+
+        state = modifyDirectionalProps(state, directionalProps);
+
+        return state;
+    }
+
+    private static BlockState modifyDirectionalProps(BlockState state, Map<String, String> directionalProps) {
+        for (String propName : directionalProps.keySet()) {
+            String val = directionalProps.get(propName);
+            if (val == null) continue;
+
+            var optProp = state.getProperties().stream()
+                    .filter(prop -> propName.equals(prop.getName()))
+                    .findAny();
+
+            if (optProp.isEmpty()) continue;
+
+            state = BlockStateUtils.with(state, optProp.get(), val);
+        }
+
+        return state;
+    }
+
+    private static BlockState checkDirectionalProps(BlockState state, Matrix3i transformation, Property<?> prop, Map<String, String> directionalProps) {
+        if ((!(prop instanceof BooleanProperty boolProp) || !state.get(boolProp))
+            && (!(prop instanceof EnumProperty<?> enumProp) || state.get(enumProp).asString().equals("none"))) {
+            return state;
+        }
+
+        String name = prop.getName();
+
+        var optDir = HORIZONTAL.stream()
+                .filter(d -> name.equals(d.asString()))
+                .findAny();
+
+        if (optDir.isEmpty()) return state;
+
+        Vec3i vec = optDir.get().getVector();
+        vec = transformation.transform(vec);
+
+        Direction dir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
+        if (dir == null) return state;
+
+        if (prop instanceof BooleanProperty boolProp) {
+            state = state.with(boolProp, false);
+            directionalProps.put(dir.asString(), "true");
+        } else {
+            EnumProperty<?> enumProp = (EnumProperty<?>) prop;
+
+            directionalProps.put(dir.asString(), state.get(enumProp).asString());
+
+            // check if there is a value "none"
+            if (prop.stream().map(v -> v.property().name(v.value())).anyMatch("none"::equals)) {
+                state = BlockStateUtils.with(state, enumProp, "none");
+            }
         }
 
         return state;
@@ -33,9 +102,13 @@ public class RotationUtil {
     private static BlockState rotateProperty(BlockState state, Matrix3i transformation, Property<?> prop) {
         if (prop instanceof DirectionProperty dirProp) {
             return rotateDirectionProperty(state, transformation, dirProp);
-        } else if (prop instanceof EnumProperty<?> enumProp) {
+        }
+
+        if (prop instanceof EnumProperty<?> enumProp) {
             return rotateEnumProperty(state, transformation, enumProp);
-        } else if (prop instanceof IntProperty intProp) {
+        }
+
+        if (prop instanceof IntProperty intProp) {
             return rotateIntProperty(state, transformation, intProp);
         }
 

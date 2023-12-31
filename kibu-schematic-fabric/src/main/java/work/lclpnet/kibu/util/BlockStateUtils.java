@@ -92,7 +92,7 @@ public class BlockStateUtils {
         return property.name((T) value);
     }
 
-    private static <T extends Comparable<T>> net.minecraft.block.BlockState with(net.minecraft.block.BlockState state, Property<T> property, String rawValue) {
+    static <T extends Comparable<T>> BlockState with(BlockState state, Property<T> property, String rawValue) {
         Optional<T> value = property.parse(rawValue);
         if (value.isEmpty()) return state;
 

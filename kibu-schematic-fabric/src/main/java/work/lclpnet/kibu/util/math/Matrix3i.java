@@ -3,6 +3,7 @@ package work.lclpnet.kibu.util.math;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -50,10 +51,29 @@ public class Matrix3i {
         );
     }
 
+    public void transform(float x, float y, float z, Vector3f target) {
+        target.x = elements[0] * x + elements[1] * y + elements[2] * z;
+        target.y = elements[3] * x + elements[4] * y + elements[5] * z;
+        target.z = elements[6] * x + elements[7] * y + elements[8] * z;
+    }
+
+    public void transform(Vector3f src, Vector3f target) {
+        transform(src.x, src.y, src.z, target);
+    }
+
     public Matrix3i multiply(Matrix3i other) {
         Matrix3i dest = new Matrix3i();
         multiply(this, other, dest);
         return dest;
+    }
+
+    public boolean isHorizontalFlip() {
+        // determinant of the x-z submatrix
+        return elements[0] * elements[8] - elements[2] * elements[6] < 0;
+    }
+
+    public boolean isVerticalFlip() {
+        return elements[4] < 0;
     }
 
     @Override

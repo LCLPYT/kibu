@@ -71,6 +71,6 @@ public class SchematicCommand {
         ServerWorld world = player.getServerWorld();
         BlockPos pos = player.getBlockPos();
 
-        StructureWriter.placeStructure(structure, world, pos, Matrix3i.makeRotationY(0));
+        StructureWriter.placeStructure(structure, world, pos, Matrix3i.makeRotationY(1));
     }
 }

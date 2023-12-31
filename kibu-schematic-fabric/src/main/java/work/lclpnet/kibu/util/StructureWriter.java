@@ -35,7 +35,6 @@ public class StructureWriter {
 
         var adapter = FabricBlockStateAdapter.getInstance();
         BlockState air = Blocks.AIR.getDefaultState();
-        BlockPos offset = adapter.revert(origin);
 
         BlockPos.Mutable printPos = new BlockPos.Mutable();
 
@@ -51,6 +50,8 @@ public class StructureWriter {
 
             BlockState state = adapter.revert(kibuState);
             if (state == null) state = air;
+
+            state = RotationUtil.rotate(state, transformation);
 
             world.setBlockState(printPos, state);
 

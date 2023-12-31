@@ -14,6 +14,7 @@ import work.lclpnet.kibu.util.math.CardinalRotation;
 import work.lclpnet.kibu.util.math.Matrix3i;
 
 import javax.annotation.Nonnull;
+import java.util.EnumSet;
 
 public class StructureWriter {
 
@@ -28,6 +29,11 @@ public class StructureWriter {
     }
 
     public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos, @Nonnull Matrix3i transformation) {
+        placeStructure(structure, world, pos, transformation, EnumSet.allOf(Option.class));
+    }
+
+    public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos,
+                                      @Nonnull Matrix3i transformation, EnumSet<Option> options) {
         var origin = structure.getOrigin();
 
         final int ox = origin.getX(), oy = origin.getY(), oz = origin.getZ();
@@ -35,6 +41,8 @@ public class StructureWriter {
 
         var adapter = FabricBlockStateAdapter.getInstance();
         BlockState air = Blocks.AIR.getDefaultState();
+
+        final boolean readBlockEntities = options.contains(Option.READ_BLOCK_ENTITIES);
 
         BlockPos.Mutable printPos = new BlockPos.Mutable();
 
@@ -55,6 +63,8 @@ public class StructureWriter {
 
             world.setBlockState(printPos, state);
 
+            if (!readBlockEntities) continue;
+
             var kibuBlockEntity = structure.getBlockEntity(kibuPos);
             if (kibuBlockEntity == null) continue;
 
@@ -68,6 +78,18 @@ public class StructureWriter {
                 }
             }, () -> logger.warn("Unknown block entity type '{}'", kibuBlockEntity.getId()));
         }
+
+        if (options.contains(Option.SPAWN_ENTITIES)) {
+            spawnEntities(structure, world, pos, transformation);
+        }
+    }
+
+    public static void spawnEntities(BlockStructure structure, ServerWorld world, Vec3i pos, @Nonnull Matrix3i transformation) {
+        var origin = structure.getOrigin();
+
+        final int ox = origin.getX(), oy = origin.getY(), oz = origin.getZ();
+
+        var adapter = FabricBlockStateAdapter.getInstance();
 
         for (var kibuEntity : structure.getEntities()) {
             adapter.revert(kibuEntity).ifPresentOrElse(entity -> {
@@ -83,5 +105,10 @@ public class StructureWriter {
                 }
             }, () -> logger.warn("Unknown entity type '{}'", kibuEntity.getId()));
         }
+    }
+
+    public enum Option {
+        SPAWN_ENTITIES,
+        READ_BLOCK_ENTITIES
     }
 }

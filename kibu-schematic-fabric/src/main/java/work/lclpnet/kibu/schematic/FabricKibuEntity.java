@@ -11,6 +11,8 @@ import net.minecraft.util.math.Vec3d;
 import work.lclpnet.kibu.jnbt.CompoundTag;
 import work.lclpnet.kibu.mc.KibuEntity;
 import work.lclpnet.kibu.nbt.FabricNbtConversion;
+import work.lclpnet.kibu.util.RotationUtil;
+import work.lclpnet.kibu.util.math.Matrix3i;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -68,7 +70,7 @@ public class FabricKibuEntity implements KibuEntity {
         return pos;
     }
 
-    public boolean spawn(ServerWorld world, Vec3d pos) {
+    public boolean spawn(ServerWorld world, Vec3d pos, Matrix3i transformation) {
         nbt.putString("id", getId());
 
         NbtList posList = new NbtList();
@@ -87,6 +89,8 @@ public class FabricKibuEntity implements KibuEntity {
             Vec3d rel = e.getPos().subtract(rootPos);
             e.setPosition(pos.add(rel));
             e.setUuid(UUID.randomUUID());
+
+            RotationUtil.rotateEntity(e, transformation);
         });
 
         return world.spawnNewEntityAndPassengers(entity);

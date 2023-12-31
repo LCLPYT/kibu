@@ -1,14 +1,18 @@
 package work.lclpnet.kibu.util;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import org.joml.Vector3f;
+import work.lclpnet.kibu.access.entity.DecorationEntityAccess;
 import work.lclpnet.kibu.util.math.Matrix3i;
 
 public class RotationUtil {
@@ -182,5 +186,28 @@ public class RotationUtil {
         angle = (angle + pi2) % (pi2);
 
         return Math.round(angle * precision / pi2);
+    }
+
+    public static void rotateEntity(Entity entity, Matrix3i transformation) {
+        if (transformation.equals(Matrix3i.IDENTITY)) return;
+
+        Vec3d rotationVector = entity.getRotationVector();
+        rotationVector = transformation.transform(rotationVector);
+
+        double pitch = Math.asin(rotationVector.getY() / rotationVector.length());
+        double yaw = Math.atan2(rotationVector.getX(), rotationVector.getZ());
+
+        entity.setYaw((float) Math.toDegrees(yaw));
+        entity.setPitch((float) Math.toDegrees(pitch));
+
+        if (entity instanceof AbstractDecorationEntity deco) {
+            Direction facing = deco.getHorizontalFacing();
+            Vec3i vec = transformation.transform(facing.getVector());
+            facing = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
+
+            if (facing != null) {
+                DecorationEntityAccess.setFacing(deco, facing);
+            }
+        }
     }
 }

@@ -6,7 +6,8 @@ archivesBaseName = "kibu-schematic-fabric"
 
 moduleDependencies(project, [
         'kibu-nbt-api',
-        'kibu-schematic-api'
+        'kibu-schematic-api',
+        'kibu-access-lib'
 ])
 
 publishing {

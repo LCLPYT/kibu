@@ -61,6 +61,10 @@ public class Matrix3i {
         transform(src.x, src.y, src.z, target);
     }
 
+    public Vec3d transform(Vec3d pos) {
+        return transform(pos.getX(), pos.getY(), pos.getZ());
+    }
+
     public Matrix3i multiply(Matrix3i other) {
         Matrix3i dest = new Matrix3i();
         multiply(this, other, dest);

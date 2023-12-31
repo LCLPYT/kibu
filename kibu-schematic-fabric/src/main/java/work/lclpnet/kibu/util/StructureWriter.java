@@ -97,7 +97,7 @@ public class StructureWriter {
                 entityPos = entityPos.add(pos.getX(), pos.getY(), pos.getZ());
 
                 try {
-                    if (!entity.spawn(world, entityPos)) {
+                    if (!entity.spawn(world, entityPos, transformation)) {
                         logger.warn("Failed to spawn entity '{}' at {}", kibuEntity.getId(), entity.getPos());
                     }
                 } catch (Throwable throwable) {

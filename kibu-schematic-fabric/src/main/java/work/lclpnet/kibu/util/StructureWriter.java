@@ -43,21 +43,24 @@ public class StructureWriter {
         BlockState air = Blocks.AIR.getDefaultState();
 
         final boolean readBlockEntities = options.contains(Option.READ_BLOCK_ENTITIES);
+        final boolean skipAir = options.contains(Option.SKIP_AIR);
 
         BlockPos.Mutable printPos = new BlockPos.Mutable();
 
         for (var kibuPos : structure.getBlockPositions()) {
+            var kibuState = structure.getBlockState(kibuPos);
+            if (skipAir && kibuState.isAir()) continue;
+
+            BlockState state = adapter.revert(kibuState);
+            if (state == null) state = air;
+            if (skipAir && state.isAir()) continue;
+
             // convert to local position
             int sx = kibuPos.getX() - ox, sy = kibuPos.getY() - oy, sz = kibuPos.getZ() - oz;
 
             // apply transformations
             transformation.transform(sx, sy, sz, printPos);
             printPos.set(px + printPos.getX(), py + printPos.getY(), pz + printPos.getZ());
-
-            var kibuState = structure.getBlockState(kibuPos);
-
-            BlockState state = adapter.revert(kibuState);
-            if (state == null) state = air;
 
             state = RotationUtil.rotate(state, transformation);
 
@@ -109,6 +112,7 @@ public class StructureWriter {
 
     public enum Option {
         SPAWN_ENTITIES,
-        READ_BLOCK_ENTITIES
+        READ_BLOCK_ENTITIES,
+        SKIP_AIR
     }
 }

@@ -7,8 +7,11 @@ import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.jnbt.CompoundTag;
+import work.lclpnet.kibu.jnbt.NBTConstants;
 import work.lclpnet.kibu.mc.KibuEntity;
 import work.lclpnet.kibu.nbt.FabricNbtConversion;
 import work.lclpnet.kibu.util.RotationUtil;
@@ -60,6 +63,15 @@ public class FabricKibuEntity implements KibuEntity {
     @Override
     public CompoundTag getExtraNbt() {
         return FabricNbtConversion.convert(nbt, CompoundTag.class);
+    }
+
+    @Nullable
+    public BlockPos getTilePos() {
+        if (!nbt.contains("TileX", NBTConstants.TYPE_INT) ||
+            !nbt.contains("TileY", NBTConstants.TYPE_INT) ||
+            !nbt.contains("TileZ", NBTConstants.TYPE_INT)) return null;
+
+        return new BlockPos(nbt.getInt("TileX"), nbt.getInt("TileY"), nbt.getInt("TileZ"));
     }
 
     public EntityType<?> getType() {

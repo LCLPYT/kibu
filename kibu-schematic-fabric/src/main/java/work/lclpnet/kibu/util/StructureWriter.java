@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.server.world.ServerWorld;
@@ -9,6 +10,7 @@ import net.minecraft.util.math.Vec3i;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import work.lclpnet.kibu.schematic.FabricBlockStateAdapter;
+import work.lclpnet.kibu.schematic.FabricKibuEntity;
 import work.lclpnet.kibu.structure.BlockStructure;
 import work.lclpnet.kibu.util.math.CardinalRotation;
 import work.lclpnet.kibu.util.math.Matrix3i;
@@ -29,7 +31,7 @@ public class StructureWriter {
     }
 
     public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos, @Nonnull Matrix3i transformation) {
-        placeStructure(structure, world, pos, transformation, EnumSet.allOf(Option.class));
+        placeStructure(structure, world, pos, transformation, EnumSet.noneOf(Option.class));
     }
 
     public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos,
@@ -42,8 +44,13 @@ public class StructureWriter {
         var adapter = FabricBlockStateAdapter.getInstance();
         BlockState air = Blocks.AIR.getDefaultState();
 
-        final boolean readBlockEntities = options.contains(Option.READ_BLOCK_ENTITIES);
+        final boolean skipBlockEntities = options.contains(Option.SKIP_BLOCK_ENTITIES);
         final boolean skipAir = options.contains(Option.SKIP_AIR);
+
+        int flags = 0;
+        if (!options.contains(Option.SKIP_PLAYER_SYNC)) flags |= Block.NOTIFY_LISTENERS;
+        if (options.contains(Option.FORCE_STATE)) flags |= Block.FORCE_STATE;
+        if (options.contains(Option.SKIP_DROPS)) flags |= Block.SKIP_DROPS;
 
         BlockPos.Mutable printPos = new BlockPos.Mutable();
 
@@ -64,9 +71,9 @@ public class StructureWriter {
 
             state = RotationUtil.rotate(state, transformation);
 
-            world.setBlockState(printPos, state);
+            world.setBlockState(printPos, state, flags);
 
-            if (!readBlockEntities) continue;
+            if (skipBlockEntities) continue;
 
             var kibuBlockEntity = structure.getBlockEntity(kibuPos);
             if (kibuBlockEntity == null) continue;
@@ -82,22 +89,20 @@ public class StructureWriter {
             }, () -> logger.warn("Unknown block entity type '{}'", kibuBlockEntity.getId()));
         }
 
-        if (options.contains(Option.SPAWN_ENTITIES)) {
+        if (!options.contains(Option.SKIP_ENTITIES)) {
             spawnEntities(structure, world, pos, transformation);
         }
     }
 
     public static void spawnEntities(BlockStructure structure, ServerWorld world, Vec3i pos, @Nonnull Matrix3i transformation) {
         var origin = structure.getOrigin();
-
-        final int ox = origin.getX(), oy = origin.getY(), oz = origin.getZ();
+        Vec3d offset = new Vec3d(origin.getX(), origin.getY(), origin.getZ());
 
         var adapter = FabricBlockStateAdapter.getInstance();
 
         for (var kibuEntity : structure.getEntities()) {
             adapter.revert(kibuEntity).ifPresentOrElse(entity -> {
-                Vec3d entityPos = transformation.transform(entity.getX() - ox, entity.getY() - oy, entity.getZ() - oz);
-                entityPos = entityPos.add(pos.getX(), pos.getY(), pos.getZ());
+                Vec3d entityPos = rotateEntityPosition(pos, transformation, entity, offset);
 
                 try {
                     if (!entity.spawn(world, entityPos, transformation)) {
@@ -110,9 +115,41 @@ public class StructureWriter {
         }
     }
 
+    private static Vec3d rotateEntityPosition(Vec3i pos, @Nonnull Matrix3i transformation, FabricKibuEntity entity, Vec3d pivot) {
+        BlockPos tilePos = entity.getTilePos();
+        Vec3d entityPos;
+
+        if (tilePos != null) {
+            entityPos = transformation.transform(
+                    tilePos.getX() - pivot.x,
+                    tilePos.getY() - pivot.y,
+                    tilePos.getZ() - pivot.z);
+
+            return entityPos.add(
+                    pos.getX(),
+                    pos.getY(),
+                    pos.getZ());
+        }
+
+        entityPos = transformation.transform(
+                    entity.getX() - pivot.x - 0.5,
+                    entity.getY() - pivot.y - 0.5,
+                    entity.getZ() - pivot.z - 0.5);
+
+        entityPos = entityPos.add(
+                pos.getX() + 0.5,
+                pos.getY() + 0.5,
+                pos.getZ() + 0.5);
+
+        return entityPos;
+    }
+
     public enum Option {
-        SPAWN_ENTITIES,
-        READ_BLOCK_ENTITIES,
-        SKIP_AIR
+        SKIP_ENTITIES,
+        SKIP_BLOCK_ENTITIES,
+        SKIP_AIR,
+        FORCE_STATE,
+        SKIP_PLAYER_SYNC,
+        SKIP_DROPS
     }
 }

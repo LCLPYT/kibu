@@ -268,7 +268,7 @@ public class RotationUtil {
         rotationVector = transformation.transform(rotationVector);
 
         double pitch = Math.asin(rotationVector.getY() / rotationVector.length());
-        double yaw = Math.atan2(rotationVector.getX(), rotationVector.getZ());
+        double yaw = Math.atan2(-rotationVector.getX(), rotationVector.getZ());
 
         entity.setYaw((float) Math.toDegrees(yaw));
         entity.setPitch((float) Math.toDegrees(pitch));

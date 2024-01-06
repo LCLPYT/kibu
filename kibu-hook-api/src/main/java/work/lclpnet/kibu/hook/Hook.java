@@ -7,11 +7,6 @@ package work.lclpnet.kibu.hook;
  *
  * @param <T> The listener type.
  */
-public interface Hook<T> {
+public interface Hook<T> extends Registrable<T>, Unregistrable<T>, Invocable<T> {
 
-    T invoker();
-
-    void register(T listener);
-
-    void unregister(T listener);
 }

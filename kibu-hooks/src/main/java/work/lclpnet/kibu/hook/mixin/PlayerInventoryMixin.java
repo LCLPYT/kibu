@@ -28,7 +28,7 @@ public class PlayerInventoryMixin {
             cancellable = true
     )
     public void kibu$onDropSelectedItem(boolean entireStack, CallbackInfoReturnable<ItemStack> cir) {
-        boolean cancel = PlayerInventoryHooks.QUICK_DROP_ITEM.invoker().onDropItem(player, selectedSlot);
+        boolean cancel = PlayerInventoryHooks.DROP_ITEM.invoker().onDropItem(player, selectedSlot, false);
 
         if (cancel) {
             cir.setReturnValue(ItemStack.EMPTY);

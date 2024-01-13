@@ -31,6 +31,22 @@ public class PlayerInventoryHooks {
      * Called before the player drops an item.
      * Can be cancelled by returning true.
      */
+    public static final Hook<DropItem> QUICK_DROP_ITEM = HookFactory.createArrayBacked(DropItem.class, (hooks) -> (player, slot) -> {
+        boolean cancelled = false;
+
+        for (var hook : hooks) {
+            if (hook.onDropItem(player, slot)) {
+                cancelled = true;
+            }
+        }
+
+        return cancelled;
+    });
+
+    /**
+     * Called before the player drops an item.
+     * Can be cancelled by returning true.
+     */
     public static final Hook<DropItem> DROP_ITEM = HookFactory.createArrayBacked(DropItem.class, (hooks) -> (player, slot) -> {
         boolean cancelled = false;
 

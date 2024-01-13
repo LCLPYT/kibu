@@ -64,6 +64,9 @@ public class KibuHooks implements ModInitializer {
             return PlayerInventoryHooks.DROP_ITEM.invoker().onDropItem(event.player(), event.slot());
         });
 
+        PlayerInventoryHooks.QUICK_DROP_ITEM.register((player, slot)
+                -> PlayerInventoryHooks.DROP_ITEM.invoker().onDropItem(player, slot));
+
         PlayerInventoryHooks.MODIFIED_INVENTORY.register(event -> {
             if (!event.isDropAction()) return;
 

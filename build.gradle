@@ -1,7 +1,7 @@
 plugins {
-    id 'fabric-loom' version '1.2.7' apply false
+    id 'fabric-loom' version '1.5-SNAPSHOT' apply false
     id 'maven-publish'
-    id 'gradle-build-utils' version '1.6.0'
+    id 'gradle-build-utils' version '1.7.0'
 }
 
 Properties props = buildUtils.loadProperties('publish.properties')
@@ -31,9 +31,6 @@ allprojects {
     if (ext.isMc) {
         apply plugin: 'fabric-loom'
     }
-
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
 
     repositories {
         mavenCentral()
@@ -73,6 +70,9 @@ allprojects {
     java {
         // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
         withSourcesJar()
+
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     [jar, sourcesJar].each {

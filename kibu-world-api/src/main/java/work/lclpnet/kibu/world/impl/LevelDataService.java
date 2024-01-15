@@ -21,14 +21,12 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.storage.SaveVersionInfo;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import work.lclpnet.kibu.world.data.LevelDataDeserializer;
 import work.lclpnet.kibu.world.data.LevelDataSerializer;
 import work.lclpnet.kibu.world.mixin.LevelPropertiesAccessor;
-import work.lclpnet.kibu.world.mixin.LevelStorageAccessor;
 import work.lclpnet.kibu.world.mixin.UnmodifiableLevelPropertiesAccessor;
 import xyz.nucleoid.fantasy.RuntimeWorld;
 
@@ -204,22 +202,12 @@ public class LevelDataService implements LevelDataSerializer, LevelDataDeseriali
         DataFixer dataFixer = server.getDataFixer();
         Lifecycle registryLifecycle = registryManager.getRegistryLifecycle();
 
-        // from net.minecraft.world.level.storage.LevelStorage#createLevelDataParser
+        var levelDynamic = getLevelProperties(levelData, dataFixer);
+        var dynamic = wrap(levelDynamic, registryManager);
+
+        WorldGenSettings worldGenSettings = getWorldGenSettings(dynamic);
+
         NbtCompound data = levelData.getCompound("Data");
-
-        NbtCompound player = data.contains("Player", NbtElement.COMPOUND_TYPE) ? data.getCompound("Player") : null;
-        data.remove("Player");
-
-        int dataVersion = NbtHelper.getDataVersion(data, -1);
-
-        var ops = RegistryOps.of(NbtOps.INSTANCE, registryManager);
-        var dynamic = DataFixTypes.LEVEL.update(dataFixer, new Dynamic<>(ops, data), dataVersion);
-
-        WorldGenSettings worldGenSettings = LevelStorageAccessor.invokeReadGeneratorProperties(dynamic, dataFixer, dataVersion)
-                .getOrThrow(false, Util.addPrefix("WorldGenSettings: ", logger::error));
-
-        SaveVersionInfo saveVersionInfo = SaveVersionInfo.fromDynamic(dynamic);
-
         DataConfiguration dataConfiguration = getDataConfiguration(data, dataFixer);
         LevelInfo levelInfo = LevelInfo.fromDynamic(dynamic, dataConfiguration);
 
@@ -231,11 +219,41 @@ public class LevelDataService implements LevelDataSerializer, LevelDataDeseriali
 
         Lifecycle propsLifecycle = dimensionsConfig.getLifecycle().add(registryLifecycle);
 
-        LevelProperties levelProperties = LevelProperties.readProperties(dynamic, dataFixer, dataVersion, player,
-                levelInfo, saveVersionInfo, dimensionsConfig.specialWorldProperty(),
-                worldGenSettings.generatorOptions(), propsLifecycle);
+        LevelProperties levelProperties = LevelProperties.readProperties(dynamic, levelInfo,
+                dimensionsConfig.specialWorldProperty(), worldGenSettings.generatorOptions(), propsLifecycle);
 
         return new Result(levelProperties, dimensionsConfig);
+    }
+
+    private WorldGenSettings getWorldGenSettings(Dynamic<NbtElement> dynamic) {
+        var worldGenSettingsDynamic = dynamic.get("WorldGenSettings").orElseEmptyMap();
+
+        return WorldGenSettings.CODEC.parse(worldGenSettingsDynamic)
+                .getOrThrow(false, Util.addPrefix("WorldGenSettings: ", logger::error));
+    }
+
+    // from net.minecraft.world.level.storage.LevelStorage.readLevelProperties(java.nio.file.Path, com.mojang.datafixers.DataFixer)
+    // adjusted so that NbtCompound is used instead
+    private Dynamic<NbtElement> getLevelProperties(NbtCompound nbtCompound, DataFixer dataFixer) {
+        NbtCompound data = nbtCompound.getCompound("Data");
+        int dataVersion = NbtHelper.getDataVersion(data, -1);
+
+        Dynamic<NbtElement> levelProps = DataFixTypes.LEVEL.update(dataFixer, new Dynamic<>(NbtOps.INSTANCE, data), dataVersion);
+
+        Dynamic<NbtElement> player = levelProps.get("Player").orElseEmptyMap();
+        Dynamic<NbtElement> updatedPlayer = DataFixTypes.PLAYER.update(dataFixer, player, dataVersion);
+        levelProps = levelProps.set("Player", updatedPlayer);
+
+        Dynamic<NbtElement> worldGenSettings = levelProps.get("WorldGenSettings").orElseEmptyMap();
+        Dynamic<NbtElement> updatedWorldGenSettings = DataFixTypes.WORLD_GEN_SETTINGS.update(dataFixer, worldGenSettings, dataVersion);
+        levelProps = levelProps.set("WorldGenSettings", updatedWorldGenSettings);
+
+        return levelProps;
+    }
+
+    private <T> Dynamic<T> wrap(Dynamic<T> dynamic, DynamicRegistryManager.Immutable registryManager) {
+        RegistryOps<T> registryOps = RegistryOps.of(dynamic.getOps(), registryManager);
+        return new Dynamic<>(registryOps, dynamic.getValue());
     }
 
     @NotNull

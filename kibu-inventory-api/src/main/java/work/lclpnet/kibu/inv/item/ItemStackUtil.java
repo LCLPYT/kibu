@@ -38,7 +38,7 @@ public class ItemStackUtil {
             String json = nbtList.getString(i);
 
             try {
-                MutableText text = Text.Serializer.fromJson(json);
+                MutableText text = Text.Serialization.fromJson(json);
                 if (text == null) continue;
 
                 lore.add(text);
@@ -54,7 +54,7 @@ public class ItemStackUtil {
 
         for (Text text : lore) {
             MutableText copy = text.copy().setStyle(text.getStyle().withParent(LORE_STYLE));
-            String json = Text.Serializer.toJson(copy);
+            String json = Text.Serialization.toJsonString(copy);
             list.add(NbtString.of(json));
         }
 

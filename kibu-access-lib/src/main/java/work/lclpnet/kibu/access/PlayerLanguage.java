@@ -14,7 +14,7 @@ public class PlayerLanguage {
      * @param player The player.
      * @return The language code, such as "en_us".
      * @implNote In case this method is invoked before a client sends the
-     * {@link net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket}, the language defaults to "en_us".
+     * {@link net.minecraft.network.packet.c2s.common.SyncedClientOptions}, the language defaults to "en_us".
      */
     @Nonnull
     public static String getLanguage(ServerPlayerEntity player) {

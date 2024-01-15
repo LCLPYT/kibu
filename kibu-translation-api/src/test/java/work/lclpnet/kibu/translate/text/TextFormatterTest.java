@@ -82,13 +82,13 @@ public class TextFormatterTest {
         final String string;
         TextContent content = text.getContent();
 
-        if (content instanceof LiteralTextContent literal) {
+        if (content instanceof PlainTextContent literal) {
             string = literal.string();
         } else {
             string = content.toString();
         }
 
-        if (!string.isEmpty() && text.getContent() != TextContent.EMPTY) {
+        if (!string.isEmpty() && text.getContent() != PlainTextContent.EMPTY) {
             Style style = text.getStyle();
             TextColor color = style.getColor();
             builder.append(color == null ? "#FFFFFF" : color.getHexCode());

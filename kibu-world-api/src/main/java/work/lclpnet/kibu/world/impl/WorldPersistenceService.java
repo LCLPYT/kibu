@@ -2,6 +2,7 @@ package work.lclpnet.kibu.world.impl;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtSizeTracker;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -164,7 +165,7 @@ public class WorldPersistenceService {
         NbtCompound nbt;
 
         try (var in = Files.newInputStream(levelDat)) {
-            nbt = NbtIo.readCompressed(in);
+            nbt = NbtIo.readCompressed(in, NbtSizeTracker.ofUnlimitedBytes());
         } catch (IOException e) {
             logger.error("Failed to read compressed nbt from {}", levelDat, e);
             return null;

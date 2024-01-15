@@ -4,6 +4,7 @@ import net.minecraft.block.MapColor;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtSizeTracker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -54,7 +55,7 @@ class MapColorUtilTest {
         NbtCompound nbt;
 
         try (var in = Files.newInputStream(ref)) {
-            nbt = NbtIo.readCompressed(in);
+            nbt = NbtIo.readCompressed(in, NbtSizeTracker.ofUnlimitedBytes());
         }
 
         NbtCompound data = nbt.getCompound("data");

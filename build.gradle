@@ -176,32 +176,6 @@ repositories {
     }
 }
 
-dependencies {
-    afterEvaluate {
-        subprojects.each {
-            if (it.ext.isMc) {
-                api project(path: it.path, configuration: "namedElements")
-            }
-        }
-    }
-
-    modLocalRuntime "xyz.nucleoid:fantasy:${project.fantasy_version}"
-    include(modLocalRuntime("io.github.llamalad7:mixinextras-fabric:${project.mixin_extras_version}"))
-}
-
-// add subprojects as nested jar to the main jar
-remapJar {
-    afterEvaluate {
-        subprojects.each {
-            if (it.ext.isMc) {
-                nestedJars.from project(it.path).tasks.named("remapJar")
-            } else {
-                nestedJars.from project(it.path).tasks.named("jar")
-            }
-        }
-    }
-}
-
 sourceSets {
     testmod {
         compileClasspath += main.compileClasspath + main.getOutput()
@@ -217,6 +191,33 @@ loom {
 
         named('client') {
             source 'testmod'
+        }
+    }
+}
+
+dependencies {
+    afterEvaluate {
+        subprojects.each {
+            if (it.ext.isMc) {
+                api project(path: it.path, configuration: "namedElements")
+            }
+        }
+    }
+
+    testmodImplementation("xyz.nucleoid:fantasy:${project.fantasy_version}")
+    modLocalRuntime("xyz.nucleoid:fantasy:${project.fantasy_version}")
+    include(modLocalRuntime("io.github.llamalad7:mixinextras-fabric:${project.mixin_extras_version}"))
+}
+
+// add subprojects as nested jar to the main jar
+remapJar {
+    afterEvaluate {
+        subprojects.each {
+            if (it.ext.isMc) {
+                nestedJars.from project(it.path).tasks.named("remapJar")
+            } else {
+                nestedJars.from project(it.path).tasks.named("jar")
+            }
         }
     }
 }

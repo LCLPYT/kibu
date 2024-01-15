@@ -33,7 +33,7 @@ public class RootText implements Text {
 
     @Override
     public TextContent getContent() {
-        return TextContent.EMPTY;
+        return PlainTextContent.EMPTY;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class RootText implements Text {
         }
 
         if (o instanceof MutableText text) {
-            return TextContent.EMPTY.equals(text.getContent()) && this.style.equals(text.getStyle()) && this.siblings.equals(text.getSiblings());
+            return PlainTextContent.EMPTY.equals(text.getContent()) && this.style.equals(text.getStyle()) && this.siblings.equals(text.getSiblings());
         }
 
         return false;

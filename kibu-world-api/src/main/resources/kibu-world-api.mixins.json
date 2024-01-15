@@ -9,7 +9,6 @@
   "mixins": [
     "GameRulesMixin",
     "LevelPropertiesAccessor",
-    "LevelStorageAccessor",
     "MinecraftServerAccessor",
     "UnmodifiableLevelPropertiesAccessor"
   ]

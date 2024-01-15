@@ -33,7 +33,7 @@ public class KibuTestMod implements ModInitializer {
                 return null;
             }
 
-            return world.getPersistentStateManager().get(MapState::fromNbt, id);
+            return world.getPersistentStateManager().get(MapState.getPersistentStateType(), id);
         });
     }
 
@@ -42,6 +42,7 @@ public class KibuTestMod implements ModInitializer {
             new ImageMapCommand().register(dispatcher);
             new FireworkCommand().register(dispatcher);
             new SchematicCommand().register(dispatcher);
+            new WorldCommand().register(dispatcher);
         });
     }
 

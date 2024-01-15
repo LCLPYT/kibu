@@ -5,10 +5,13 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,7 +26,7 @@ public class WorldMixin {
 
     @SuppressWarnings("InvalidInjectorMethodSignature")
     @Inject(
-            method = "createExplosion(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/damage/DamageSource;Lnet/minecraft/world/explosion/ExplosionBehavior;DDDFZLnet/minecraft/world/World$ExplosionSourceType;Z)Lnet/minecraft/world/explosion/Explosion;",
+            method = "createExplosion(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/damage/DamageSource;Lnet/minecraft/world/explosion/ExplosionBehavior;DDDFZLnet/minecraft/world/World$ExplosionSourceType;ZLnet/minecraft/particle/ParticleEffect;Lnet/minecraft/particle/ParticleEffect;Lnet/minecraft/sound/SoundEvent;)Lnet/minecraft/world/explosion/Explosion;",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/explosion/Explosion;collectBlocksAndDamageEntities()V"
@@ -31,7 +34,7 @@ public class WorldMixin {
             locals = LocalCapture.CAPTURE_FAILHARD,
             cancellable = true
     )
-    public void kibu$onExplode(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, boolean particles, CallbackInfoReturnable<Explosion> cir, Explosion.DestructionType destructionType, Explosion explosion) {
+    public void kibu$onExplode(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, boolean particles, ParticleEffect particle, ParticleEffect emitterParticle, SoundEvent soundEvent, CallbackInfoReturnable<Explosion> cir, Explosion.DestructionType destructionType, Explosion explosion) {
         if (!WorldPhysicsHooks.EXPLOSION.invoker().onExplode(entity)) return;
 
         ((CancellableExplosion) explosion).kibu$setCancelled(true);

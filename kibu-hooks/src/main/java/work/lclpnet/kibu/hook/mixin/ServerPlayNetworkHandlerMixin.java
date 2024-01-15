@@ -52,7 +52,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
     private double modifiedVelocityY = Double.NaN;
 
     @Redirect(
-            method = "onDisconnected",
+            method = "cleanUp",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"
@@ -70,7 +70,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             method = "onDisconnected",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;isHost()Z"
+                    target = "Lnet/minecraft/server/network/ServerCommonNetworkHandler;onDisconnected(Lnet/minecraft/text/Text;)V"
             )
     )
     public void kibu$afterQuit(Text reason, CallbackInfo ci) {
@@ -150,7 +150,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             )
     )
     public void kibu$onCreativeClickSlot(CreativeInventoryActionC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.getSlot(), packet.getItemStack());
+        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.getSlot(), packet.getStack());
 
         PlayerInventoryHooks.MODIFY_CREATIVE_INVENTORY.invoker().onModify(event);
     }
@@ -164,7 +164,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             )
     )
     public void kibu$onCreativeClickedSlot(CreativeInventoryActionC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.getSlot(), packet.getItemStack());
+        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.getSlot(), packet.getStack());
 
         PlayerInventoryHooks.MODIFIED_CREATIVE_INVENTORY.invoker().onModified(event);
     }

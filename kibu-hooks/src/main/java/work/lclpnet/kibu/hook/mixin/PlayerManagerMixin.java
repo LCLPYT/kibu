@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -46,7 +47,7 @@ public abstract class PlayerManagerMixin {
                     target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"
             )
     )
-    public void kibu$sendCustomJoinMessage(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    public void kibu$sendCustomJoinMessage(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         GameProfile gameprofile = player.getGameProfile();
         UserCache userCache = this.server.getUserCache();
 
@@ -73,7 +74,7 @@ public abstract class PlayerManagerMixin {
             method = "onPlayerConnect",
             at = @At("TAIL")
     )
-    public void kibu$afterConnected(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    public void kibu$afterConnected(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         PlayerConnectionHooks.JOIN.invoker().act(player);
 
         var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.getServerWorld(),

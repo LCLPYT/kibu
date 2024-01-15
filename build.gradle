@@ -98,13 +98,7 @@ subprojects {
             mavenJava(MavenPublication) {
                 artifactId = project.archivesBaseName
 
-                if (project.ext.isMc) {
-                    artifact remapJar
-                    artifact remapSourcesJar
-                } else {
-                    artifact jar
-                    artifact sourcesJar
-                }
+                from components.java
             }
         }
     }
@@ -139,24 +133,11 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId = project.archivesBaseName
 
-            artifact remapJar
-            artifact remapSourcesJar
+            from components.java
 
             pom {
                 name = 'Kibu'
                 description = 'Modding library for FabricMC.'
-
-                // add subproject as maven compile dependency
-                withXml {
-                    def depsNode = asNode().appendNode("dependencies")
-                    subprojects.each {
-                        def depNode = depsNode.appendNode("dependency")
-                        depNode.appendNode("groupId", it.group)
-                        depNode.appendNode("artifactId", it.name)
-                        depNode.appendNode("version", it.version)
-                        depNode.appendNode("scope", "compile")
-                    }
-                }
             }
         }
     }
@@ -198,9 +179,7 @@ loom {
 dependencies {
     afterEvaluate {
         subprojects.each {
-            if (it.ext.isMc) {
-                api project(path: it.path, configuration: "namedElements")
-            }
+            api project(path: it.path, configuration: "namedElements")
         }
     }
 
@@ -305,24 +284,6 @@ def moduleDependencies(project, List<String> dependencies) {
     project.dependencies {
         deps.each {
             api it
-        }
-    }
-
-    // As we manually handle the maven artifacts, we need to also manually specify the deps.
-    project.publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                pom.withXml {
-                    def depsNode = asNode().appendNode("dependencies")
-                    deps.each {
-                        def depNode = depsNode.appendNode("dependency")
-                        depNode.appendNode("groupId", it.group)
-                        depNode.appendNode("artifactId", it.name)
-                        depNode.appendNode("version", it.version)
-                        depNode.appendNode("scope", "compile")
-                    }
-                }
-            }
         }
     }
 }

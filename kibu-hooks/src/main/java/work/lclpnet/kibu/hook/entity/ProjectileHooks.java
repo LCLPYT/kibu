@@ -15,7 +15,24 @@ public class ProjectileHooks {
         }
     });
 
+    public static final Hook<AffectBlock> BREAK_DECORATED_POT = HookFactory.createArrayBacked(AffectBlock.class,
+            hooks -> (projectile, hit) -> {
+                boolean cancel = false;
+
+                for (var hook : hooks) {
+                    if (hook.onAffect(projectile, hit)) {
+                        cancel = true;
+                    }
+                }
+
+                return cancel;
+            });
+
     public interface HitBlock {
         void onHitBlock(ProjectileEntity projectile, BlockHitResult hit);
+    }
+
+    public interface AffectBlock {
+        boolean onAffect(ProjectileEntity projectile, BlockHitResult hit);
     }
 }

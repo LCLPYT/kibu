@@ -19,6 +19,7 @@
     "CauldronBlockMixin",
     "ComposterBlockMixin",
     "CoralParentBlockMixin",
+    "DecoratedPotBlockMixin",
     "EntityMixin",
     "ExplosionMixin",
     "ExplosiveProjectileEntityMixin",

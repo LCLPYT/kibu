@@ -182,6 +182,16 @@ public class BlockModificationHooks {
         return cancelled;
     });
 
+    public static final Hook<BlockModifyHook> DECORATIVE_POT_STORE = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
+        boolean cancelled = false;
+
+        for (var callback : callbacks)
+            if (callback.onModify(world, pos, entity))
+                cancelled = true;
+
+        return cancelled;
+    });
+
     public interface PlaceBlockHook {
         boolean onPlace(World world, BlockPos pos, Entity entity, BlockState newState);
     }

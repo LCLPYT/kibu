@@ -109,5 +109,14 @@ public class KibuTestMod implements ModInitializer {
         PlayerAdvancementPacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(Items.STICK));
 
         PlayerRecipePacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(Items.STICK));
+
+        BlockModificationHooks.DECORATIVE_POT_STORE.register((world, pos, entity)
+                -> entity instanceof ServerPlayerEntity player && player.getOffHandStack().isOf(Items.STICK));
+
+        ProjectileHooks.BREAK_DECORATED_POT.register((projectile, hit) -> {
+            if (!(projectile.getOwner() instanceof ServerPlayerEntity player)) return false;
+
+            return player.getOffHandStack().isOf(Items.STICK);
+        });
     }
 }

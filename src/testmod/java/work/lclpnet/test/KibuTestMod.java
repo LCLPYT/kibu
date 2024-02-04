@@ -11,9 +11,12 @@ import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.PlayerAdvancementPacketCallback;
+import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 import work.lclpnet.kibu.hook.player.PlayerRecipePacketCallback;
 import work.lclpnet.kibu.hook.player.PlayerToggleFlightCallback;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
+import work.lclpnet.kibu.hook.world.ItemScatterCallback;
+import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 import work.lclpnet.kibu.map.hook.MapStateCallback;
 
 public class KibuTestMod implements ModInitializer {
@@ -25,6 +28,13 @@ public class KibuTestMod implements ModInitializer {
         testCommands();
         preventWithStick();
         useSeparateMapsForNether();
+        preventWhenRaining();
+    }
+
+    private void preventWhenRaining() {
+        WorldPhysicsHooks.BLOCK_ITEM_DROP.register((world, pos, stack) -> world.isRaining());
+
+        ItemScatterCallback.HOOK.register((world, x, y, z, stack) -> world.isRaining());
     }
 
     private void useSeparateMapsForNether() {
@@ -117,6 +127,14 @@ public class KibuTestMod implements ModInitializer {
             if (!(projectile.getOwner() instanceof ServerPlayerEntity player)) return false;
 
             return player.getOffHandStack().isOf(Items.STICK);
+        });
+
+        PlayerInventoryHooks.DROP_ITEM_ENTITY.register((player, itemEntity) -> player.getOffHandStack().isOf(Items.STICK));
+
+        PlayerInventoryHooks.DROPPED_ITEM_ENTITY.register((player, itemEntity) -> {
+            if (player.getMainHandStack().isOf(Items.STICK)) {
+                System.out.println("DROPPED ITEM ENTITY " + itemEntity);
+            }
         });
     }
 }

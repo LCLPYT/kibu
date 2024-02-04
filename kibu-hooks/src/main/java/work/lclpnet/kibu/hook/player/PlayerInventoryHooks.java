@@ -52,6 +52,24 @@ public class PlayerInventoryHooks {
         }
     });
 
+    public static final Hook<DropItemEntity> DROP_ITEM_ENTITY = HookFactory.createArrayBacked(DropItemEntity.class, (hooks) -> (player, itemEntity) -> {
+        boolean cancel = false;
+
+        for (var hook : hooks) {
+            if (hook.onDropItemEntity(player, itemEntity)) {
+                cancel = true;
+            }
+        }
+
+        return cancel;
+    });
+
+    public static final Hook<DroppedItemEntity> DROPPED_ITEM_ENTITY = HookFactory.createArrayBacked(DroppedItemEntity.class, (hooks) -> (player, itemEntity) -> {
+        for (var hook : hooks) {
+            hook.onDroppedItemEntity(player, itemEntity);
+        }
+    });
+
     /**
      * Called before a player swap their selected main hand item with their offhand item.
      * Can be cancelled by returning true.
@@ -151,6 +169,14 @@ public class PlayerInventoryHooks {
     public interface DroppedItem {
 
         void onDroppedItem(PlayerEntity player, int slot);
+    }
+
+    public interface DropItemEntity {
+        boolean onDropItemEntity(ServerPlayerEntity player, ItemEntity itemEntity);
+    }
+
+    public interface DroppedItemEntity {
+        void onDroppedItemEntity(ServerPlayerEntity player, ItemEntity itemEntity);
     }
 
     public interface SwapHands {

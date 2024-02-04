@@ -35,6 +35,8 @@ public class KibuTestMod implements ModInitializer {
         WorldPhysicsHooks.BLOCK_ITEM_DROP.register((world, pos, stack) -> world.isRaining());
 
         ItemScatterCallback.HOOK.register((world, x, y, z, stack) -> world.isRaining());
+
+        EntityDropItemCallback.HOOK.register((world, entity, itemEntity) -> world.isRaining());
     }
 
     private void useSeparateMapsForNether() {

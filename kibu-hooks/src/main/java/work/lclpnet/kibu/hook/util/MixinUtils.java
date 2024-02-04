@@ -7,6 +7,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import work.lclpnet.kibu.hook.entity.EntityDropItemCallback;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 
 public class MixinUtils {
@@ -29,6 +30,18 @@ public class MixinUtils {
     public static boolean wrapBlockEntityItemDrop(World world, Entity entity, Operation<Boolean> original, Object mixin) {
         if (mixin instanceof BlockEntity self) {
             return wrapBlockItemDrop(world, entity, original, self.getPos());
+        }
+
+        return original.call(world, entity);
+    }
+
+    public static boolean wrapEntityItemDrop(World world, Entity entity, Operation<Boolean> original, Object mixin) {
+        if (!(mixin instanceof Entity self) || !(entity instanceof ItemEntity itemEntity))
+            return original.call(world, entity);
+
+        if (EntityDropItemCallback.HOOK.invoker().onDropItem(world, self, itemEntity)) {
+            // cancelled, do not call original
+            return false;
         }
 
         return original.call(world, entity);

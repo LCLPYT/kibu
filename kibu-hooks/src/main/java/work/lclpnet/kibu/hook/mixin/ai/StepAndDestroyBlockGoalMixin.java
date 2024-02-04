@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.hook.mixin;
+package work.lclpnet.kibu.hook.mixin.ai;
 
 import net.minecraft.entity.ai.goal.StepAndDestroyBlockGoal;
 import net.minecraft.entity.mob.MobEntity;

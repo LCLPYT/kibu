@@ -2,6 +2,8 @@ package work.lclpnet.kibu.hook.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.recipe.CraftingRecipe;
@@ -28,11 +30,11 @@ public class CraftingScreenHandlerMixin {
     )
     private static Optional<RecipeEntry<CraftingRecipe>> kibu$modifyCraftingResult(
             RecipeManager instance, RecipeType<CraftingRecipe> type, Inventory _inventory, World world,
-            Operation<Optional<RecipeEntry<CraftingRecipe>>> original
+            Operation<Optional<RecipeEntry<CraftingRecipe>>> original, @Local(argsOnly = true) PlayerEntity player
     ) {
         RecipeInputInventory inventory = (RecipeInputInventory) _inventory;
 
-        var pending = CraftingRecipeCallback.HOOK.invoker().modifyRecipe(instance, type, inventory, world);
+        var pending = CraftingRecipeCallback.HOOK.invoker().modifyRecipe(player, instance, type, inventory, world);
 
         if (pending.isPass()) {
             return original.call(instance, type, inventory, world);

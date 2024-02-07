@@ -38,37 +38,6 @@ public class KibuTestMod implements ModInitializer {
         ItemScatterCallback.HOOK.register((world, x, y, z, stack) -> world.isRaining());
 
         EntityDropItemCallback.HOOK.register((world, entity, itemEntity) -> world.isRaining());
-
-        CraftingRecipeCallback.HOOK.register((recipeManager, type, inventory, world) -> {
-            if (!world.isRaining()) {
-                return PendingRecipe.pass();
-            }
-
-            // test for sticks; this could also check the recipe entry identifier
-            return recipeManager.getFirstMatch(type, inventory, world)
-                    .map(RecipeEntry::value)
-                    .map(recipe -> recipe.getResult(world.getRegistryManager()))
-                    .filter(result -> result.isOf(Items.STICK))
-                    .map(result -> PendingRecipe.empty())  // this is the resulting recipe; empty means none
-                    .orElse(PendingRecipe.pass());
-        });
-
-        CraftingRecipeCallback.HOOK.register((recipeManager, type, inventory, world) -> {
-            if (!world.isRaining()) {
-                return PendingRecipe.pass();
-            }
-
-            return recipeManager.getFirstMatch(type, inventory, world)
-                    .map(RecipeEntry::value)
-                    .map(recipe -> recipe.getResult(world.getRegistryManager()))
-                    .filter(result -> result.isOf(Items.STONE_SWORD))
-                    .map(result -> {
-                        // replace stone sword with wooden sword
-                        var woodenSword = RecipeUtils.getRecipe(recipeManager, new Identifier("wooden_sword"), type);
-                        return PendingRecipe.of(woodenSword.orElse(null));
-                    })
-                    .orElse(PendingRecipe.pass());
-        });
     }
 
     private void useSeparateMapsForNether() {
@@ -169,6 +138,37 @@ public class KibuTestMod implements ModInitializer {
             if (player.getMainHandStack().isOf(Items.STICK)) {
                 System.out.println("DROPPED ITEM ENTITY " + itemEntity);
             }
+        });
+
+        CraftingRecipeCallback.HOOK.register((player, recipeManager, type, inventory, world) -> {
+            if (!player.getMainHandStack().isOf(Items.STICK)) {
+                return PendingRecipe.pass();
+            }
+
+            // test for sticks; this could also check the recipe entry identifier
+            return recipeManager.getFirstMatch(type, inventory, world)
+                    .map(RecipeEntry::value)
+                    .map(recipe -> recipe.getResult(world.getRegistryManager()))
+                    .filter(result -> result.isOf(Items.STICK))
+                    .map(result -> PendingRecipe.empty())  // this is the resulting recipe; empty means none
+                    .orElse(PendingRecipe.pass());
+        });
+
+        CraftingRecipeCallback.HOOK.register((player, recipeManager, type, inventory, world) -> {
+            if (!player.getMainHandStack().isOf(Items.STICK)) {
+                return PendingRecipe.pass();
+            }
+
+            return recipeManager.getFirstMatch(type, inventory, world)
+                    .map(RecipeEntry::value)
+                    .map(recipe -> recipe.getResult(world.getRegistryManager()))
+                    .filter(result -> result.isOf(Items.STONE_SWORD))
+                    .map(result -> {
+                        // replace stone sword with wooden sword
+                        var woodenSword = RecipeUtils.getRecipe(recipeManager, new Identifier("wooden_sword"), type);
+                        return PendingRecipe.of(woodenSword.orElse(null));
+                    })
+                    .orElse(PendingRecipe.pass());
         });
     }
 }

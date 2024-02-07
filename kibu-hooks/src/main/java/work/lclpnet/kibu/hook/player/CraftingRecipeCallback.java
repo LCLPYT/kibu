@@ -2,15 +2,12 @@ package work.lclpnet.kibu.hook.player;
 
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.recipe.CraftingRecipe;
-import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.world.World;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
-import work.lclpnet.kibu.hook.util.Pending;
-
-import java.util.Optional;
+import work.lclpnet.kibu.hook.util.PendingRecipe;
 
 public interface CraftingRecipeCallback {
 
@@ -25,10 +22,9 @@ public interface CraftingRecipeCallback {
             return pending;
         }
 
-        return Pending.pass();
+        return PendingRecipe.pass();
     });
 
-    Pending<Optional<RecipeEntry<CraftingRecipe>>> modifyRecipe(
-            RecipeManager recipeManager, RecipeType<CraftingRecipe> type, RecipeInputInventory inventory, World world
-    );
+    PendingRecipe modifyRecipe(RecipeManager recipeManager, RecipeType<CraftingRecipe> type,
+                               RecipeInputInventory inventory, World world);
 }

@@ -5,21 +5,20 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
-import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.*;
-import work.lclpnet.kibu.hook.util.Pending;
+import work.lclpnet.kibu.hook.util.PendingRecipe;
+import work.lclpnet.kibu.hook.util.RecipeUtils;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 import work.lclpnet.kibu.hook.world.ItemScatterCallback;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 import work.lclpnet.kibu.map.hook.MapStateCallback;
-
-import java.util.Optional;
 
 public class KibuTestMod implements ModInitializer {
 
@@ -42,17 +41,33 @@ public class KibuTestMod implements ModInitializer {
 
         CraftingRecipeCallback.HOOK.register((recipeManager, type, inventory, world) -> {
             if (!world.isRaining()) {
-                return Pending.pass();
+                return PendingRecipe.pass();
             }
 
             // test for sticks; this could also check the recipe entry identifier
             return recipeManager.getFirstMatch(type, inventory, world)
                     .map(RecipeEntry::value)
                     .map(recipe -> recipe.getResult(world.getRegistryManager()))
-                    .<Pending<Optional<RecipeEntry<CraftingRecipe>>>>map(result -> result.isOf(Items.STICK)
-                            ? Pending.of(Optional.empty())  // this is the resulting recipe; empty means none
-                            : Pending.pass())
-                    .orElse(Pending.pass());
+                    .filter(result -> result.isOf(Items.STICK))
+                    .map(result -> PendingRecipe.empty())  // this is the resulting recipe; empty means none
+                    .orElse(PendingRecipe.pass());
+        });
+
+        CraftingRecipeCallback.HOOK.register((recipeManager, type, inventory, world) -> {
+            if (!world.isRaining()) {
+                return PendingRecipe.pass();
+            }
+
+            return recipeManager.getFirstMatch(type, inventory, world)
+                    .map(RecipeEntry::value)
+                    .map(recipe -> recipe.getResult(world.getRegistryManager()))
+                    .filter(result -> result.isOf(Items.STONE_SWORD))
+                    .map(result -> {
+                        // replace stone sword with wooden sword
+                        var woodenSword = RecipeUtils.getRecipe(recipeManager, new Identifier("wooden_sword"), type);
+                        return PendingRecipe.of(woodenSword.orElse(null));
+                    })
+                    .orElse(PendingRecipe.pass());
         });
     }
 

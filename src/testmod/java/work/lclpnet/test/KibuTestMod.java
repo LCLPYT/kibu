@@ -170,5 +170,8 @@ public class KibuTestMod implements ModInitializer {
                     })
                     .orElse(PendingRecipe.pass());
         });
+
+        EntityDamageCallback.HOOK.register((entity, source, amount) -> entity instanceof ServerPlayerEntity player
+                                                                       && player.getOffHandStack().isOf(Items.STICK));
     }
 }

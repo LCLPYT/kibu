@@ -17,6 +17,7 @@ import work.lclpnet.kibu.translate.util.WeakList;
 import work.lclpnet.translations.Translator;
 
 import javax.annotation.Nonnull;
+import java.util.Locale;
 
 public class TranslationService {
 
@@ -47,6 +48,21 @@ public class TranslationService {
     public String getLanguage(ServerPlayerEntity player) {
         return languagePreferenceProvider.getLanguagePreference(player)
                 .orElseGet(() -> PlayerLanguage.getLanguage(player));
+    }
+
+    @Nonnull
+    public Locale getLocale(ServerPlayerEntity player) {
+        String normalized = getLanguage(player).toLowerCase(Locale.ROOT).replace('-', '_');
+
+        return switch (normalized) {
+            case "de_de", "de_at", "de_ch" -> Locale.GERMAN;
+            case "fr_fr", "fr_ca", "fr_be", "fr_ch" -> Locale.FRENCH;
+            case "ja_jp" -> Locale.JAPANESE;
+            case "ko_kr" -> Locale.KOREAN;
+            case "it_it", "it_ch" -> Locale.ITALIAN;
+            case "zh_cn", "zh_hk", "zh_tw" -> Locale.CHINESE;
+            default -> Locale.ENGLISH;
+        };
     }
 
     public String translate(ServerPlayerEntity player, String key) {

@@ -11,6 +11,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
+import work.lclpnet.kibu.hook.ServerMessageHooks;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PendingRecipe;
@@ -173,5 +174,7 @@ public class KibuTestMod implements ModInitializer {
 
         EntityDamageCallback.HOOK.register((entity, source, amount) -> entity instanceof ServerPlayerEntity player
                                                                        && player.getOffHandStack().isOf(Items.STICK));
+
+        ServerMessageHooks.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> !sender.getMainHandStack().isOf(Items.STICK));
     }
 }

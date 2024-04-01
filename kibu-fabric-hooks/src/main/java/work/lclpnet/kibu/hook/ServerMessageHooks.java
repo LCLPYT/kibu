@@ -55,11 +55,11 @@ public class ServerMessageHooks {
     private ServerMessageHooks() {}
 
     static {
-        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register(ALLOW_CHAT_MESSAGE.invoker());
-        ServerMessageEvents.ALLOW_GAME_MESSAGE.register(ALLOW_GAME_MESSAGE.invoker());
-        ServerMessageEvents.ALLOW_COMMAND_MESSAGE.register(ALLOW_COMMAND_MESSAGE.invoker());
-        ServerMessageEvents.CHAT_MESSAGE.register(CHAT_MESSAGE.invoker());
-        ServerMessageEvents.GAME_MESSAGE.register(GAME_MESSAGE.invoker());
-        ServerMessageEvents.COMMAND_MESSAGE.register(COMMAND_MESSAGE.invoker());
+        ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> ALLOW_CHAT_MESSAGE.invoker().allowChatMessage(message, sender, params));
+        ServerMessageEvents.ALLOW_GAME_MESSAGE.register((server, message, overlay) -> ALLOW_GAME_MESSAGE.invoker().allowGameMessage(server, message, overlay));
+        ServerMessageEvents.ALLOW_COMMAND_MESSAGE.register((message, source, params) -> ALLOW_COMMAND_MESSAGE.invoker().allowCommandMessage(message, source, params));
+        ServerMessageEvents.CHAT_MESSAGE.register((message, sender, params) -> CHAT_MESSAGE.invoker().onChatMessage(message, sender, params));
+        ServerMessageEvents.GAME_MESSAGE.register((server, message, overlay) -> GAME_MESSAGE.invoker().onGameMessage(server, message, overlay));
+        ServerMessageEvents.COMMAND_MESSAGE.register((message, source, params) -> COMMAND_MESSAGE.invoker().onCommandMessage(message, source, params));
     }
 }

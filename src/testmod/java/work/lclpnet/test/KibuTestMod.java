@@ -2,15 +2,22 @@ package work.lclpnet.test;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.entity.passive.GoatEntity;
+import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
+import work.lclpnet.kibu.access.entity.GoatEntityAccess;
+import work.lclpnet.kibu.access.entity.TropicalFishEntityAccess;
 import work.lclpnet.kibu.hook.ServerMessageHooks;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.*;
@@ -31,6 +38,31 @@ public class KibuTestMod implements ModInitializer {
         preventWithStick();
         useSeparateMapsForNether();
         preventWhenRaining();
+        entityEditor();
+    }
+
+    private void entityEditor() {
+        UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            if (!player.getStackInHand(hand).isOf(Items.NETHER_STAR)) {
+                return ActionResult.PASS;
+            }
+
+            if (entity instanceof GoatEntity goat) {
+                if (goat.hasLeftHorn() && goat.hasRightHorn()) {
+                    GoatEntityAccess.setLeftHorn(goat, false);
+                } else if (!goat.hasLeftHorn() && goat.hasRightHorn()) {
+                    GoatEntityAccess.setRightHorn(goat, false);
+                } else {
+                    GoatEntityAccess.setLeftHorn(goat, true);
+                    GoatEntityAccess.setRightHorn(goat, true);
+                }
+            }
+            else if (entity instanceof TropicalFishEntity tropicalFish) {
+                TropicalFishEntityAccess.setVariant(tropicalFish, TropicalFishEntity.Variety.BETTY, DyeColor.BLUE, DyeColor.GREEN);
+            }
+
+            return ActionResult.SUCCESS;
+        });
     }
 
     private void preventWhenRaining() {

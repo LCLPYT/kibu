@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import work.lclpnet.kibu.hook.entity.AffectedByDaylightCallback;
 import work.lclpnet.kibu.hook.entity.LeashEntityCallback;
 import work.lclpnet.kibu.hook.entity.UnleashEntityCallback;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
@@ -52,6 +53,21 @@ public class MobEntityMixin {
 
         if (UnleashEntityCallback.HOOK.invoker().onUnleash(player, self)) {
             cir.setReturnValue(ActionResult.PASS);
+        }
+    }
+
+    @Inject(
+            method = "isAffectedByDaylight",
+            at = @At("RETURN"),
+            cancellable = true
+    )
+    public void kibu$isAffectedByDaylight(CallbackInfoReturnable<Boolean> cir) {
+        if (!cir.getReturnValueZ()) return;
+
+        MobEntity self = (MobEntity) (Object) this;
+
+        if (AffectedByDaylightCallback.HOOK.invoker().shouldIgnoreDaylight(self)) {
+            cir.setReturnValue(false);
         }
     }
 }

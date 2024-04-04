@@ -39,11 +39,12 @@ public class KibuTestMod implements ModInitializer {
         useSeparateMapsForNether();
         preventWhenRaining();
         entityEditor();
-        preventMobBurningBeyond300();
+        preventBeyond300();
     }
 
-    private void preventMobBurningBeyond300() {
+    private void preventBeyond300() {
         AffectedByDaylightCallback.HOOK.register(entity -> entity.getY() > 300);
+        EntityTeleportCallback.HOOK.register((entity, x, y, z) -> entity.getY() > 300);
     }
 
     private void entityEditor() {

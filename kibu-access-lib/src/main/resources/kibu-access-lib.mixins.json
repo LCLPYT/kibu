@@ -20,6 +20,7 @@
     "LlamaEntityAccessor",
     "ServerPlayerEntityMixin",
     "TextDisplayEntityAccessor",
-    "TropicalFishEntityAccessor"
+    "TropicalFishEntityAccessor",
+    "VexEntityMixin"
   ]
 }

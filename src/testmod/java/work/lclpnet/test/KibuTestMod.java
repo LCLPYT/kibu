@@ -3,6 +3,7 @@ package work.lclpnet.test;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.entity.mob.VexEntity;
 import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.item.ItemStack;
@@ -18,6 +19,7 @@ import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.access.entity.GoatEntityAccess;
 import work.lclpnet.kibu.access.entity.TropicalFishEntityAccess;
+import work.lclpnet.kibu.access.entity.VexEntityAccess;
 import work.lclpnet.kibu.hook.ServerMessageHooks;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.*;
@@ -65,6 +67,9 @@ public class KibuTestMod implements ModInitializer {
             }
             else if (entity instanceof TropicalFishEntity tropicalFish) {
                 TropicalFishEntityAccess.setVariant(tropicalFish, TropicalFishEntity.Variety.BETTY, DyeColor.BLUE, DyeColor.GREEN);
+            }
+            else if (entity instanceof VexEntity vex) {
+                VexEntityAccess.setForceClipping(vex, !VexEntityAccess.isForceClipping(vex));
             }
 
             return ActionResult.SUCCESS;

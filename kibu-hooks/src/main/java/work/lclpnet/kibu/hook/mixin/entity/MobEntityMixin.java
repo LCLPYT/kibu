@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.EntityAttachS2CPacket;
@@ -9,8 +10,10 @@ import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.entity.AffectedByDaylightCallback;
+import work.lclpnet.kibu.hook.entity.EntityTargetCallback;
 import work.lclpnet.kibu.hook.entity.LeashEntityCallback;
 import work.lclpnet.kibu.hook.entity.UnleashEntityCallback;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
@@ -68,6 +71,19 @@ public class MobEntityMixin {
 
         if (AffectedByDaylightCallback.HOOK.invoker().shouldIgnoreDaylight(self)) {
             cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(
+            method = "setTarget",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public void kibu$onSetTarget(LivingEntity target, CallbackInfo ci) {
+        MobEntity self = (MobEntity) (Object) this;
+
+        if (EntityTargetCallback.HOOK.invoker().onChangeTarget(self, target)) {
+            ci.cancel();
         }
     }
 }

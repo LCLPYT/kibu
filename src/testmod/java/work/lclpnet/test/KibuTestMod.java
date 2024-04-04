@@ -221,5 +221,9 @@ public class KibuTestMod implements ModInitializer {
                                                                        && player.getOffHandStack().isOf(Items.STICK));
 
         ServerMessageHooks.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> !sender.getMainHandStack().isOf(Items.STICK));
+
+        // disallow mobs to target players who hold a stick
+        EntityTargetCallback.HOOK.register((entity, target) -> target instanceof ServerPlayerEntity player
+                                                               && player.getMainHandStack().isOf(Items.STICK));
     }
 }

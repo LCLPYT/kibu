@@ -53,7 +53,15 @@ public class TextFormatter {
             }
 
             if (arg instanceof FormatWrapper wrapper) {
-                formatter.format(part, wrapper.getWrapped());
+                Object wrapped = wrapper.getWrapped();
+
+                // if the wrapped object is a Text, append it directly
+                if (wrapped instanceof Text next) {
+                    texts[i] = next.copy().fillStyle(wrapper.getStyle());
+                    continue;
+                }
+
+                formatter.format(part, wrapped);
 
                 String string = formatBuffer.toString();
                 formatBuffer.setLength(0);  // reset buffer for reuse

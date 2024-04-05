@@ -4,6 +4,7 @@ import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import org.junit.jupiter.api.Test;
 
+import static net.minecraft.util.Formatting.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static work.lclpnet.kibu.translate.text.FormatWrapper.styled;
 
@@ -33,7 +34,7 @@ public class TextFormatterTest {
     void formatText_prefix_textArg() {
         var service = new TextFormatter();
 
-        RootText text = service.formatText("%s bar", Text.literal("Hello").formatted(Formatting.BLUE)).formatted(Formatting.YELLOW);
+        RootText text = service.formatText("%s bar", Text.literal("Hello").formatted(Formatting.BLUE)).formatted(YELLOW);
         assertEquals("Hello bar", text.getString());
         assertEquals(2, text.getSiblings().size());
         assertEquals("#5555FFHello#FFFF55 bar", debugString(text));
@@ -43,7 +44,7 @@ public class TextFormatterTest {
     void formatText_suffix() {
         var service = new TextFormatter();
 
-        RootText text = service.formatText("Hello %s", "world").formatted(Formatting.BOLD);
+        RootText text = service.formatText("Hello %s", "world").formatted(BOLD);
         assertEquals("Hello world", text.getString());
         assertEquals(2, text.getSiblings().size());
         assertEquals("#FFFFFF§lHello #FFFFFF§lworld", debugString(text));
@@ -53,7 +54,7 @@ public class TextFormatterTest {
     void formatText_styledArg() {
         var service = new TextFormatter();
 
-        RootText text = service.formatText("Count %.2f", styled(Math.PI, Formatting.YELLOW)).formatted(Formatting.GREEN, Formatting.BOLD);
+        RootText text = service.formatText("Count %.2f", styled(Math.PI, YELLOW)).formatted(GREEN, BOLD);
         assertEquals("Count 3.14", text.getString());
         assertEquals(2, text.getSiblings().size());
         assertEquals("#55FF55§lCount #FFFF55§l3.14", debugString(text));
@@ -74,6 +75,19 @@ public class TextFormatterTest {
         String text = service.formatText("Hi \"%s\", this is \"%s\"", "Marc", "Paul").getString();
 
         assertEquals("Hi \"Marc\", this is \"Paul\"", text);
+    }
+
+    @Test
+    void formatText_textInFormatWrapper() {
+        var service = new TextFormatter();
+
+        // put in a text that has formatting and override it with the FormatWrapper style
+        FormatWrapper wrapper = styled(Text.literal("test").formatted(YELLOW, BOLD), GREEN);
+
+        RootText text = service.formatText("Test %s hello", wrapper);
+
+        // the final substitution should be the "base" style, overridden using the FormatWrapper style
+        assertEquals("#FFFFFFTest #55FF55§ltest#FFFFFF hello", debugString(text));
     }
 
     private String debugString(Text text) {

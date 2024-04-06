@@ -1,0 +1,24 @@
+package work.lclpnet.kibu.hook.entity;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.ServerBossBar;
+import net.minecraft.server.network.ServerPlayerEntity;
+import work.lclpnet.kibu.hook.Hook;
+import work.lclpnet.kibu.hook.HookFactory;
+
+public interface EntityBossBarCallback {
+
+    Hook<EntityBossBarCallback> HOOK = HookFactory.createArrayBacked(EntityBossBarCallback.class, callbacks -> (entity, bossBar, player) -> {
+        boolean cancel = false;
+
+        for (var cb : callbacks) {
+            if (cb.onShow(entity, bossBar, player)) {
+                cancel = true;
+            }
+        }
+
+        return cancel;
+    });
+
+    boolean onShow(Entity entity, ServerBossBar bossBar, ServerPlayerEntity player);
+}

@@ -84,6 +84,8 @@ public class KibuTestMod implements ModInitializer {
         EntityDropItemCallback.HOOK.register((world, entity, itemEntity) -> world.isRaining());
 
         EntityConvertCallback.HOOK.register((entity, type) -> entity.getWorld().isRaining());
+
+        WitherShootCallback.HOOK.register((wither, targetX, targetY, targetZ) -> wither.getWorld().isRaining());
     }
 
     private void useSeparateMapsForNether() {
@@ -230,5 +232,7 @@ public class KibuTestMod implements ModInitializer {
                 && entity instanceof ServerPlayerEntity player
                 && player.getMainHandStack().isOf(Items.STICK)
                 && !effect.getEffectType().isBeneficial());
+
+        EntityBossBarCallback.HOOK.register((entity, bossBar, player) -> player.getMainHandStack().isOf(Items.STICK));
     }
 }

@@ -19,6 +19,7 @@
     "ServerPlayNetworkHandlerMixin",
     "ServerRecipeBookMixin",
     "ServerWorldMixin",
+    "StatusEffectUtilMixin",
     "WorldMixin",
     "access.AbstractPressurePlateBlockAccessor",
     "access.ScreenHandlerAccessor",

@@ -109,7 +109,7 @@ public class KibuTestMod implements ModInitializer {
         // cancel when holding a wither rose
         EntityHealthCallback.HOOK.register((entity, health)
                 -> entity instanceof ServerPlayerEntity player && player.getInventory() != null
-                   && player.getStackInHand(Hand.MAIN_HAND).isOf(Items.WITHER_ROSE));
+                && player.getStackInHand(Hand.MAIN_HAND).isOf(Items.WITHER_ROSE));
     }
 
     private static void doubleJump() {
@@ -218,12 +218,17 @@ public class KibuTestMod implements ModInitializer {
         });
 
         EntityDamageCallback.HOOK.register((entity, source, amount) -> entity instanceof ServerPlayerEntity player
-                                                                       && player.getOffHandStack().isOf(Items.STICK));
+                && player.getOffHandStack().isOf(Items.STICK));
 
         ServerMessageHooks.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> !sender.getMainHandStack().isOf(Items.STICK));
 
         // disallow mobs to target players who hold a stick
         EntityTargetCallback.HOOK.register((entity, target) -> target instanceof ServerPlayerEntity player
-                                                               && player.getMainHandStack().isOf(Items.STICK));
+                && player.getMainHandStack().isOf(Items.STICK));
+
+        EntityStatusEffectCallback.HOOK.register((entity, effect, source) -> source != null
+                && entity instanceof ServerPlayerEntity player
+                && player.getMainHandStack().isOf(Items.STICK)
+                && !effect.getEffectType().isBeneficial());
     }
 }

@@ -77,6 +77,7 @@
     "entity.SkeletonEntityMixin",
     "entity.SnifferEntityMixin",
     "entity.VehicleEntityMixin",
+    "entity.WardenEntityMixin",
     "entity.ZombieEntityMixin",
     "entity.ZombieVillagerEntityMixin",
     "item.BlockItemMixin",

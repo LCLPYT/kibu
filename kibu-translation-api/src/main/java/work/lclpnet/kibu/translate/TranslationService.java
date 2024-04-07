@@ -12,6 +12,7 @@ import work.lclpnet.kibu.translate.bossbar.TranslatedBossBar;
 import work.lclpnet.kibu.translate.hook.LanguageChangedCallback;
 import work.lclpnet.kibu.translate.pref.LanguagePreferenceProvider;
 import work.lclpnet.kibu.translate.text.*;
+import work.lclpnet.kibu.translate.util.LocaleUtil;
 import work.lclpnet.kibu.translate.util.Partial;
 import work.lclpnet.kibu.translate.util.WeakList;
 import work.lclpnet.translations.Translator;
@@ -52,17 +53,7 @@ public class TranslationService {
 
     @Nonnull
     public Locale getLocale(ServerPlayerEntity player) {
-        String normalized = getLanguage(player).toLowerCase(Locale.ROOT).replace('-', '_');
-
-        return switch (normalized) {
-            case "de_de", "de_at", "de_ch" -> Locale.GERMAN;
-            case "fr_fr", "fr_ca", "fr_be", "fr_ch" -> Locale.FRENCH;
-            case "ja_jp" -> Locale.JAPANESE;
-            case "ko_kr" -> Locale.KOREAN;
-            case "it_it", "it_ch" -> Locale.ITALIAN;
-            case "zh_cn", "zh_hk", "zh_tw" -> Locale.CHINESE;
-            default -> Locale.ENGLISH;
-        };
+        return LocaleUtil.getLocale(getLanguage(player));
     }
 
     public String translate(ServerPlayerEntity player, String key) {

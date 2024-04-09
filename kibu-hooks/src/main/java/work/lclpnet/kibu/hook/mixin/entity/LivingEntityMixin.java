@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.entity.EntityDamageCallback;
 import work.lclpnet.kibu.hook.entity.EntityHealthCallback;
 import work.lclpnet.kibu.hook.entity.EntityStatusEffectCallback;
+import work.lclpnet.kibu.hook.entity.EntityDismountCallback;
 import work.lclpnet.kibu.hook.util.MixinUtils;
 
 @Mixin(LivingEntity.class)
@@ -75,6 +77,24 @@ public class LivingEntityMixin {
 
         if (EntityStatusEffectCallback.HOOK.invoker().onAddEffect(self, effect, source)) {
             cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(
+            method = "stopRiding",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public void kibu$onStopRiding(CallbackInfo ci) {
+        LivingEntity self = (LivingEntity) (Object) this;
+
+        // players are handled in ServerPlayerEntityMixin
+        if (self instanceof ServerPlayerEntity) return;
+
+        Entity vehicle = self.getVehicle();
+
+        if (EntityDismountCallback.HOOK.invoker().onDismount(self, vehicle)) {
+            ci.cancel();
         }
     }
 }

@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import work.lclpnet.kibu.hook.entity.EntityDismountCallback;
 import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 import work.lclpnet.kibu.hook.player.PlayerMountHooks;
 
@@ -75,5 +76,20 @@ public class ServerPlayerEntityMixin {
         ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
 
         PlayerInventoryHooks.DROPPED_ITEM_ENTITY.invoker().onDroppedItemEntity(self, item);
+    }
+
+    @Inject(
+            method = "stopRiding",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public void kibu$onStopRiding(CallbackInfo ci) {
+        ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
+
+        Entity vehicle = self.getVehicle();
+
+        if (EntityDismountCallback.HOOK.invoker().onDismount(self, vehicle)) {
+            ci.cancel();
+        }
     }
 }

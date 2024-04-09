@@ -3,13 +3,17 @@ package work.lclpnet.kibu.hook.mixin.entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.entity.EntityRemovedCallback;
+import work.lclpnet.kibu.hook.entity.EntityMountCallback;
+import work.lclpnet.kibu.hook.entity.EntityDismountCallback;
 import work.lclpnet.kibu.hook.player.PlayerSneakCallback;
 import work.lclpnet.kibu.hook.player.PlayerSprintCallback;
 import work.lclpnet.kibu.hook.util.MixinUtils;
@@ -64,5 +68,39 @@ public class EntityMixin {
     )
     public boolean kibu$onDropItem(World world, Entity entity, Operation<Boolean> original) {
         return MixinUtils.wrapEntityItemDrop(world, entity, original, this);
+    }
+
+    @Inject(
+            method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/Entity;hasVehicle()Z"
+            ),
+            cancellable = true
+    )
+    public void kibu$onStartRiding(Entity entity, boolean force, CallbackInfoReturnable<Boolean> cir) {
+        Entity self = (Entity) (Object) this;
+
+        if (EntityMountCallback.HOOK.invoker().onMount(self, entity)) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(
+            method = "stopRiding",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public void kibu$onStopRiding(CallbackInfo ci) {
+        Entity self = (Entity) (Object) this;
+
+        // LivingEntity is handled in LivingEntityMixin
+        if (self instanceof LivingEntity) return;
+
+        Entity vehicle = self.getVehicle();
+
+        if (EntityDismountCallback.HOOK.invoker().onDismount(self, vehicle)) {
+            ci.cancel();
+        }
     }
 }

@@ -18,7 +18,10 @@
     "HorseEntityAccessor",
     "ItemDisplayEntityAccessor",
     "LlamaEntityAccessor",
+    "PigEntityAccessor",
+    "SaddledComponentMixin",
     "ServerPlayerEntityMixin",
+    "StriderEntityAccessor",
     "TextDisplayEntityAccessor",
     "TropicalFishEntityAccessor",
     "VexEntityMixin"

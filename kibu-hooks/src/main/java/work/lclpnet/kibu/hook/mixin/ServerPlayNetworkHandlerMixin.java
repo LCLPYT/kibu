@@ -9,6 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -17,10 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import work.lclpnet.kibu.hook.player.PlayerConnectionHooks;
-import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
-import work.lclpnet.kibu.hook.player.PlayerMoveCallback;
-import work.lclpnet.kibu.hook.player.PlayerToggleFlightCallback;
+import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PositionRotation;
 
 import java.util.Set;
@@ -299,5 +297,18 @@ public abstract class ServerPlayNetworkHandlerMixin {
             ci.cancel();
             player.sendAbilitiesUpdate();
         }
+    }
+
+    @Inject(
+            method = "onTeleportConfirm",
+            at = @At(
+                    value = "FIELD",
+                    target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;requestedTeleportPos:Lnet/minecraft/util/math/Vec3d;",
+                    opcode = Opcodes.PUTFIELD,
+                    shift = At.Shift.AFTER
+            )
+    )
+    public void kibu$onTeleportConfirm(TeleportConfirmC2SPacket packet, CallbackInfo ci) {
+        PlayerTeleportedCallback.HOOK.invoker().onTeleported(player);
     }
 }

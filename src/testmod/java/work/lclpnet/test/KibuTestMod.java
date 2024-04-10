@@ -11,10 +11,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.access.entity.GoatEntityAccess;
@@ -42,6 +39,22 @@ public class KibuTestMod implements ModInitializer {
         preventWhenRaining();
         entityEditor();
         preventBeyond300();
+        teleportWithBrick();
+    }
+
+    private void teleportWithBrick() {
+        PlayerInteractionHooks.USE_ITEM.register((player, world, hand) -> {
+            if (!world.isClient && player.getMainHandStack().isOf(Items.BRICK) && player instanceof ServerPlayerEntity sp) {
+                sp.teleport(sp.getServerWorld(), sp.getX(), sp.getY() + 20, sp.getZ(), sp.getYaw(), sp.getPitch());
+                return TypedActionResult.success(ItemStack.EMPTY);
+            }
+
+            return TypedActionResult.pass(ItemStack.EMPTY);
+        });
+
+        PlayerTeleportedCallback.HOOK.register(player -> {
+            System.out.printf("%s just teleported%n", player.getNameForScoreboard());
+        });
     }
 
     private void preventBeyond300() {

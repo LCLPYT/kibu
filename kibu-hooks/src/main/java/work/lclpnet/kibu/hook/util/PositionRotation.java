@@ -49,7 +49,7 @@ public class PositionRotation implements Position {
     }
 
     public boolean isDifferentPosition(PositionRotation other) {
-        return squaredDistanceTo(other) > 1e-9d;
+        return squaredDistanceTo(other) > 1e-3d;
     }
 
     public boolean isDifferentRotation(PositionRotation positionRotation) {

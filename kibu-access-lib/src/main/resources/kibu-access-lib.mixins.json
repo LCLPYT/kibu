@@ -17,6 +17,7 @@
     "GoatEntityMixin",
     "HorseEntityAccessor",
     "ItemDisplayEntityAccessor",
+    "DamageTrackerAccessor",
     "LlamaEntityAccessor",
     "PigEntityAccessor",
     "SaddledComponentMixin",

@@ -60,6 +60,7 @@ public class KibuTestMod implements ModInitializer {
     private void preventBeyond300() {
         AffectedByDaylightCallback.HOOK.register(entity -> entity.getY() > 300);
         EntityTeleportCallback.HOOK.register((entity, x, y, z) -> entity.getY() > 300);
+        ProjectileCanHitCallback.HOOK.register((projectile, entity) -> entity.getY() <= 300);
     }
 
     private void entityEditor() {

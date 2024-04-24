@@ -24,3 +24,7 @@ All available versions can be found [here](https://repo.lclpnet.work/#artifact/w
 
 ## Credits
 - Gradle buildscript structure inspired by [fabric](https://github.com/FabricMC/fabric).
+
+## Related projects
+- [kibu-world-api](https://github.com/LCLPYT/kibu-world-api)
+- [kibu-plugins](https://github.com/LCLPYT/kibu-plugins)

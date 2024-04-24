@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.access.type;
+package work.lclpnet.kibu.behaviour.type;
 
 public interface KibuVexEntity {
 

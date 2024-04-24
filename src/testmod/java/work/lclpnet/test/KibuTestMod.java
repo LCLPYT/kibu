@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.access.entity.GoatEntityAccess;
 import work.lclpnet.kibu.access.entity.TropicalFishEntityAccess;
-import work.lclpnet.kibu.access.entity.VexEntityAccess;
+import work.lclpnet.kibu.behaviour.entity.VexEntityBehaviour;
 import work.lclpnet.kibu.hook.ServerMessageHooks;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.*;
@@ -83,7 +83,7 @@ public class KibuTestMod implements ModInitializer {
                 TropicalFishEntityAccess.setVariant(tropicalFish, TropicalFishEntity.Variety.BETTY, DyeColor.BLUE, DyeColor.GREEN);
             }
             else if (entity instanceof VexEntity vex) {
-                VexEntityAccess.setForceClipping(vex, !VexEntityAccess.isForceClipping(vex));
+                VexEntityBehaviour.setForceClipping(vex, !VexEntityBehaviour.isForceClipping(vex));
             }
 
             return ActionResult.SUCCESS;

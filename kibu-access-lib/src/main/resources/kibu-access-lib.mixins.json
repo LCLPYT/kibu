@@ -24,7 +24,6 @@
     "ServerPlayerEntityMixin",
     "StriderEntityAccessor",
     "TextDisplayEntityAccessor",
-    "TropicalFishEntityAccessor",
-    "VexEntityMixin"
+    "TropicalFishEntityAccessor"
   ]
 }

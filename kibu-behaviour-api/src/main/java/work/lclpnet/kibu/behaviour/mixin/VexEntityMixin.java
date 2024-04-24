@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.access.mixin;
+package work.lclpnet.kibu.behaviour.mixin;
 
 import net.minecraft.entity.mob.VexEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.access.type.KibuVexEntity;
+import work.lclpnet.kibu.behaviour.type.KibuVexEntity;
 
 @Mixin(VexEntity.class)
 public class VexEntityMixin implements KibuVexEntity {

@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = "kibu-behaviour-api"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'kibu-behaviour-api'
+                description = 'API for customizing vanilla behaviour'
+            }
+        }
+    }
+}

@@ -1,19 +1,16 @@
-package work.lclpnet.kibu.access.entity;
+package work.lclpnet.kibu.behaviour.entity;
 
 import net.minecraft.entity.mob.VexEntity;
-import org.jetbrains.annotations.ApiStatus;
-import work.lclpnet.kibu.access.type.KibuVexEntity;
+import work.lclpnet.kibu.behaviour.type.KibuVexEntity;
 
-public class VexEntityAccess {
+public class VexEntityBehaviour {
 
-    private VexEntityAccess() {}
+    private VexEntityBehaviour() {}
 
-    @ApiStatus.Experimental
     public static void setForceClipping(VexEntity vex, boolean clipping) {
         ((KibuVexEntity) vex).kibu$setForceClipping(clipping);
     }
 
-    @ApiStatus.Experimental
     public static boolean isForceClipping(VexEntity vex) {
         return ((KibuVexEntity) vex).kibu$isForceClipping();
     }

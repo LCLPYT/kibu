@@ -81,7 +81,7 @@ public class EntityMixin {
     public void kibu$onStartRiding(Entity entity, boolean force, CallbackInfoReturnable<Boolean> cir) {
         Entity self = (Entity) (Object) this;
 
-        if (EntityMountCallback.HOOK.invoker().onMount(self, entity)) {
+        if (EntityMountCallback.HOOK.invoker().onMount(self, entity, force)) {
             cir.setReturnValue(false);
         }
     }

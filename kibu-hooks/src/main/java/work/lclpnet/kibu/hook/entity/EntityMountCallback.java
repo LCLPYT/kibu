@@ -6,11 +6,11 @@ import work.lclpnet.kibu.hook.HookFactory;
 
 public interface EntityMountCallback {
 
-    Hook<EntityMountCallback> HOOK = HookFactory.createArrayBacked(EntityMountCallback.class, callbacks -> (entity, vehicle) -> {
+    Hook<EntityMountCallback> HOOK = HookFactory.createArrayBacked(EntityMountCallback.class, callbacks -> (entity, vehicle, force) -> {
         boolean cancel = false;
 
         for (var cb : callbacks) {
-            if (cb.onMount(entity, vehicle)) {
+            if (cb.onMount(entity, vehicle, force)) {
                 cancel = true;
             }
         }
@@ -18,5 +18,5 @@ public interface EntityMountCallback {
         return cancel;
     });
 
-    boolean onMount(Entity entity, Entity vehicle);
+    boolean onMount(Entity entity, Entity vehicle, boolean force);
 }

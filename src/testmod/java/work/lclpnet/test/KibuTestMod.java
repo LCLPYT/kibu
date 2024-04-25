@@ -249,7 +249,7 @@ public class KibuTestMod implements ModInitializer {
 
         EntityBossBarCallback.HOOK.register((entity, bossBar, player) -> player.getMainHandStack().isOf(Items.STICK));
 
-        EntityMountCallback.HOOK.register((entity, vehicle) -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(Items.STICK));
+        EntityMountCallback.HOOK.register((entity, vehicle, force) -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(Items.STICK));
         EntityDismountCallback.HOOK.register((entity, vehicle) -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(Items.STICK));
     }
 }

@@ -1,14 +1,12 @@
 package work.lclpnet.kibu.hook.mixin.item;
 
-import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ItemActionResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,17 +28,21 @@ public class ItemStackMixin {
             cancellable = true,
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    public void kibu$interceptUseOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir, PlayerEntity playerEntity, BlockPos blockPos, CachedBlockPosition cachedBlockPosition, Item item) {
-        ActionResult result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(context);
+    public void kibu$interceptUseOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
+        ItemActionResult result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(context);
 
-        if (result != null) {
-            // when useOnBlock is cancelled, sync the item consumption cancel with the client
-            if (!playerEntity.isCreative() && !playerEntity.isSpectator()) {
-                PlayerUtils.syncPlayerItems(playerEntity);
-            }
+        if (result == null) return;
 
-            cir.setReturnValue(result);
+        PlayerEntity player = context.getPlayer();
+
+        if (player == null) return;
+
+        // when useOnBlock is cancelled, sync the item consumption cancel with the client
+        if (!player.isCreative() && !player.isSpectator()) {
+            PlayerUtils.syncPlayerItems(player);
         }
+
+        cir.setReturnValue(result.toActionResult());
     }
 
     @Inject(

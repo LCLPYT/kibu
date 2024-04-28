@@ -3,9 +3,10 @@ package work.lclpnet.kibu.hook.mixin.block;
 import net.minecraft.block.AbstractCauldronBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -19,11 +20,11 @@ import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 public class AbstractCauldronBlockMixin {
 
     @Inject(
-            method = "onUse",
+            method = "onUseWithItem",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$interceptOnUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$interceptOnUse(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ItemActionResult> cir) {
         var ctx = new ItemUsageContext(player, hand, hit);
         var result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(ctx);
 

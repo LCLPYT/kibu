@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.access.entity;
 
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.passive.HorseColor;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.passive.HorseMarking;
@@ -14,7 +15,14 @@ public class HorseEntityAccess {
         ((HorseEntityAccessor) horse).invokeSetHorseVariant(color, marking);
     }
 
+    /**
+     * Set the armor of a horse.
+     * @param horse The horse entity.
+     * @param armor The armor item stack.
+     * @deprecated Use horse.equipBodyArmor(armor) instead
+     */
+    @Deprecated(forRemoval = true)
     public static void setArmor(HorseEntity horse, ItemStack armor) {
-        ((HorseEntityAccessor) horse).invokeSetArmorTypeFromStack(armor);
+        horse.equipStack(EquipmentSlot.BODY, armor);
     }
 }

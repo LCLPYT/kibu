@@ -4,8 +4,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.DecoratedPotBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -21,19 +23,28 @@ import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 public class DecoratedPotBlockMixin {
 
     @Inject(
-            method = "onUse",
-            at = {@At(
+            method = "onUseWithItem",
+            at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/entity/DecoratedPotBlockEntity;wobble(Lnet/minecraft/block/entity/DecoratedPotBlockEntity$WobbleType;)V",
-                    ordinal = 0
-            ), @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V",
-                    ordinal = 1
-            )},
+                    target = "Lnet/minecraft/block/entity/DecoratedPotBlockEntity;wobble(Lnet/minecraft/block/entity/DecoratedPotBlockEntity$WobbleType;)V"
+            ),
             cancellable = true
     )
-    public void kibu$beforeWobble(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$beforeWobble(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ItemActionResult> cir) {
+        if (BlockModificationHooks.DECORATIVE_POT_STORE.invoker().onModify(world, hit.getBlockPos(), player)) {
+            cir.setReturnValue(ItemActionResult.SKIP_DEFAULT_BLOCK_INTERACTION);
+        }
+    }
+
+    @Inject(
+            method = "onUse",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"
+            ),
+            cancellable = true
+    )
+    public void kibu$beforeWobbleBack(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (BlockModificationHooks.DECORATIVE_POT_STORE.invoker().onModify(world, hit.getBlockPos(), player)) {
             cir.setReturnValue(ActionResult.PASS);
         }

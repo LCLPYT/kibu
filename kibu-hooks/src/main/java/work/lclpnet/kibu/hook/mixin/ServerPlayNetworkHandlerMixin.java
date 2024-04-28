@@ -148,7 +148,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             )
     )
     public void kibu$onCreativeClickSlot(CreativeInventoryActionC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.getSlot(), packet.getStack());
+        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.slot(), packet.stack());
 
         PlayerInventoryHooks.MODIFY_CREATIVE_INVENTORY.invoker().onModify(event);
     }
@@ -162,7 +162,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             )
     )
     public void kibu$onCreativeClickedSlot(CreativeInventoryActionC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.getSlot(), packet.getStack());
+        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.slot(), packet.stack());
 
         PlayerInventoryHooks.MODIFIED_CREATIVE_INVENTORY.invoker().onModified(event);
     }

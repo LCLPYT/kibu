@@ -4,7 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import work.lclpnet.kibu.hook.Hook;
@@ -206,6 +206,6 @@ public class BlockModificationHooks {
 
     public interface ItemUseOnBlock {
         @Nullable
-        ActionResult onUse(ItemUsageContext ctx);
+        ItemActionResult onUse(ItemUsageContext ctx);
     }
 }

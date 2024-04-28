@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.map.hook;
 
+import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.item.map.MapState;
 import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
@@ -22,5 +23,5 @@ public interface MapStateCallback {
             });
 
     @Nullable
-    MapState getMapState(ServerWorld world, String id);
+    MapState getMapState(ServerWorld world, MapIdComponent id);
 }

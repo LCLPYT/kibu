@@ -25,7 +25,7 @@ public class ProjectileEntityMixin {
         ProjectileHooks.HIT_BLOCK.invoker().onHitBlock(self, blockHitResult);
     }
 
-    @ModifyReturnValue(method = "canHit", at = @At("RETURN"))
+    @ModifyReturnValue(method = "canHit(Lnet/minecraft/entity/Entity;)Z", at = @At("RETURN"))
     public boolean kibu$canHit(boolean original, @Local(argsOnly = true) Entity entity) {
         if (!original) return false;
 

@@ -3,8 +3,10 @@ package work.lclpnet.kibu.hook.mixin.block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.RespawnAnchorBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -19,16 +21,16 @@ import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 public class RespawnAnchorBlockMixin {
 
     @Inject(
-            method = "onUse",
+            method = "onUseWithItem",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/block/RespawnAnchorBlock;charge(Lnet/minecraft/entity/Entity;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V"
             ),
             cancellable = true
     )
-    public void kibu$onCharge(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onCharge(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ItemActionResult> cir) {
         if (BlockModificationHooks.CHARGE_RESPAWN_ANCHOR.invoker().onModify(world, pos, player)) {
-            cir.setReturnValue(ActionResult.PASS);
+            cir.setReturnValue(ItemActionResult.SKIP_DEFAULT_BLOCK_INTERACTION);
         }
     }
 
@@ -40,7 +42,7 @@ public class RespawnAnchorBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onExplode(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onExplode(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (BlockModificationHooks.EXPLODE_RESPAWN_LOCATION.invoker().onModify(world, pos, player)) {
             cir.setReturnValue(ActionResult.PASS);
         }
@@ -54,7 +56,7 @@ public class RespawnAnchorBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onSetSpawnPoint(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onSetSpawnPoint(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (PlayerSpawnPointChangeCallback.HOOK.invoker().onChange(player, world, pos)) {
             cir.setReturnValue(ActionResult.PASS);
         }

@@ -108,14 +108,13 @@ public class KibuTestMod implements ModInitializer {
                 return null;
             }
 
-            return world.getPersistentStateManager().get(MapState.getPersistentStateType(), id);
+            return world.getPersistentStateManager().get(MapState.getPersistentStateType(), id.asString());
         });
     }
 
     private void testCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             new ImageMapCommand().register(dispatcher);
-            new FireworkCommand().register(dispatcher);
             new SchematicCommand().register(dispatcher);
             new BehaviourCommand().register(dispatcher);
         });
@@ -245,7 +244,7 @@ public class KibuTestMod implements ModInitializer {
         EntityStatusEffectCallback.HOOK.register((entity, effect, source) -> source != null
                 && entity instanceof ServerPlayerEntity player
                 && player.getMainHandStack().isOf(Items.STICK)
-                && !effect.getEffectType().isBeneficial());
+                && !effect.getEffectType().value().isBeneficial());
 
         EntityBossBarCallback.HOOK.register((entity, bossBar, player) -> player.getMainHandStack().isOf(Items.STICK));
 

@@ -12,6 +12,8 @@ import work.lclpnet.kibu.mc.KibuBlockEntity;
 import work.lclpnet.kibu.mc.KibuBlockPos;
 import work.lclpnet.kibu.nbt.FabricNbtConversion;
 
+import java.util.Objects;
+
 public class FabricKibuBlockEntity implements KibuBlockEntity {
 
     private final BlockEntityType<?> type;
@@ -19,7 +21,7 @@ public class FabricKibuBlockEntity implements KibuBlockEntity {
     private final NbtCompound nbt;
 
     public FabricKibuBlockEntity(BlockEntity blockEntity) {
-        this(blockEntity.getType(), blockEntity.getPos(), blockEntity.createNbt());
+        this(blockEntity.getType(), blockEntity.getPos(), blockEntity.createNbt(Objects.requireNonNull(blockEntity.getWorld()).getRegistryManager()));
     }
 
     public FabricKibuBlockEntity(BlockEntityType<?> type, BlockPos pos, NbtCompound nbt) {
@@ -54,7 +56,7 @@ public class FabricKibuBlockEntity implements KibuBlockEntity {
         var optBlockEntity = world.getBlockEntity(pos, type);
 
         if (optBlockEntity.isPresent()) {
-            optBlockEntity.get().readNbt(nbt);
+            optBlockEntity.get().read(nbt, world.getRegistryManager());
             return true;
         }
 
@@ -62,7 +64,7 @@ public class FabricKibuBlockEntity implements KibuBlockEntity {
 
         if (blockEntity == null) return false;
 
-        blockEntity.readNbt(nbt);
+        blockEntity.read(nbt, world.getRegistryManager());
         blockEntity.setWorld(world);
 
         world.addBlockEntity(blockEntity);

@@ -7,8 +7,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ComposterBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -23,16 +25,16 @@ import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 public class ComposterBlockMixin {
 
     @Inject(
-            method = "onUse",
+            method = "onUseWithItem",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/block/ComposterBlock;addToComposter(Lnet/minecraft/entity/Entity;Lnet/minecraft/block/BlockState;Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/block/BlockState;"
             ),
             cancellable = true
     )
-    public void kibu$onAddToComposter(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onAddToComposter(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ItemActionResult> cir) {
         if (BlockModificationHooks.COMPOSTER.invoker().onModify(world, pos, player)) {
-            cir.setReturnValue(ActionResult.PASS);
+            cir.setReturnValue(ItemActionResult.SKIP_DEFAULT_BLOCK_INTERACTION);
         }
     }
 
@@ -44,7 +46,7 @@ public class ComposterBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onEmptyComposter(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onEmptyComposter(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
         if (BlockModificationHooks.COMPOSTER.invoker().onModify(world, pos, player)) {
             cir.setReturnValue(ActionResult.PASS);
         }

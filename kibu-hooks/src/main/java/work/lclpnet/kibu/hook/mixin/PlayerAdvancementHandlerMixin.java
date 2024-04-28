@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.mixin;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.AdvancementUpdateS2CPacket;

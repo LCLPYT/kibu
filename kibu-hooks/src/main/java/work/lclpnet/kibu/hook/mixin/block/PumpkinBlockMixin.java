@@ -15,7 +15,7 @@ import work.lclpnet.kibu.hook.util.MixinUtils;
 public class PumpkinBlockMixin {
 
     @WrapOperation(
-            method = "onUse",
+            method = "onUseWithItem",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"

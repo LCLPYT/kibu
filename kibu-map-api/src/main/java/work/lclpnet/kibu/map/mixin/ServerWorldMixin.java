@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.map.mixin;
 
+import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.item.map.MapState;
 import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +17,7 @@ public class ServerWorldMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onGetMapState(String id, CallbackInfoReturnable<MapState> cir) {
+    public void kibu$onGetMapState(MapIdComponent id, CallbackInfoReturnable<MapState> cir) {
         ServerWorld world = (ServerWorld) (Object) this;
 
         MapState override = MapStateCallback.HOOK.invoker().getMapState(world, id);

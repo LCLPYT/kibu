@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "work.lclpnet.kibu.access.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "injectors": {
     "defaultRequire": 1
   },
@@ -10,6 +10,7 @@
     "AbstractDecorationEntityAccessor",
     "ArmorStandEntityAccessor",
     "BlockDisplayEntityAccessor",
+    "DamageTrackerAccessor",
     "DisplayEntityAccessor",
     "EntityAccessor",
     "FallingBlockEntityAccessor",
@@ -17,8 +18,6 @@
     "GoatEntityMixin",
     "HorseEntityAccessor",
     "ItemDisplayEntityAccessor",
-    "DamageTrackerAccessor",
-    "LlamaEntityAccessor",
     "PigEntityAccessor",
     "SaddledComponentMixin",
     "ServerPlayerEntityMixin",

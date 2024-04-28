@@ -5,8 +5,6 @@ import net.minecraft.entity.passive.PigEntity;
 import work.lclpnet.kibu.access.mixin.PigEntityAccessor;
 import work.lclpnet.kibu.access.type.KibuSaddledComponent;
 
-import java.util.Random;
-
 public class PigEntityAccess {
 
     private PigEntityAccess() {}

@@ -4,7 +4,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.item.FilledMapItem;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
@@ -68,10 +69,8 @@ public class ImageMapCommand {
     private void processImage(ServerPlayerEntity player, BufferedImage img) {
         ServerWorld world = player.getServerWorld();
 
-        int id = MapUtil.allocateMapId(world, 0, 0, 0, false, false, world.getRegistryKey());
-        String name = FilledMapItem.getMapName(id);
-
-        MapState mapState = world.getMapState(name);
+        MapIdComponent id = MapUtil.allocateMapId(world, 0, 0, 0, false, false, world.getRegistryKey());
+        MapState mapState = world.getMapState(id);
 
         if (mapState == null) throw new IllegalStateException("Map state not found");
 
@@ -82,7 +81,7 @@ public class ImageMapCommand {
         mapState.markDirty();
 
         ItemStack stack = new ItemStack(Items.FILLED_MAP);
-        MapUtil.setMapId(stack, id);
+        stack.set(DataComponentTypes.MAP_ID, id);
 
         player.getInventory().setStack(0, stack);
     }

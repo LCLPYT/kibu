@@ -1,11 +1,13 @@
 package work.lclpnet.kibu.hook.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -19,26 +21,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import work.lclpnet.kibu.hook.type.CancellableExplosion;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 
 @Mixin(ServerWorld.class)
 public class ServerWorldMixin {
 
-    @SuppressWarnings("InvalidInjectorMethodSignature")
     @Inject(
             method = "createExplosion",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/explosion/Explosion;shouldDestroy()Z"
             ),
-            cancellable = true,
-            locals = LocalCapture.CAPTURE_FAILHARD
+            cancellable = true
     )
-    public void kibu$onExplode(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, ParticleEffect particle, ParticleEffect emitterParticle, SoundEvent soundEvent, CallbackInfoReturnable<Explosion> cir, Explosion explosion) {
-        if (((CancellableExplosion) explosion).kibu$isCancelled())
+    public void kibu$onExplode(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, ParticleEffect particle, ParticleEffect emitterParticle, RegistryEntry<SoundEvent> soundEvent, CallbackInfoReturnable<Explosion> cir, @Local Explosion explosion) {
+        if (((CancellableExplosion) explosion).kibu$isCancelled()) {
             cir.setReturnValue(explosion);
+        }
     }
 
     @Redirect(

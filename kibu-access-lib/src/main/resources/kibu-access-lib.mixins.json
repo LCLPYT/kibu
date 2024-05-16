@@ -20,8 +20,10 @@
     "ItemDisplayEntityAccessor",
     "PigEntityAccessor",
     "SaddledComponentMixin",
+    "SerializableTeamAccessor",
     "ServerPlayerEntityMixin",
     "StriderEntityAccessor",
+    "TeamS2CPacketAccessor",
     "TextDisplayEntityAccessor",
     "TropicalFishEntityAccessor"
   ]

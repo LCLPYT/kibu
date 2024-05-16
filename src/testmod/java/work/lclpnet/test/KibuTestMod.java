@@ -117,6 +117,7 @@ public class KibuTestMod implements ModInitializer {
             new ImageMapCommand().register(dispatcher);
             new SchematicCommand().register(dispatcher);
             new BehaviourCommand().register(dispatcher);
+            new TeamCommand().register(dispatcher);
         });
     }
 

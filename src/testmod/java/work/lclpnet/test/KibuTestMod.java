@@ -3,17 +3,21 @@ package work.lclpnet.test;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.mob.VexEntity;
 import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
+import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
+import work.lclpnet.kibu.access.entity.EntityAccess;
 import work.lclpnet.kibu.access.entity.GoatEntityAccess;
 import work.lclpnet.kibu.access.entity.TropicalFishEntityAccess;
 import work.lclpnet.kibu.behaviour.entity.VexEntityBehaviour;
@@ -26,6 +30,8 @@ import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 import work.lclpnet.kibu.hook.world.ItemScatterCallback;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 import work.lclpnet.kibu.map.hook.MapStateCallback;
+
+import java.util.List;
 
 public class KibuTestMod implements ModInitializer {
 
@@ -65,7 +71,15 @@ public class KibuTestMod implements ModInitializer {
 
     private void entityEditor() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (!player.getStackInHand(hand).isOf(Items.NETHER_STAR)) {
+            ItemStack stack = player.getStackInHand(hand);
+
+            if (stack.isOf(Items.BLAZE_ROD) && player instanceof ServerPlayerEntity serverPlayer && !world.isClient && hitResult != null) {
+                toggleInvisibility(entity, serverPlayer);
+
+                return ActionResult.SUCCESS;
+            }
+
+            if (!stack.isOf(Items.NETHER_STAR)) {
                 return ActionResult.PASS;
             }
 
@@ -88,6 +102,24 @@ public class KibuTestMod implements ModInitializer {
 
             return ActionResult.SUCCESS;
         });
+    }
+
+    private static void toggleInvisibility(Entity entity, ServerPlayerEntity serverPlayer) {
+        var tags = entity.getCommandTags();
+        boolean invisible = tags.contains("invisible");
+
+        if (invisible) {
+            tags.remove("invisible");
+        } else {
+            tags.add("invisible");
+        }
+
+        byte flags = entity.getDataTracker().get(EntityAccess.FLAGS);
+        flags = EntityAccess.setFlag(flags, EntityAccess.INVISIBLE_FLAG_INDEX, !invisible);
+
+        var entry = DataTracker.SerializedEntry.of(EntityAccess.FLAGS, flags);
+        var packet = new EntityTrackerUpdateS2CPacket(entity.getId(), List.of(entry));
+        serverPlayer.networkHandler.sendPacket(packet);
     }
 
     private void preventWhenRaining() {

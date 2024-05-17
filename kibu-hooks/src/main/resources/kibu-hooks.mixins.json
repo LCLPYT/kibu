@@ -15,6 +15,7 @@
     "PlayerAdvancementHandlerMixin",
     "PlayerInventoryMixin",
     "PlayerManagerMixin",
+    "ServerCommonNetworkHandlerMixin",
     "ServerPlayerInteractionManagerMixin",
     "ServerPlayNetworkHandlerMixin",
     "ServerRecipeBookMixin",

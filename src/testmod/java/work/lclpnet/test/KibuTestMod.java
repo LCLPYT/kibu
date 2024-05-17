@@ -12,7 +12,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundFromEntityS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -23,6 +26,7 @@ import work.lclpnet.kibu.access.entity.TropicalFishEntityAccess;
 import work.lclpnet.kibu.behaviour.entity.VexEntityBehaviour;
 import work.lclpnet.kibu.hook.ServerMessageHooks;
 import work.lclpnet.kibu.hook.entity.*;
+import work.lclpnet.kibu.hook.network.ServerSendPacketCallback;
 import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PendingRecipe;
 import work.lclpnet.kibu.hook.util.RecipeUtils;
@@ -32,6 +36,8 @@ import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 import work.lclpnet.kibu.map.hook.MapStateCallback;
 
 import java.util.List;
+
+import static net.minecraft.item.Items.STICK;
 
 public class KibuTestMod implements ModInitializer {
 
@@ -58,9 +64,7 @@ public class KibuTestMod implements ModInitializer {
             return TypedActionResult.pass(ItemStack.EMPTY);
         });
 
-        PlayerTeleportedCallback.HOOK.register(player -> {
-            System.out.printf("%s just teleported%n", player.getNameForScoreboard());
-        });
+        PlayerTeleportedCallback.HOOK.register(player -> System.out.printf("%s just teleported%n", player.getNameForScoreboard()));
     }
 
     private void preventBeyond300() {
@@ -157,7 +161,7 @@ public class KibuTestMod implements ModInitializer {
         // cancel when holding a wither rose
         EntityHealthCallback.HOOK.register((entity, health)
                 -> entity instanceof ServerPlayerEntity player && player.getInventory() != null
-                && player.getStackInHand(Hand.MAIN_HAND).isOf(Items.WITHER_ROSE));
+                   && player.getStackInHand(Hand.MAIN_HAND).isOf(Items.WITHER_ROSE));
     }
 
     private static void doubleJump() {
@@ -177,65 +181,65 @@ public class KibuTestMod implements ModInitializer {
             if (!(source.getSource() instanceof ServerPlayerEntity player)) return false;
 
             ItemStack stack = player.getMainHandStack();
-            return stack.isOf(Items.STICK);
+            return stack.isOf(STICK);
         });
 
-        ItemFramePutItemCallback.HOOK.register((itemFrame, stack, player, hand) -> stack.isOf(Items.STICK));
+        ItemFramePutItemCallback.HOOK.register((itemFrame, stack, player, hand) -> stack.isOf(STICK));
 
         ItemFrameRotateCallback.HOOK.register((itemFrame, player, hand) -> {
             ItemStack stack = player.getStackInHand(hand);
-            return stack.isOf(Items.STICK);
+            return stack.isOf(STICK);
         });
 
         ItemFrameRemoveItemCallback.HOOK.register((itemFrame, attacker) -> {
             if (!(attacker instanceof ServerPlayerEntity player)) return false;
 
             ItemStack stack = player.getMainHandStack();
-            return stack.isOf(Items.STICK);
+            return stack.isOf(STICK);
         });
 
-        ArmorStandManipulateCallback.HOOK.register((armorStand, player, slot, stack, hand) -> player.getStackInHand(hand).isOf(Items.STICK));
+        ArmorStandManipulateCallback.HOOK.register((armorStand, player, slot, stack, hand) -> player.getStackInHand(hand).isOf(STICK));
 
-        ItemUseOnEntityCallback.HOOK.register((player, entity, hand, stack) -> player.getOffHandStack().isOf(Items.STICK));
+        ItemUseOnEntityCallback.HOOK.register((player, entity, hand, stack) -> player.getOffHandStack().isOf(STICK));
 
-        LeashAttachCallback.HOOK.register((player, world, pos) -> player.getOffHandStack().isOf(Items.STICK));
+        LeashAttachCallback.HOOK.register((player, world, pos) -> player.getOffHandStack().isOf(STICK));
 
-        LeashDetachCallback.HOOK.register((player, leashKnot) -> player.getOffHandStack().isOf(Items.STICK));
+        LeashDetachCallback.HOOK.register((player, leashKnot) -> player.getOffHandStack().isOf(STICK));
 
-        LeashEntityCallback.HOOK.register((player, entity) -> player.getOffHandStack().isOf(Items.STICK));
+        LeashEntityCallback.HOOK.register((player, entity) -> player.getOffHandStack().isOf(STICK));
 
-        UnleashEntityCallback.HOOK.register((player, entity) -> player.getOffHandStack().isOf(Items.STICK));
+        UnleashEntityCallback.HOOK.register((player, entity) -> player.getOffHandStack().isOf(STICK));
 
-        LeashEntityToBlockCallback.HOOK.register((player, entity, leashKnot) -> player.getOffHandStack().isOf(Items.STICK));
+        LeashEntityToBlockCallback.HOOK.register((player, entity, leashKnot) -> player.getOffHandStack().isOf(STICK));
 
-        ProjectilePickupCallback.HOOK.register((player, projectile) -> player.getMainHandStack().isOf(Items.STICK));
+        ProjectilePickupCallback.HOOK.register((player, projectile) -> player.getMainHandStack().isOf(STICK));
 
         BlockModificationHooks.EXTINGUISH_CANDLE.register((world, pos, entity)
-                -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(Items.STICK));
+                -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));
 
-        PlayerAdvancementPacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(Items.STICK));
+        PlayerAdvancementPacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(STICK));
 
-        PlayerRecipePacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(Items.STICK));
+        PlayerRecipePacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(STICK));
 
         BlockModificationHooks.DECORATIVE_POT_STORE.register((world, pos, entity)
-                -> entity instanceof ServerPlayerEntity player && player.getOffHandStack().isOf(Items.STICK));
+                -> entity instanceof ServerPlayerEntity player && player.getOffHandStack().isOf(STICK));
 
         ProjectileHooks.BREAK_DECORATED_POT.register((projectile, hit) -> {
             if (!(projectile.getOwner() instanceof ServerPlayerEntity player)) return false;
 
-            return player.getOffHandStack().isOf(Items.STICK);
+            return player.getOffHandStack().isOf(STICK);
         });
 
-        PlayerInventoryHooks.DROP_ITEM_ENTITY.register((player, itemEntity) -> player.getOffHandStack().isOf(Items.STICK));
+        PlayerInventoryHooks.DROP_ITEM_ENTITY.register((player, itemEntity) -> player.getOffHandStack().isOf(STICK));
 
         PlayerInventoryHooks.DROPPED_ITEM_ENTITY.register((player, itemEntity) -> {
-            if (player.getMainHandStack().isOf(Items.STICK)) {
+            if (player.getMainHandStack().isOf(STICK)) {
                 System.out.println("DROPPED ITEM ENTITY " + itemEntity);
             }
         });
 
         CraftingRecipeCallback.HOOK.register((player, recipeManager, type, inventory, world) -> {
-            if (!player.getMainHandStack().isOf(Items.STICK)) {
+            if (!player.getMainHandStack().isOf(STICK)) {
                 return PendingRecipe.pass();
             }
 
@@ -243,13 +247,13 @@ public class KibuTestMod implements ModInitializer {
             return recipeManager.getFirstMatch(type, inventory, world)
                     .map(RecipeEntry::value)
                     .map(recipe -> recipe.getResult(world.getRegistryManager()))
-                    .filter(result -> result.isOf(Items.STICK))
+                    .filter(result -> result.isOf(STICK))
                     .map(result -> PendingRecipe.empty())  // this is the resulting recipe; empty means none
                     .orElse(PendingRecipe.pass());
         });
 
         CraftingRecipeCallback.HOOK.register((player, recipeManager, type, inventory, world) -> {
-            if (!player.getMainHandStack().isOf(Items.STICK)) {
+            if (!player.getMainHandStack().isOf(STICK)) {
                 return PendingRecipe.pass();
             }
 
@@ -265,23 +269,31 @@ public class KibuTestMod implements ModInitializer {
                     .orElse(PendingRecipe.pass());
         });
 
-        EntityDamageCallback.HOOK.register((entity, source, amount) -> entity instanceof ServerPlayerEntity player
-                && player.getOffHandStack().isOf(Items.STICK));
+        EntityDamageCallback.HOOK.register((entity, source, amount)
+                -> entity instanceof ServerPlayerEntity player
+                   && player.getOffHandStack().isOf(STICK));
 
-        ServerMessageHooks.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> !sender.getMainHandStack().isOf(Items.STICK));
+        ServerMessageHooks.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> !sender.getMainHandStack().isOf(STICK));
 
         // disallow mobs to target players who hold a stick
-        EntityTargetCallback.HOOK.register((entity, target) -> target instanceof ServerPlayerEntity player
-                && player.getMainHandStack().isOf(Items.STICK));
+        EntityTargetCallback.HOOK.register((entity, target)
+                -> target instanceof ServerPlayerEntity player
+                   && player.getMainHandStack().isOf(STICK));
 
-        EntityStatusEffectCallback.HOOK.register((entity, effect, source) -> source != null
-                && entity instanceof ServerPlayerEntity player
-                && player.getMainHandStack().isOf(Items.STICK)
-                && !effect.getEffectType().value().isBeneficial());
+        EntityStatusEffectCallback.HOOK.register((entity, effect, source)
+                -> source != null
+                   && entity instanceof ServerPlayerEntity player
+                   && player.getMainHandStack().isOf(STICK)
+                   && !effect.getEffectType().value().isBeneficial());
 
-        EntityBossBarCallback.HOOK.register((entity, bossBar, player) -> player.getMainHandStack().isOf(Items.STICK));
+        EntityBossBarCallback.HOOK.register((entity, bossBar, player) -> player.getMainHandStack().isOf(STICK));
 
-        EntityMountCallback.HOOK.register((entity, vehicle, force) -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(Items.STICK));
-        EntityDismountCallback.HOOK.register((entity, vehicle) -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(Items.STICK));
+        EntityMountCallback.HOOK.register((entity, vehicle, force) -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));
+        EntityDismountCallback.HOOK.register((entity, vehicle) -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));
+
+        ServerSendPacketCallback.HOOK.register((packet, handler)
+                -> handler instanceof ServerPlayNetworkHandler networkHandler
+                   && networkHandler.player.getStackInHand(Hand.MAIN_HAND).isOf(STICK)
+                   && (packet instanceof PlaySoundS2CPacket || packet instanceof PlaySoundFromEntityS2CPacket));
     }
 }

@@ -80,6 +80,8 @@ public class ArrayBlockStructure implements BlockStructure {
         } else if (!isEmpty) {
             boolean sameState = oldEntry.state.getAsString().equals(state.getAsString());
 
+            states[y][x][z].state = state;
+
             // reset block entity if blocks mismatch
             if (!sameState && states[y][x][z].blockEntity != null) {
                 states[y][x][z].blockEntity = null;

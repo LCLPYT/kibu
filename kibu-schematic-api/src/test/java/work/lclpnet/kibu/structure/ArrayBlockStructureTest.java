@@ -27,6 +27,19 @@ class ArrayBlockStructureTest {
     }
 
     @Test
+    void setBlockState_insideReplace_success() {
+        var struct = new ArrayBlockStructure(2, 2, 2, new KibuBlockPos(5, 5, 5), 0);
+
+        BuiltinKibuBlockState foo = new BuiltinKibuBlockState("foo");
+        BuiltinKibuBlockState bar = new BuiltinKibuBlockState("bar");
+
+        struct.setBlockState(new KibuBlockPos(6, 6, 6), foo);
+        struct.setBlockState(new KibuBlockPos(6, 6, 6), bar);
+
+        assertEquals(bar, struct.getBlockState(new KibuBlockPos(6, 6, 6)));
+    }
+
+    @Test
     void setBlockState_outside_throws() {
         var struct = new ArrayBlockStructure(2, 2, 2, new KibuBlockPos(5, 5, 5), 0);
 

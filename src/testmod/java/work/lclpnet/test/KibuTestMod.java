@@ -154,6 +154,7 @@ public class KibuTestMod implements ModInitializer {
             new SchematicCommand().register(dispatcher);
             new BehaviourCommand().register(dispatcher);
             new TeamCommand().register(dispatcher);
+            new BorderCommand().register(dispatcher);
         });
     }
 

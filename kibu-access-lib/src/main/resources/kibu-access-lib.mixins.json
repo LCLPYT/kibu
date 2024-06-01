@@ -25,6 +25,7 @@
     "StriderEntityAccessor",
     "TeamS2CPacketAccessor",
     "TextDisplayEntityAccessor",
-    "TropicalFishEntityAccessor"
+    "TropicalFishEntityAccessor",
+    "WorldBorderWarningBlocksChangedS2CPacketAccessor"
   ]
 }

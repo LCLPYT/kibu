@@ -6,6 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -31,12 +32,12 @@ public class WorldPhysicsHooks {
         return cancelled;
     });
 
-    public static final Hook<FrostWalkerFreezeHook> FROST_WALKER_FREEZE = HookFactory.createArrayBacked(FrostWalkerFreezeHook.class, callbacks -> (world, pos, entity) -> {
+    public static final Hook<ReplaceDiskEnchantmentHook> REPLACE_DISK_ENCHANTMENT = HookFactory.createArrayBacked(ReplaceDiskEnchantmentHook.class, callbacks -> (world, pos, entity, state) -> {
         boolean cancelled = false;
 
         for (var callback : callbacks)
-            if (callback.onFreeze(world, pos, entity))
-                return cancelled;
+            if (callback.onApply(world, pos, entity, state))
+                cancelled = true;
 
         return cancelled;
     });
@@ -46,7 +47,7 @@ public class WorldPhysicsHooks {
 
         for (var callback : callbacks)
             if (callback.onFade(world, pos))
-                return cancelled;
+                cancelled = true;
 
         return cancelled;
     });
@@ -122,8 +123,8 @@ public class WorldPhysicsHooks {
         boolean onFade(World world, BlockPos pos);
     }
 
-    public interface FrostWalkerFreezeHook {
-        boolean onFreeze(World world, BlockPos pos, LivingEntity entity);
+    public interface ReplaceDiskEnchantmentHook {
+        boolean onApply(World world, BlockPos pos, @Nullable LivingEntity entity, BlockState state);
     }
 
     public interface SnowFallHook {

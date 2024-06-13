@@ -2,7 +2,7 @@ package work.lclpnet.kibu.hook.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.UnlockRecipesS2CPacket;
+import net.minecraft.network.packet.s2c.play.ChangeUnlockedRecipesS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerRecipeBook;
@@ -21,7 +21,7 @@ public class ServerRecipeBookMixin {
             )
     )
     public boolean kibu$beforeSendUnlockPacket(ServerPlayNetworkHandler instance, Packet<?> packet) {
-        if (!(packet instanceof UnlockRecipesS2CPacket updatePacket)) return true;
+        if (!(packet instanceof ChangeUnlockedRecipesS2CPacket updatePacket)) return true;
 
         ServerPlayerEntity player = instance.player;
 

@@ -2,8 +2,8 @@ package work.lclpnet.kibu.hook.mixin.item;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.Leashable;
 import net.minecraft.entity.decoration.LeashKnotEntity;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.LeadItem;
 import net.minecraft.util.ActionResult;
@@ -37,12 +37,12 @@ public class LeadItemMixin {
             method = "attachHeldMobsToBlock",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/mob/MobEntity;attachLeash(Lnet/minecraft/entity/Entity;Z)V"
+                    target = "Lnet/minecraft/entity/Leashable;attachLeash(Lnet/minecraft/entity/Entity;Z)V"
             )
     )
-    private static boolean kibu$attachLeashAllowed(MobEntity instance, Entity entity, boolean sendPacket) {
-        Entity holder = instance.getHoldingEntity();
-        if (!(holder instanceof PlayerEntity player) || !(entity instanceof LeashKnotEntity leashKnot)) return true;
+    private static boolean kibu$attachLeashAllowed(Leashable instance, Entity leashHolder, boolean sendPacket) {
+        Entity currentHolder = instance.getLeashHolder();
+        if (!(currentHolder instanceof PlayerEntity player) || !(leashHolder instanceof LeashKnotEntity leashKnot)) return true;
 
         return !LeashEntityToBlockCallback.HOOK.invoker().onLeashToBlock(player, instance, leashKnot);
     }

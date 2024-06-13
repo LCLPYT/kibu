@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.hook.mixin;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
@@ -92,7 +93,7 @@ public abstract class PlayerManagerMixin {
             method = "respawnPlayer",
             at = @At("RETURN")
     )
-    public void kibu$afterRespawn(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir) {
+    public void kibu$afterRespawn(ServerPlayerEntity oldPlayer, boolean alive, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayerEntity> cir) {
         ServerPlayerEntity player = cir.getReturnValue();
 
         var data = new PlayerSpawnLocationCallback.LocationData(player, false, player.getServerWorld(),

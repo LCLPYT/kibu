@@ -3,20 +3,24 @@ package work.lclpnet.kibu.hook.mixin.entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.Leashable;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.EntityAttachS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import work.lclpnet.kibu.hook.entity.EntityRemovedCallback;
-import work.lclpnet.kibu.hook.entity.EntityMountCallback;
-import work.lclpnet.kibu.hook.entity.EntityDismountCallback;
+import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.player.PlayerSneakCallback;
 import work.lclpnet.kibu.hook.player.PlayerSprintCallback;
 import work.lclpnet.kibu.hook.util.MixinUtils;
+import work.lclpnet.kibu.hook.util.PlayerUtils;
 
 @Mixin(Entity.class)
 public class EntityMixin {
@@ -101,6 +105,44 @@ public class EntityMixin {
 
         if (EntityDismountCallback.HOOK.invoker().onDismount(self, vehicle)) {
             ci.cancel();
+        }
+    }
+
+    @Inject(
+            method = "interact",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/Leashable;attachLeash(Lnet/minecraft/entity/Entity;Z)V"
+            ),
+            cancellable = true
+    )
+    public void kibu$beforeLeashMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+        Entity self = (Entity) (Object) this;
+
+        if (LeashEntityCallback.HOOK.invoker().onLeash(player, (Leashable) self)) {
+            cir.setReturnValue(ActionResult.PASS);
+
+            // fix de-sync
+            if (player instanceof ServerPlayerEntity serverPlayer) {
+                PlayerUtils.syncPlayerItems(player);
+                serverPlayer.networkHandler.sendPacket(new EntityAttachS2CPacket(self, null));
+            }
+        }
+    }
+
+    @Inject(
+            method = "interact",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/Leashable;detachLeash(ZZ)V"
+            ),
+            cancellable = true
+    )
+    public void kibu$beforeUnleashMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+        Leashable self = (Leashable) this;
+
+        if (UnleashEntityCallback.HOOK.invoker().onUnleash(player, self)) {
+            cir.setReturnValue(ActionResult.PASS);
         }
     }
 }

@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.hook.mixin;
 
 import net.minecraft.entity.player.PlayerAbilities;
+import net.minecraft.network.DisconnectionInfo;
 import net.minecraft.network.packet.c2s.play.*;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.PlayerManager;
@@ -68,10 +69,10 @@ public abstract class ServerPlayNetworkHandlerMixin {
             method = "onDisconnected",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerCommonNetworkHandler;onDisconnected(Lnet/minecraft/text/Text;)V"
+                    target = "Lnet/minecraft/server/network/ServerCommonNetworkHandler;onDisconnected(Lnet/minecraft/network/DisconnectionInfo;)V"
             )
     )
-    public void kibu$afterQuit(Text reason, CallbackInfo ci) {
+    public void kibu$afterQuit(DisconnectionInfo info, CallbackInfo ci) {
         PlayerConnectionHooks.QUIT.invoker().act(player);
     }
 

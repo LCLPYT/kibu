@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.entity;
 
+import net.minecraft.entity.Leashable;
 import net.minecraft.entity.decoration.LeashKnotEntity;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
@@ -21,5 +21,5 @@ public interface LeashEntityToBlockCallback {
                 return cancel;
             });
 
-    boolean onLeashToBlock(PlayerEntity player, MobEntity entity, LeashKnotEntity leashKnot);
+    boolean onLeashToBlock(PlayerEntity player, Leashable entity, LeashKnotEntity leashKnot);
 }

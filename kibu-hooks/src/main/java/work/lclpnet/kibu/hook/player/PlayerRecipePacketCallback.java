@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.network.packet.s2c.play.UnlockRecipesS2CPacket;
+import net.minecraft.network.packet.s2c.play.ChangeUnlockedRecipesS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
@@ -20,5 +20,5 @@ public interface PlayerRecipePacketCallback {
                 return cancel;
             });
 
-    boolean onRecipeUpdate(ServerPlayerEntity player, UnlockRecipesS2CPacket packet);
+    boolean onRecipeUpdate(ServerPlayerEntity player, ChangeUnlockedRecipesS2CPacket packet);
 }

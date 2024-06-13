@@ -239,13 +239,15 @@ public class KibuTestMod implements ModInitializer {
             }
         });
 
-        CraftingRecipeCallback.HOOK.register((player, recipeManager, type, inventory, world) -> {
+        CraftingRecipeCallback.HOOK.register((player, recipeManager, type, input, cached) -> {
             if (!player.getMainHandStack().isOf(STICK)) {
                 return PendingRecipe.pass();
             }
 
+            World world = player.getWorld();
+
             // test for sticks; this could also check the recipe entry identifier
-            return recipeManager.getFirstMatch(type, inventory, world)
+            return recipeManager.getFirstMatch(type, input, world)
                     .map(RecipeEntry::value)
                     .map(recipe -> recipe.getResult(world.getRegistryManager()))
                     .filter(result -> result.isOf(STICK))
@@ -253,18 +255,20 @@ public class KibuTestMod implements ModInitializer {
                     .orElse(PendingRecipe.pass());
         });
 
-        CraftingRecipeCallback.HOOK.register((player, recipeManager, type, inventory, world) -> {
+        CraftingRecipeCallback.HOOK.register((player, recipeManager, type, input, cached) -> {
             if (!player.getMainHandStack().isOf(STICK)) {
                 return PendingRecipe.pass();
             }
 
-            return recipeManager.getFirstMatch(type, inventory, world)
+            World world = player.getWorld();
+
+            return recipeManager.getFirstMatch(type, input, world)
                     .map(RecipeEntry::value)
                     .map(recipe -> recipe.getResult(world.getRegistryManager()))
                     .filter(result -> result.isOf(Items.STONE_SWORD))
                     .map(result -> {
                         // replace stone sword with wooden sword
-                        var woodenSword = RecipeUtils.getRecipe(recipeManager, new Identifier("wooden_sword"), type);
+                        var woodenSword = RecipeUtils.getRecipe(recipeManager, Identifier.of("wooden_sword"), type);
                         return PendingRecipe.of(woodenSword.orElse(null));
                     })
                     .orElse(PendingRecipe.pass());
@@ -296,5 +300,8 @@ public class KibuTestMod implements ModInitializer {
                 -> handler instanceof ServerPlayNetworkHandler networkHandler
                    && networkHandler.player.getStackInHand(Hand.MAIN_HAND).isOf(STICK)
                    && (packet instanceof PlaySoundS2CPacket || packet instanceof PlaySoundFromEntityS2CPacket));
+
+        WorldPhysicsHooks.REPLACE_DISK_ENCHANTMENT.register((world, pos, entity, state)
+                -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));
     }
 }

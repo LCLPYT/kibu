@@ -65,7 +65,7 @@ public class BlockStateUtils {
             propertiesPart = string.substring(propertiesStart + 1, propertiesEnd);
         }
 
-        var identifier = new Identifier(blockPart);
+        var identifier = Identifier.of(blockPart);
         var block = Registries.BLOCK.get(identifier);
         var state = block.getDefaultState();
 

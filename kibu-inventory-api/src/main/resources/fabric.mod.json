@@ -20,7 +20,7 @@
 	"mixins": [],
 	"depends": {
 		"fabricloader": ">=${loader_version}",
-		"minecraft": "~1.20.5",
+		"minecraft": "~1.21",
 		"java": ">=21",
 		"fabric-api": "*",
 		"kibu-hook-api": "*",

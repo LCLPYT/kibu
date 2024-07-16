@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.world.WorldUnreadyCallback;
+import work.lclpnet.kibu.hook.world.ServerWorldUnreadyCallback;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
@@ -20,6 +20,7 @@ public abstract class MinecraftServerMixin {
             method = "shutdown"
     )
     private void mplugins$beforeGetNetworkIo(CallbackInfo ci) {
-        WorldUnreadyCallback.HOOK.invoker().onWorldUnready();
+        MinecraftServer self = (MinecraftServer) (Object) this;
+        ServerWorldUnreadyCallback.HOOK.invoker().onWorldUnready(self);
     }
 }

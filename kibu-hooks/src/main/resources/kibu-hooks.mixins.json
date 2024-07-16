@@ -11,6 +11,8 @@
     "ExplosionMixin",
     "HungerManagerMixin",
     "LecternScreenHandlerMixin",
+    "MinecraftDedicatedServerMixin",
+    "MinecraftServerMixin",
     "PlayerAdvancementHandlerMixin",
     "PlayerInventoryMixin",
     "PlayerManagerMixin",
@@ -89,5 +91,8 @@
     "item.ItemScattererMixin",
     "item.ItemStackMixin",
     "item.LeadItemMixin"
+  ],
+  "client": [
+    "client.IntegratedServerMixin"
   ]
 }

@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.cmd.type.impl;
 
 import org.junit.jupiter.api.Test;
+import work.lclpnet.kibu.cmd.impl.DynamicCommandReference;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;

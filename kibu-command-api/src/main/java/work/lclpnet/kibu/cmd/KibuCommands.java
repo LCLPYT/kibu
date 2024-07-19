@@ -6,9 +6,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.command.ServerCommandSource;
+import work.lclpnet.kibu.cmd.impl.DynamicCommandReference;
 import work.lclpnet.kibu.cmd.type.CommandFactory;
 import work.lclpnet.kibu.cmd.type.CommandReference;
-import work.lclpnet.kibu.cmd.type.impl.DynamicCommandReference;
 import work.lclpnet.kibu.cmd.util.DeferredProxyCommandRegister;
 import work.lclpnet.kibu.cmd.util.MinecraftCommandRegister;
 

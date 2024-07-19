@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.hook;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Stack;
 import java.util.function.Supplier;
 

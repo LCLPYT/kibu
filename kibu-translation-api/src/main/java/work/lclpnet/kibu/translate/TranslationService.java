@@ -6,6 +6,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import work.lclpnet.kibu.access.PlayerLanguage;
 import work.lclpnet.kibu.translate.bossbar.BossBarProvider;
 import work.lclpnet.kibu.translate.bossbar.TranslatedBossBar;
@@ -18,7 +19,6 @@ import work.lclpnet.kibu.translate.util.Partial;
 import work.lclpnet.kibu.translate.util.WeakList;
 import work.lclpnet.translations.Translator;
 
-import javax.annotation.Nonnull;
 import java.util.Locale;
 
 public class TranslationService {
@@ -50,13 +50,13 @@ public class TranslationService {
         return translator;
     }
 
-    @Nonnull
+    @NotNull
     public String getLanguage(ServerPlayerEntity player) {
         return languagePreferenceProvider.getLanguagePreference(player)
                 .orElseGet(() -> PlayerLanguage.getLanguage(player));
     }
 
-    @Nonnull
+    @NotNull
     public Locale getLocale(ServerPlayerEntity player) {
         return LocaleUtil.getLocale(getLanguage(player));
     }

@@ -3,11 +3,11 @@ package work.lclpnet.kibu.cmd.mixin;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import work.lclpnet.kibu.cmd.type.RedirectAware;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,7 @@ public class RootCommandNodeMixin implements RedirectAware {
     @Unique
     private final Map<LiteralCommandNode<?>, List<CommandNode<?>>> redirects = new HashMap<>();
 
-    @Nonnull
+    @NotNull
     @Override
     public Map<LiteralCommandNode<?>, List<CommandNode<?>>> kibu$getRedirects() {
         return redirects;

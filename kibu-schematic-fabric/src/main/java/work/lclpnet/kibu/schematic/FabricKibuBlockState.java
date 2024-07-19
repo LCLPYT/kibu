@@ -1,10 +1,9 @@
 package work.lclpnet.kibu.schematic;
 
 import net.minecraft.block.BlockState;
+import org.jetbrains.annotations.NotNull;
 import work.lclpnet.kibu.mc.KibuBlockState;
 import work.lclpnet.kibu.util.BlockStateUtils;
-
-import javax.annotation.Nonnull;
 
 public class FabricKibuBlockState implements KibuBlockState {
 
@@ -28,7 +27,7 @@ public class FabricKibuBlockState implements KibuBlockState {
         return string;
     }
 
-    @Nonnull
+    @NotNull
     private String buildString() {
         return BlockStateUtils.stringify(state);
     }

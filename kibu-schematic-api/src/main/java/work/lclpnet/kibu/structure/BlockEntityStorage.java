@@ -1,9 +1,8 @@
 package work.lclpnet.kibu.structure;
 
+import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.mc.KibuBlockEntity;
 import work.lclpnet.kibu.mc.KibuBlockPos;
-
-import javax.annotation.Nullable;
 
 public interface BlockEntityStorage {
 

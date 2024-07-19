@@ -1,9 +1,8 @@
 package work.lclpnet.kibu.access;
 
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.jetbrains.annotations.NotNull;
 import work.lclpnet.kibu.access.type.LanguageGetter;
-
-import javax.annotation.Nonnull;
 
 public class PlayerLanguage {
 
@@ -16,7 +15,7 @@ public class PlayerLanguage {
      * @implNote In case this method is invoked before a client sends the
      * {@link net.minecraft.network.packet.c2s.common.SyncedClientOptions}, the language defaults to "en_us".
      */
-    @Nonnull
+    @NotNull
     public static String getLanguage(ServerPlayerEntity player) {
         return ((LanguageGetter) player).kibu$getLanguage();
     }

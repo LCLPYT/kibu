@@ -2,10 +2,9 @@ package work.lclpnet.kibu.scheduler;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 
 public class KibuScheduling implements ModInitializer {
 
@@ -19,7 +18,7 @@ public class KibuScheduling implements ModInitializer {
     }
 
     @SuppressWarnings("unused")
-    @Nonnull
+    @NotNull
     public static RootScheduler getRootScheduler() {
         return rootScheduler;
     }

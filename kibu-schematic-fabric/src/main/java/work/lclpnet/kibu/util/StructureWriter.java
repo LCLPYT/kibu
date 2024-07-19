@@ -7,6 +7,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import work.lclpnet.kibu.schematic.FabricBlockStateAdapter;
@@ -15,7 +16,6 @@ import work.lclpnet.kibu.structure.BlockStructure;
 import work.lclpnet.kibu.util.math.CardinalRotation;
 import work.lclpnet.kibu.util.math.Matrix3i;
 
-import javax.annotation.Nonnull;
 import java.util.EnumSet;
 
 public class StructureWriter {
@@ -30,12 +30,12 @@ public class StructureWriter {
         placeStructure(structure, world, pos, rotation.asMatrix3());
     }
 
-    public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos, @Nonnull Matrix3i transformation) {
+    public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos, @NotNull Matrix3i transformation) {
         placeStructure(structure, world, pos, transformation, EnumSet.noneOf(Option.class));
     }
 
     public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos,
-                                      @Nonnull Matrix3i transformation, EnumSet<Option> options) {
+                                      @NotNull Matrix3i transformation, EnumSet<Option> options) {
         var origin = structure.getOrigin();
 
         final int ox = origin.getX(), oy = origin.getY(), oz = origin.getZ();
@@ -94,7 +94,7 @@ public class StructureWriter {
         }
     }
 
-    public static void spawnEntities(BlockStructure structure, ServerWorld world, Vec3i pos, @Nonnull Matrix3i transformation) {
+    public static void spawnEntities(BlockStructure structure, ServerWorld world, Vec3i pos, @NotNull Matrix3i transformation) {
         var origin = structure.getOrigin();
         Vec3d offset = new Vec3d(origin.getX(), origin.getY(), origin.getZ());
 
@@ -115,7 +115,7 @@ public class StructureWriter {
         }
     }
 
-    private static Vec3d rotateEntityPosition(Vec3i pos, @Nonnull Matrix3i transformation, FabricKibuEntity entity, Vec3d pivot) {
+    private static Vec3d rotateEntityPosition(Vec3i pos, @NotNull Matrix3i transformation, FabricKibuEntity entity, Vec3d pivot) {
         BlockPos tilePos = entity.getTilePos();
         Vec3d entityPos;
 

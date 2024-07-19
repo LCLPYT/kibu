@@ -7,10 +7,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import work.lclpnet.kibu.translate.TranslationService;
 import work.lclpnet.kibu.translate.text.RootText;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -98,12 +98,12 @@ public class TranslatedBossBar extends ServerBossBar implements CustomBossBar {
         addPlayer(player);
     }
 
-    @Nonnull
+    @NotNull
     private CommandBossBar getLocalizedBar(String language) {
         return localizedBars.computeIfAbsent(language, this::createLocalizedBar);
     }
 
-    @Nonnull
+    @NotNull
     private CommandBossBar createLocalizedBar(String language) {
         Text localizedTitle = getLocalizedTitle(language);
 
@@ -113,7 +113,7 @@ public class TranslatedBossBar extends ServerBossBar implements CustomBossBar {
         return createBossBar(localizedId, localizedTitle);
     }
 
-    @Nonnull
+    @NotNull
     private Text getLocalizedTitle(String language) {
         RootText rootText = translations.translateText(language, translationKey, args);
         rootText.setStyle(titleStyle);
@@ -121,7 +121,7 @@ public class TranslatedBossBar extends ServerBossBar implements CustomBossBar {
         return rootText;
     }
 
-    @Nonnull
+    @NotNull
     private CommandBossBar createBossBar(Identifier id, Text title) {
         CommandBossBar bossBar = bossBarProvider.createBossBar(id, title);
 

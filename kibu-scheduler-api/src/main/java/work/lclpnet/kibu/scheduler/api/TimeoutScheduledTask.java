@@ -1,13 +1,14 @@
 package work.lclpnet.kibu.scheduler.api;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class TimeoutScheduledTask implements ScheduledTask {
 
-    @Nonnull
+    @NotNull
     private final SchedulerAction runnable;
     private final Object mutex = new Object();
     private List<Runnable> whenComplete = null;

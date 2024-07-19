@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.access.type;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface LanguageGetter {
 
-    @Nonnull
+    @NotNull
     String kibu$getLanguage();
 }

@@ -6,10 +6,9 @@ import net.minecraft.network.packet.s2c.play.HealthUpdateS2CPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerSyncHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.mixin.access.ScreenHandlerAccessor;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class PlayerUtils {
 
@@ -41,7 +40,7 @@ public class PlayerUtils {
         syncCursorStack(player);
     }
 
-    @Nonnull
+    @NotNull
     public static ItemStack getCursorStack(ServerPlayerEntity player) {
         ScreenHandler handler = player.currentScreenHandler;
         if (handler == null) return ItemStack.EMPTY;  // no screen open, thus no cursor item

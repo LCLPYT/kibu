@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.mc;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface BlockStateAdapter {
 

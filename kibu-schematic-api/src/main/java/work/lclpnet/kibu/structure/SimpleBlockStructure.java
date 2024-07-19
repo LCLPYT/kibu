@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.structure;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.mc.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class SimpleBlockStructure implements BlockStructure {
@@ -66,7 +66,7 @@ public class SimpleBlockStructure implements BlockStructure {
         );
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public KibuBlockState getBlockState(KibuBlockPos pos) {
         if (!isWithinBox(pos)) {

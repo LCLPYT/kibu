@@ -2,10 +2,9 @@ package work.lclpnet.kibu.hook.entity;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
+import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
-
-import javax.annotation.Nullable;
 
 public interface EntityTargetCallback {
 

@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.structure;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.mc.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class ArrayBlockStructure implements BlockStructure {
@@ -90,7 +90,7 @@ public class ArrayBlockStructure implements BlockStructure {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public KibuBlockState getBlockState(KibuBlockPos pos) {
         Entry entry = getEntry(pos);
@@ -191,12 +191,12 @@ public class ArrayBlockStructure implements BlockStructure {
     }
 
     private static class Entry {
-        @Nonnull KibuBlockState state;
+        @NotNull KibuBlockState state;
         @Nullable
         KibuBlockEntity blockEntity = null;
 
         Entry(KibuBlockState state) {
-            this.state = state;
+            this.state = Objects.requireNonNull(state);
         }
     }
 }

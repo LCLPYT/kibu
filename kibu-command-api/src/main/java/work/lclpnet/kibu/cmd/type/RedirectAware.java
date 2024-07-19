@@ -2,13 +2,13 @@ package work.lclpnet.kibu.cmd.type;
 
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
 public interface RedirectAware {
 
-    @Nonnull
+    @NotNull
     Map<LiteralCommandNode<?>, List<CommandNode<?>>> kibu$getRedirects();
 }

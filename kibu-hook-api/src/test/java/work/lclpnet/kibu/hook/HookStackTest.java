@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -41,7 +41,7 @@ class HookStackTest {
         assertFalse(flag.get());
     }
 
-    @Nonnull
+    @NotNull
     private static Hook<Runnable> each() {
         return HookFactory.createArrayBacked(Runnable.class, cbs -> () -> {
             for (var cb : cbs) {

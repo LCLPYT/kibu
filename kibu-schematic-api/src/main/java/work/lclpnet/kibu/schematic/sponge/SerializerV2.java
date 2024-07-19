@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.schematic.sponge;
 
+import org.jetbrains.annotations.NotNull;
 import work.lclpnet.kibu.jnbt.CompoundTag;
 import work.lclpnet.kibu.jnbt.DoubleTag;
 import work.lclpnet.kibu.jnbt.ListTag;
@@ -10,7 +11,6 @@ import work.lclpnet.kibu.mc.KibuEntity;
 import work.lclpnet.kibu.schematic.api.SchematicSerializer;
 import work.lclpnet.kibu.schematic.api.SchematicWriteable;
 
-import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +100,7 @@ class SerializerV2 implements SchematicSerializer {
         return nbt;
     }
 
-    @Nonnull
+    @NotNull
     private static CompoundTag getBlockEntityNbt(KibuBlockEntity blockEntity, int x, int y, int z) {
         final var nbt = blockEntity.createNbt();
 

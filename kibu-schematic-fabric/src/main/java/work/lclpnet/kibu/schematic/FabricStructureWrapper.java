@@ -7,13 +7,13 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.mc.KibuBlockPos;
 import work.lclpnet.kibu.structure.ArrayBlockStructure;
 import work.lclpnet.kibu.structure.BlockStructure;
 import work.lclpnet.kibu.structure.SimpleBlockStructure;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class FabricStructureWrapper implements FabricStructureView {
@@ -48,7 +48,7 @@ public class FabricStructureWrapper implements FabricStructureView {
         return SharedConstants.getGameVersion().getSaveVersion().getId();
     }
 
-    @Nonnull
+    @NotNull
     public BlockStructure getStructure() {
         return structure;
     }

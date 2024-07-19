@@ -33,7 +33,8 @@
 
 package work.lclpnet.kibu.jnbt;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 import static work.lclpnet.kibu.jnbt.NBTConstants.*;
@@ -101,7 +102,7 @@ public final class CompoundTag implements Tag {
 		throw new IllegalStateException("Tag %s does not exist".formatted(name));
 	}
 
-	@Nonnull
+	@NotNull
 	public <T extends Tag> T get(String name, Class<T> type) {
 		var tag = getNullable(name, type);
 		if (tag != null) return tag;

@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.structure;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.mc.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -40,7 +40,7 @@ class EmptyStructure implements BlockStructure {
     public void setBlockState(KibuBlockPos pos, KibuBlockState state) {
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public KibuBlockState getBlockState(KibuBlockPos pos) {
         return BuiltinKibuBlockState.AIR;

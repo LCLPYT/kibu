@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.mc;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 

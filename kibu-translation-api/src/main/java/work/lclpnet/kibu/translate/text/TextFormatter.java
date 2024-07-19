@@ -3,8 +3,8 @@ package work.lclpnet.kibu.translate.text;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Formatter;
 import java.util.List;
 
@@ -12,12 +12,12 @@ public class TextFormatter {
 
     private final FormatSplitter splitter = new FormatSplitter();
 
-    @Nonnull
+    @NotNull
     public RootText formatText(String format, Object... args) {
         return formatText(format, Style.EMPTY, args);
     }
 
-    @Nonnull
+    @NotNull
     public RootText formatText(String format, Style defaultStyle, Object... args) {
         final List<String> parts = splitter.split(format);
 

@@ -5,16 +5,16 @@ import net.minecraft.block.BlockState;
 import net.minecraft.registry.Registries;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class BlockStateUtils {
 
     private BlockStateUtils() {}
 
-    @Nonnull
+    @NotNull
     public static String stringify(BlockState state) {
         Block block = state.getBlock();
         Identifier blockId = Registries.BLOCK.getId(block);

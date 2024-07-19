@@ -2,10 +2,9 @@ package work.lclpnet.kibu.hook.player;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
-
-import javax.annotation.Nullable;
 
 public class PlayerConnectionHooks {
 

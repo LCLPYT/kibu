@@ -10,6 +10,7 @@ import work.lclpnet.kibu.access.PlayerLanguage;
 import work.lclpnet.kibu.translate.bossbar.BossBarProvider;
 import work.lclpnet.kibu.translate.bossbar.TranslatedBossBar;
 import work.lclpnet.kibu.translate.hook.LanguageChangedCallback;
+import work.lclpnet.kibu.translate.pref.FabricLanguagePreferenceProvider;
 import work.lclpnet.kibu.translate.pref.LanguagePreferenceProvider;
 import work.lclpnet.kibu.translate.text.*;
 import work.lclpnet.kibu.translate.util.LocaleUtil;
@@ -28,6 +29,10 @@ public class TranslationService {
     private final LanguagePreferenceProvider languagePreferenceProvider;
     private final String defaultLanguage;
     private final WeakList<TranslatedBossBar> translatedBars = new WeakList<>();
+
+    public TranslationService(Translator translator) {
+        this(translator, FabricLanguagePreferenceProvider.getInstance());
+    }
 
     public TranslationService(Translator translator, LanguagePreferenceProvider languagePreferenceProvider) {
         this(translator, languagePreferenceProvider, "en_us");

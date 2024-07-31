@@ -1,0 +1,61 @@
+package work.lclpnet.kibu.translate;
+
+import net.fabricmc.loader.api.FabricLoader;
+import org.slf4j.Logger;
+import work.lclpnet.translations.DefaultLanguageTranslator;
+import work.lclpnet.translations.loader.language.UrlLanguageLoader;
+import work.lclpnet.translations.loader.translation.DirectTranslationLoader;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * A utility class providing functions for loading mod translations.
+ */
+public class ModTranslations {
+
+    private ModTranslations() {}
+
+    /**
+     * Loads translation files from the <code>assets/modid/lang/</code> directory of a mod.
+     * This method will load the standard translations files that would otherwise be available on the client in the I18n class.
+     * However, unlike the Minecraft translations, not every translation source from each mod is merged.
+     * The resulting {@link TranslationService} only contains the translations of the specified mod.
+     * @param modId The mod id.
+     * @param logger A logger.
+     * @return A {@link Result} containing the resulting {@link TranslationService} and a void future as callback for when the translations are loaded.
+     */
+    public static Result fromAssets(String modId, Logger logger) {
+        var locations = FabricLoader.getInstance()
+                .getModContainer(modId)
+                .orElseThrow(() -> new NoSuchElementException("Failed to find mod container"))
+                .getRootPaths()
+                .stream()
+                .map(path -> {
+                    try {
+                        return path.toUri().toURL();
+                    } catch (MalformedURLException e) {
+                        logger.error("Failed to convert path {} to url", path, e);
+                        return null;
+                    }
+                }).filter(Objects::nonNull)
+                .toArray(URL[]::new);
+
+        var langLoader = new UrlLanguageLoader(locations, List.of("assets/%s/lang/".formatted(modId)), logger);
+        var translationLoader = new DirectTranslationLoader(langLoader);
+
+        DefaultLanguageTranslator translator = new DefaultLanguageTranslator(translationLoader);
+
+        TranslationService translationService = new TranslationService(translator, player -> Optional.empty());
+        var whenLoaded = translator.reload();
+
+        return new Result(translationService, whenLoaded);
+    }
+
+    public record Result(TranslationService translations, CompletableFuture<Void> whenLoaded) {}
+}

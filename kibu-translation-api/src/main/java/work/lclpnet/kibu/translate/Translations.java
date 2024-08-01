@@ -21,24 +21,24 @@ import work.lclpnet.translations.Translator;
 
 import java.util.Locale;
 
-public class TranslationService {
+public class Translations {
 
-    private static final WeakList<TranslationService> services = new WeakList<>();
+    private static final WeakList<Translations> services = new WeakList<>();
     private final Translator translator;
     private final TextFormatter textFormatter = new TextFormatter();
     private final LanguagePreferenceProvider languagePreferenceProvider;
     private final String defaultLanguage;
     private final WeakList<TranslatedBossBar> translatedBars = new WeakList<>();
 
-    public TranslationService(Translator translator) {
+    public Translations(Translator translator) {
         this(translator, FabricLanguagePreferenceProvider.getInstance());
     }
 
-    public TranslationService(Translator translator, LanguagePreferenceProvider languagePreferenceProvider) {
+    public Translations(Translator translator, LanguagePreferenceProvider languagePreferenceProvider) {
         this(translator, languagePreferenceProvider, "en_us");
     }
 
-    public TranslationService(Translator translator, LanguagePreferenceProvider languagePreferenceProvider, String defaultLanguage) {
+    public Translations(Translator translator, LanguagePreferenceProvider languagePreferenceProvider, String defaultLanguage) {
         this.translator = translator;
         this.languagePreferenceProvider = languagePreferenceProvider;
         this.defaultLanguage = defaultLanguage;
@@ -160,7 +160,7 @@ public class TranslationService {
 
     static {
         LanguageChangedCallback.HOOK.register((player, language, reason) -> {
-            for (TranslationService service : services) {
+            for (Translations service : services) {
                 for (TranslatedBossBar bossBar : service.translatedBars) {
                     bossBar.updatePlayerLanguage(player);
                 }

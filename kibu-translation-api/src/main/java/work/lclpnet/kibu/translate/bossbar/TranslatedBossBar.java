@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import work.lclpnet.kibu.translate.TranslationService;
+import work.lclpnet.kibu.translate.Translations;
 import work.lclpnet.kibu.translate.text.RootText;
 
 import java.util.HashMap;
@@ -21,7 +21,7 @@ public class TranslatedBossBar extends ServerBossBar implements CustomBossBar {
 
     private final BossBarProvider bossBarProvider;
     private final Identifier identifier;
-    private final TranslationService translations;
+    private final Translations translations;
     private final String defaultLanguage;
     private final Map<String, CommandBossBar> localizedBars = new HashMap<>();
     private final Map<UUID, String> players = new HashMap<>();
@@ -30,11 +30,11 @@ public class TranslatedBossBar extends ServerBossBar implements CustomBossBar {
     private boolean visible = true;
     private net.minecraft.text.Style titleStyle = net.minecraft.text.Style.EMPTY;
 
-    public TranslatedBossBar(BossBarProvider bossBarProvider, Identifier identifier, TranslationService translations, String translationKey, Object[] args) {
+    public TranslatedBossBar(BossBarProvider bossBarProvider, Identifier identifier, Translations translations, String translationKey, Object[] args) {
         this(bossBarProvider, identifier, translations, "en_us", translationKey, args);
     }
 
-    public TranslatedBossBar(BossBarProvider bossBarProvider, Identifier identifier, TranslationService translations, String defaultLanguage, String translationKey, Object[] args) {
+    public TranslatedBossBar(BossBarProvider bossBarProvider, Identifier identifier, Translations translations, String defaultLanguage, String translationKey, Object[] args) {
         super(null, Color.WHITE, Style.PROGRESS);
         this.bossBarProvider = bossBarProvider;
         this.translations = translations;

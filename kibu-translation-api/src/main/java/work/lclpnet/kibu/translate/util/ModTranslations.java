@@ -1,17 +1,18 @@
-package work.lclpnet.kibu.translate;
+package work.lclpnet.kibu.translate.util;
 
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
+import work.lclpnet.kibu.translate.Translations;
 import work.lclpnet.translations.DefaultLanguageTranslator;
 import work.lclpnet.translations.loader.language.UrlLanguageLoader;
 import work.lclpnet.translations.loader.translation.DirectTranslationLoader;
+import work.lclpnet.translations.loader.translation.TranslationLoader;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -21,16 +22,7 @@ public class ModTranslations {
 
     private ModTranslations() {}
 
-    /**
-     * Loads translation files from the <code>assets/modid/lang/</code> directory of a mod.
-     * This method will load the standard translations files that would otherwise be available on the client in the I18n class.
-     * However, unlike the Minecraft translations, not every translation source from each mod is merged.
-     * The resulting {@link TranslationService} only contains the translations of the specified mod.
-     * @param modId The mod id.
-     * @param logger A logger.
-     * @return A {@link Result} containing the resulting {@link TranslationService} and a void future as callback for when the translations are loaded.
-     */
-    public static Result fromAssets(String modId, Logger logger) {
+    public static TranslationLoader assetTranslationLoader(String modId, Logger logger) {
         var locations = FabricLoader.getInstance()
                 .getModContainer(modId)
                 .orElseThrow(() -> new NoSuchElementException("Failed to find mod container"))
@@ -47,15 +39,28 @@ public class ModTranslations {
                 .toArray(URL[]::new);
 
         var langLoader = new UrlLanguageLoader(locations, List.of("assets/%s/lang/".formatted(modId)), logger);
-        var translationLoader = new DirectTranslationLoader(langLoader);
 
-        DefaultLanguageTranslator translator = new DefaultLanguageTranslator(translationLoader);
-
-        TranslationService translationService = new TranslationService(translator, player -> Optional.empty());
-        var whenLoaded = translator.reload();
-
-        return new Result(translationService, whenLoaded);
+        return new DirectTranslationLoader(langLoader);
     }
 
-    public record Result(TranslationService translations, CompletableFuture<Void> whenLoaded) {}
+    /**
+     * Loads translation files from the <code>assets/modid/lang/</code> directory of a mod.
+     * This method will load the standard translations files that would otherwise be available on the client in the I18n class.
+     * However, unlike the Minecraft translations, not every translation source from each mod is merged.
+     * The resulting {@link Translations} only contains the translations of the specified mod.
+     * @param modId The mod id.
+     * @param logger A logger.
+     * @return A {@link Result} containing the resulting {@link Translations} and a void future as callback for when the translations are loaded.
+     */
+    public static Result fromAssets(String modId, Logger logger) {
+        var loader = assetTranslationLoader(modId, logger);
+        var translator = new DefaultLanguageTranslator(loader);
+        var translations = new Translations(translator);
+
+        var whenLoaded = translator.reload();
+
+        return new Result(translations, whenLoaded);
+    }
+
+    public record Result(Translations translations, CompletableFuture<Void> whenLoaded) {}
 }

@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TranslationServiceTest {
+class TranslationsTest {
 
     @Test
     void translateText_argTranslatedText_transformed() {
@@ -30,7 +30,7 @@ class TranslationServiceTest {
         var translator = new DefaultLanguageTranslator(loader);
         translator.reload().join();
 
-        var translationService = new TranslationService(translator, player -> Optional.empty());
+        var translationService = new Translations(translator, player -> Optional.empty());
 
         var nestedText = translationService.translateText("world");
 
@@ -45,7 +45,7 @@ class TranslationServiceTest {
         var translator = new DefaultLanguageTranslator(() -> CompletableFuture.completedFuture(new StaticLanguageCollection(Map.of())));
         translator.reload().join();
 
-        var translationService = new TranslationService(translator, player -> Optional.of(language));
+        var translationService = new Translations(translator, player -> Optional.of(language));
 
         Locale locale = translationService.getLocale(null);
         assertEquals(expected, locale);

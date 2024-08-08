@@ -4,9 +4,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import work.lclpnet.kibu.translate.Translations;
 import work.lclpnet.translations.DefaultLanguageTranslator;
-import work.lclpnet.translations.loader.language.UrlLanguageLoader;
-import work.lclpnet.translations.loader.translation.DirectTranslationLoader;
-import work.lclpnet.translations.loader.translation.TranslationLoader;
+import work.lclpnet.translations.loader.TranslationLoader;
+import work.lclpnet.translations.loader.UrlLanguageLoader;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,9 +37,7 @@ public class ModTranslations {
                 }).filter(Objects::nonNull)
                 .toArray(URL[]::new);
 
-        var langLoader = new UrlLanguageLoader(locations, List.of("assets/%s/lang/".formatted(modId)), logger);
-
-        return new DirectTranslationLoader(langLoader);
+        return new UrlLanguageLoader(locations, List.of("assets/%s/lang/".formatted(modId)), logger);
     }
 
     /**

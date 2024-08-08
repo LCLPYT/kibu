@@ -5,7 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import work.lclpnet.translations.DefaultLanguageTranslator;
-import work.lclpnet.translations.loader.translation.TranslationLoader;
+import work.lclpnet.translations.loader.TranslationLoader;
 import work.lclpnet.translations.model.StaticLanguage;
 import work.lclpnet.translations.model.StaticLanguageCollection;
 

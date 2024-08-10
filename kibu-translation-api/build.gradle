@@ -21,10 +21,7 @@ publishing {
 }
 
 dependencies {
-    "work.lclpnet:translations4j:${rootProject.translations4j_version}".with {
-        api it
-        include it
-    }
+    include(api("work.lclpnet:translations4j:${rootProject.translations4j_version}"))
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'

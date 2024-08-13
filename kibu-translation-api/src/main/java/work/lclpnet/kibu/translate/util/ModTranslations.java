@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import work.lclpnet.kibu.translate.Translations;
 import work.lclpnet.translations.DefaultLanguageTranslator;
 import work.lclpnet.translations.loader.TranslationLoader;
-import work.lclpnet.translations.loader.UrlArchiveJsonTranslationLoader;
+import work.lclpnet.translations.loader.UrlArchiveTranslationLoader;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,7 +37,7 @@ public class ModTranslations {
                 }).filter(Objects::nonNull)
                 .toArray(URL[]::new);
 
-        return new UrlArchiveJsonTranslationLoader(locations, List.of("assets/%s/lang/".formatted(modId)), logger);
+        return UrlArchiveTranslationLoader.ofJson(locations, List.of("assets/%s/lang/".formatted(modId)), logger);
     }
 
     /**

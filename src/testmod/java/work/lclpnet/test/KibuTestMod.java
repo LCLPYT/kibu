@@ -52,6 +52,7 @@ public class KibuTestMod implements ModInitializer {
         entityEditor();
         preventBeyond300();
         teleportWithBrick();
+        misc();
     }
 
     private void teleportWithBrick() {
@@ -303,5 +304,9 @@ public class KibuTestMod implements ModInitializer {
 
         WorldPhysicsHooks.REPLACE_DISK_ENCHANTMENT.register((world, pos, entity, state)
                 -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));
+    }
+
+    private void misc() {
+        PlayerSwingHandHook.HOOK.register((player, hand) -> System.out.println("player swings " + hand));
     }
 }

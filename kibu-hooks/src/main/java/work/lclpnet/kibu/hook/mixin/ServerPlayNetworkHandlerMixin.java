@@ -312,4 +312,15 @@ public abstract class ServerPlayNetworkHandlerMixin {
     public void kibu$onTeleportConfirm(TeleportConfirmC2SPacket packet, CallbackInfo ci) {
         PlayerTeleportedCallback.HOOK.invoker().onTeleported(player);
     }
+
+    @Inject(
+            method = "onHandSwing",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;updateLastActionTime()V"
+            )
+    )
+    public void kibu$onHandSwing(HandSwingC2SPacket packet, CallbackInfo ci) {
+        PlayerSwingHandHook.HOOK.invoker().onSwingHand(player, packet.getHand());
+    }
 }

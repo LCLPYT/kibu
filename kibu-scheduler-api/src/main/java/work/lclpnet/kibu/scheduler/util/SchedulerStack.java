@@ -70,7 +70,11 @@ public class SchedulerStack implements TaskScheduler {
         }
     }
 
-    protected Scheduler current() {
+    /**
+     * Get or create the current scheduler in the stack.
+     * @return The current scheduler in the stack.
+     */
+    public Scheduler current() {
         synchronized (this) {
             if (current == null) {
                 current = factory.get();

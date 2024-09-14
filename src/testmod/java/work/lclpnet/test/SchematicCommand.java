@@ -64,7 +64,7 @@ public class SchematicCommand {
         String name = StringArgumentType.getString(ctx, "name");
         ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
 
-        loadAndPlace(ctx, read(name, SchematicFormats.SPONGE_V2), player);
+        loadAndPlace(ctx, read("schematics/" + name, SchematicFormats.SPONGE_V2), player);
 
         return 1;
     }
@@ -73,7 +73,7 @@ public class SchematicCommand {
         String name = StringArgumentType.getString(ctx, "name");
         ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
 
-        loadAndPlace(ctx, read(name, VanillaStructureFormat.get(player.getServer())), player);
+        loadAndPlace(ctx, read("structures/" + name, VanillaStructureFormat.get(player.getServer())), player);
 
         return 1;
     }

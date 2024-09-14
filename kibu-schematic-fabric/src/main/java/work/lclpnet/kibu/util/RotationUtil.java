@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.util;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.enums.Orientation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.state.property.*;
@@ -62,6 +63,7 @@ public class RotationUtil {
         return state;
     }
 
+    // for blocks which have properties like east=true,north=none etc. e.g. fences or walls
     private static BlockState checkDirectionalProps(BlockState state, Matrix3i transformation, Property<?> prop, Map<String, String> directionalProps) {
         if ((!(prop instanceof BooleanProperty boolProp) || !state.get(boolProp))
             && (!(prop instanceof EnumProperty<?> enumProp) || state.get(enumProp).asString().equals("none"))) {
@@ -139,6 +141,7 @@ public class RotationUtil {
         return state.with(prop, rotation);
     }
 
+    @SuppressWarnings("unchecked")
     private static BlockState rotateEnumProperty(BlockState state, Matrix3i transformation, EnumProperty<?> prop) {
         String name = prop.getName();
 
@@ -158,7 +161,33 @@ public class RotationUtil {
             return rotateShapeEnum(state, transformation, prop);
         }
 
+        if ("orientation".equals(name) && prop.getType() == Orientation.class) {
+            return rotateOrientationEnum(state, transformation, (EnumProperty<Orientation>) prop);
+        }
+
         return state;
+    }
+
+    private static BlockState rotateOrientationEnum(BlockState state, Matrix3i transformation, EnumProperty<Orientation> prop) {
+        Orientation orientation = state.get(prop);
+
+        BlockPos vec = transformation.transform(orientation.getFacing().getVector());
+        Direction facing = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
+
+        vec = transformation.transform(orientation.getRotation().getVector());
+        Direction rotation = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
+
+        if (facing == null || rotation == null) {
+            return state;
+        }
+
+        Orientation rotOrientation = Orientation.byDirections(facing, rotation);
+
+        if (rotOrientation == null) {
+            return state;
+        }
+
+        return state.with(prop, rotOrientation);
     }
 
     private static BlockState rotateShapeEnum(BlockState state, Matrix3i transformation, EnumProperty<?> prop) {

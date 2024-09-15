@@ -3,7 +3,7 @@ package work.lclpnet.kibu.util.math;
 import net.minecraft.util.math.Vec3i;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class Matrix3iTest {
 
@@ -156,5 +156,62 @@ class Matrix3iTest {
                 66, 81, 96,
                 102, 126, 150
         }), new Matrix3i(elements).multiply(new Matrix3i(elements)));
+    }
+
+    @Test
+    public void invertIdentity() {
+        assertEquals(Matrix3i.IDENTITY, Matrix3i.IDENTITY.invert());
+    }
+
+    @Test
+    public void invertNonSingular() {
+        var matrix = new Matrix3i(new int[] {
+                1, 2, 3,
+                0, 1, 4,
+                5, 6, 0
+        });
+
+        Matrix3i inverted = matrix.invert();
+
+        assertArrayEquals(new int[] {
+                -24, 18, 5,
+                20, -15, -4,
+                -5, 4, 1
+        }, inverted.elements);
+    }
+
+    @Test
+    public void invertSingular() {
+        Matrix3i singularMatrix = new Matrix3i(new int[] {
+                2, 4, 6,
+                1, 2, 3,
+                3, 6, 9
+        });
+
+        assertThrows(ArithmeticException.class, singularMatrix::invert);
+    }
+
+    @Test
+    public void invertRotateX() {
+        Matrix3i matrix = Matrix3i.makeRotationX(2);
+        Matrix3i inverted = matrix.invert();
+
+        assertEquals(Matrix3i.IDENTITY, matrix.multiply(inverted));
+    }
+
+    @Test
+    public void invertRotateY() {
+        Matrix3i matrix = Matrix3i.makeRotationY(2);
+        Matrix3i inverted = matrix.invert();
+
+        assertEquals(Matrix3i.IDENTITY, matrix.multiply(inverted));
+    }
+
+    @Test
+    public void invertRotateZ() {
+        Matrix3i matrix = Matrix3i.makeRotationZ(2);
+        Matrix3i inverted = matrix.invert();
+
+        assertEquals(Matrix3i.IDENTITY, matrix.multiply(inverted));
     }
 }

@@ -71,6 +71,24 @@ public class Matrix3i {
         return dest;
     }
 
+    public Matrix3i invert() {
+        int m00 = elements[0], m01 = elements[1], m02 = elements[2];
+        int m10 = elements[3], m11 = elements[4], m12 = elements[5];
+        int m20 = elements[6], m21 = elements[7], m22 = elements[8];
+
+        int det = m00 * (m11 * m22 - m12 * m21) - m01 * (m10 * m22 - m12 * m20) + m02 * (m10 * m21 - m11 * m20);
+
+        if (det == 0) {
+            throw new ArithmeticException("Singular matrix");
+        }
+
+        return new Matrix3i(new int[] {
+                (m11 * m22 - m12 * m21) / det, -(m01 * m22 - m02 * m21) / det, (m01 * m12 - m02 * m11) / det,
+                -(m10 * m22 - m12 * m20) / det, (m00 * m22 - m02 * m20) / det, -(m00 * m12 - m02 * m10) / det,
+                (m10 * m21 - m11 * m20) / det, -(m00 * m21 - m01 * m20) / det, (m00 * m11 - m01 * m10) / det,
+        });
+    }
+
     public boolean isHorizontalFlip() {
         // determinant of the x-z submatrix
         return elements[0] * elements[8] - elements[2] * elements[6] < 0;

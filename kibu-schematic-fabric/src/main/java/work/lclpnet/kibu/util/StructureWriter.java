@@ -49,6 +49,7 @@ public class StructureWriter {
 
         int flags = 0;
         if (!options.contains(Option.SKIP_PLAYER_SYNC)) flags |= Block.NOTIFY_LISTENERS;
+        if (!options.contains(Option.SKIP_NEIGHBOUR_UPDATE)) flags |= Block.NOTIFY_NEIGHBORS;
         if (options.contains(Option.FORCE_STATE)) flags |= Block.FORCE_STATE;
         if (options.contains(Option.SKIP_DROPS)) flags |= Block.SKIP_DROPS;
 
@@ -150,6 +151,7 @@ public class StructureWriter {
         SKIP_AIR,
         FORCE_STATE,
         SKIP_PLAYER_SYNC,
-        SKIP_DROPS
+        SKIP_DROPS,
+        SKIP_NEIGHBOUR_UPDATE,
     }
 }

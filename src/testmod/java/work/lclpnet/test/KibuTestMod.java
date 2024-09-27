@@ -304,6 +304,9 @@ public class KibuTestMod implements ModInitializer {
 
         WorldPhysicsHooks.REPLACE_DISK_ENCHANTMENT.register((world, pos, entity, state)
                 -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));
+
+        EntityUsePortalCallback.HOOK.register((entity, portal, pos)
+                -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));
     }
 
     private void misc() {

@@ -2,6 +2,7 @@ package work.lclpnet.kibu.hook.mixin.entity;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.block.Portal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Leashable;
 import net.minecraft.entity.LivingEntity;
@@ -10,6 +11,7 @@ import net.minecraft.network.packet.s2c.play.EntityAttachS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -143,6 +145,21 @@ public class EntityMixin {
 
         if (UnleashEntityCallback.HOOK.invoker().onUnleash(player, self)) {
             cir.setReturnValue(ActionResult.PASS);
+        }
+    }
+
+    @Inject(
+            method = "tryUsePortal",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public void kibu$beforeUsePortal(Portal portal, BlockPos pos, CallbackInfo ci) {
+        Entity self = (Entity) (Object) this;
+
+        if (self.hasPortalCooldown()) return;
+
+        if (EntityUsePortalCallback.HOOK.invoker().onUsePortal(self, portal, pos)) {
+            ci.cancel();
         }
     }
 }

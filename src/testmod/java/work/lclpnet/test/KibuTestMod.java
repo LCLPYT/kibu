@@ -137,6 +137,8 @@ public class KibuTestMod implements ModInitializer {
         EntityConvertCallback.HOOK.register((entity, type) -> entity.getWorld().isRaining());
 
         WitherShootCallback.HOOK.register((wither, targetX, targetY, targetZ) -> wither.getWorld().isRaining());
+
+        WorldPhysicsHooks.CORAL_DEATH.register((world, pos) -> world.isRaining());
     }
 
     private void useSeparateMapsForNether() {

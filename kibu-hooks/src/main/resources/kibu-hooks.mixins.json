@@ -38,6 +38,7 @@
     "block.CandleBlockMixin",
     "block.CauldronBlockMixin",
     "block.ComposterBlockMixin",
+    "block.CoralBlockBlockMixin",
     "block.CoralParentBlockMixin",
     "block.DecoratedPotBlockMixin",
     "block.FarmlandBlockMixin",

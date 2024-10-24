@@ -1,10 +1,10 @@
 package work.lclpnet.kibu.access.entity;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.entity.decoration.Brightness;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.AffineTransformation;
 import work.lclpnet.kibu.access.mixin.BlockDisplayEntityAccessor;

@@ -8,9 +8,7 @@ import work.lclpnet.kibu.schematic.type.KibuServerView;
 public class VanillaStructureFormat implements SchematicFormat {
 
     private final StructureTemplateManager manager;
-    private volatile SchematicSerializer serializer = null;
     private volatile SchematicDeserializer deserializer = null;
-    private volatile SchematicWriter writer = null;
     private volatile SchematicReader reader = null;
 
     public VanillaStructureFormat(StructureTemplateManager manager) {

@@ -1,28 +1,27 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.recipe.*;
+import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.input.CraftingRecipeInput;
+import net.minecraft.server.network.ServerPlayerEntity;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
-import work.lclpnet.kibu.hook.util.PendingRecipe;
+import work.lclpnet.kibu.hook.util.PendingResult;
 
 public interface CraftingRecipeCallback {
 
     Hook<CraftingRecipeCallback> HOOK = HookFactory.createArrayBacked(CraftingRecipeCallback.class, callbacks
-            -> (player, recipeManager, type, input, cached) -> {
+            -> (player, input, result) -> {
 
         for (CraftingRecipeCallback callback : callbacks) {
-            var pending = callback.modifyRecipe(player, recipeManager, type, input, cached);
+            var pending = callback.modifyRecipe(player, input, result);
 
             if (pending.isPass()) continue;
 
             return pending;
         }
 
-        return PendingRecipe.pass();
+        return PendingResult.pass();
     });
 
-    PendingRecipe modifyRecipe(PlayerEntity player, RecipeManager recipeManager, RecipeType<CraftingRecipe> type,
-                               CraftingRecipeInput input, RecipeEntry<Recipe<CraftingRecipeInput>> cached);
+    PendingResult<ItemStack> modifyRecipe(ServerPlayerEntity player, CraftingRecipeInput input, ItemStack result);
 }

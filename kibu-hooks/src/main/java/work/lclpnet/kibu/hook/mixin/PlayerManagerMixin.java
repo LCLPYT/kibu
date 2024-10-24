@@ -23,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.player.PlayerConnectionHooks;
 import work.lclpnet.kibu.hook.player.PlayerSpawnLocationCallback;
 
+import java.util.Set;
+
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
 
@@ -85,7 +87,7 @@ public abstract class PlayerManagerMixin {
 
         if (data.isDirty()) {
             Vec3d pos = data.getPosition();
-            player.teleport(data.getWorld(), pos.getX(), pos.getY(), pos.getZ(), data.getYaw(), data.getPitch());
+            player.teleport(data.getWorld(), pos.getX(), pos.getY(), pos.getZ(), Set.of(), data.getYaw(), data.getPitch(), true);
         }
     }
 
@@ -103,7 +105,7 @@ public abstract class PlayerManagerMixin {
 
         if (data.isDirty()) {
             Vec3d pos = data.getPosition();
-            player.teleport(data.getWorld(), pos.getX(), pos.getY(), pos.getZ(), data.getYaw(), data.getPitch());
+            player.teleport(data.getWorld(), pos.getX(), pos.getY(), pos.getZ(), Set.of(), data.getYaw(), data.getPitch(), true);
         }
     }
 }

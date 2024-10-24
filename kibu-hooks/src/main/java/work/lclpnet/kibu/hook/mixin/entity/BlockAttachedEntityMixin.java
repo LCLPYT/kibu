@@ -2,6 +2,7 @@ package work.lclpnet.kibu.hook.mixin.entity;
 
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.decoration.BlockAttachedEntity;
+import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,7 +17,7 @@ public class BlockAttachedEntityMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$beforeDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$beforeDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         BlockAttachedEntity self = (BlockAttachedEntity) (Object) this;
 
         if (NonLivingDamageCallback.HOOK.invoker().onDamage(self, source, amount)) {

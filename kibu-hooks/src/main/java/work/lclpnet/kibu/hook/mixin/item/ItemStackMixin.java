@@ -6,12 +6,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import work.lclpnet.kibu.hook.entity.ItemUseOnEntityCallback;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
@@ -25,11 +23,10 @@ public class ItemStackMixin {
                     value = "INVOKE",
                     target = "Lnet/minecraft/item/Item;useOnBlock(Lnet/minecraft/item/ItemUsageContext;)Lnet/minecraft/util/ActionResult;"
             ),
-            cancellable = true,
-            locals = LocalCapture.CAPTURE_FAILHARD
+            cancellable = true
     )
     public void kibu$interceptUseOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        ItemActionResult result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(context);
+        ActionResult result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(context);
 
         if (result == null) return;
 
@@ -42,7 +39,7 @@ public class ItemStackMixin {
             PlayerUtils.syncPlayerItems(player);
         }
 
-        cir.setReturnValue(result.toActionResult());
+        cir.setReturnValue(result);
     }
 
     @Inject(

@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.hook.mixin.block;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.PressurePlateBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.predicate.entity.EntityPredicates;
@@ -10,7 +11,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import work.lclpnet.kibu.hook.mixin.access.AbstractPressurePlateBlockAccessor;
 import work.lclpnet.kibu.hook.world.PressurePlateCallback;
 
@@ -23,13 +23,13 @@ public class PressurePlateBlockMixin {
                     value = "INVOKE",
                     target = "Lnet/minecraft/block/PressurePlateBlock;getEntityCount(Lnet/minecraft/world/World;Lnet/minecraft/util/math/Box;Ljava/lang/Class;)I"
             ),
-            cancellable = true,
-            locals = LocalCapture.CAPTURE_FAILHARD
+            cancellable = true
     )
-    public void kibu$onGetRedstoneOutput(World world, BlockPos pos, CallbackInfoReturnable<Integer> cir, Class<?> entityClass) {
+    public void kibu$onGetRedstoneOutput(World world, BlockPos pos, CallbackInfoReturnable<Integer> cir,
+                                         @Local Class<? extends Entity> entityClass) {
         Box box = AbstractPressurePlateBlockAccessor.getBox().offset(pos);
 
-        var entities = world.getEntitiesByClass(Entity.class, box, EntityPredicates.EXCEPT_SPECTATOR
+        var entities = world.getEntitiesByClass(entityClass, box, EntityPredicates.EXCEPT_SPECTATOR
                 .and((entity) -> !entity.canAvoidTraps()));
 
         boolean success = false;

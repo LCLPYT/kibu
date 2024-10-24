@@ -4,7 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ItemActionResult;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -205,6 +205,6 @@ public class BlockModificationHooks {
 
     public interface ItemUseOnBlock {
         @Nullable
-        ItemActionResult onUse(ItemUsageContext ctx);
+        ActionResult onUse(ItemUsageContext ctx);
     }
 }

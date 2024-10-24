@@ -13,15 +13,13 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.explosion.ExplosionImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import work.lclpnet.kibu.hook.type.CancellableExplosion;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 
 @Mixin(ServerWorld.class)
@@ -31,13 +29,13 @@ public class ServerWorldMixin {
             method = "createExplosion",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/explosion/Explosion;shouldDestroy()Z"
+                    target = "Lnet/minecraft/world/explosion/ExplosionImpl;explode()V"
             ),
             cancellable = true
     )
-    public void kibu$onExplode(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, ParticleEffect particle, ParticleEffect emitterParticle, RegistryEntry<SoundEvent> soundEvent, CallbackInfoReturnable<Explosion> cir, @Local Explosion explosion) {
-        if (((CancellableExplosion) explosion).kibu$isCancelled()) {
-            cir.setReturnValue(explosion);
+    public void kibu$onExplode(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, ParticleEffect smallParticle, ParticleEffect largeParticle, RegistryEntry<SoundEvent> soundEvent, CallbackInfo ci, @Local ExplosionImpl explosion) {
+        if (WorldPhysicsHooks.EXPLOSION.invoker().onExplode(explosion)) {
+            ci.cancel();
         }
     }
 

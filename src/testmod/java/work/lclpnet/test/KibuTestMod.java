@@ -14,10 +14,17 @@ import net.minecraft.item.map.MapState;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundFromEntityS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
+import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.access.entity.EntityAccess;
@@ -28,14 +35,14 @@ import work.lclpnet.kibu.hook.ServerMessageHooks;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.network.ServerSendPacketCallback;
 import work.lclpnet.kibu.hook.player.*;
-import work.lclpnet.kibu.hook.util.PendingRecipe;
-import work.lclpnet.kibu.hook.util.RecipeUtils;
+import work.lclpnet.kibu.hook.util.PendingResult;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 import work.lclpnet.kibu.hook.world.ItemScatterCallback;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 import work.lclpnet.kibu.map.hook.MapStateCallback;
 
 import java.util.List;
+import java.util.Set;
 
 import static net.minecraft.item.Items.STICK;
 
@@ -58,11 +65,11 @@ public class KibuTestMod implements ModInitializer {
     private void teleportWithBrick() {
         PlayerInteractionHooks.USE_ITEM.register((player, world, hand) -> {
             if (!world.isClient && player.getMainHandStack().isOf(Items.BRICK) && player instanceof ServerPlayerEntity sp) {
-                sp.teleport(sp.getServerWorld(), sp.getX(), sp.getY() + 20, sp.getZ(), sp.getYaw(), sp.getPitch());
-                return TypedActionResult.success(ItemStack.EMPTY);
+                sp.teleport(sp.getServerWorld(), sp.getX(), sp.getY() + 20, sp.getZ(), Set.of(), sp.getYaw(), sp.getPitch(), true);
+                return ActionResult.SUCCESS_SERVER;
             }
 
-            return TypedActionResult.pass(ItemStack.EMPTY);
+            return ActionResult.PASS;
         });
 
         PlayerTeleportedCallback.HOOK.register(player -> System.out.printf("%s just teleported%n", player.getNameForScoreboard()));
@@ -223,7 +230,7 @@ public class KibuTestMod implements ModInitializer {
 
         PlayerAdvancementPacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(STICK));
 
-        PlayerRecipePacketCallback.HOOK.register((player, packet) -> player.getMainHandStack().isOf(STICK));
+        PlayerRecipeNotificationCallback.HOOK.register((player, recipeEntry, displayEntry) -> player.getMainHandStack().isOf(STICK));
 
         BlockModificationHooks.DECORATIVE_POT_STORE.register((world, pos, entity)
                 -> entity instanceof ServerPlayerEntity player && player.getOffHandStack().isOf(STICK));
@@ -242,39 +249,42 @@ public class KibuTestMod implements ModInitializer {
             }
         });
 
-        CraftingRecipeCallback.HOOK.register((player, recipeManager, type, input, cached) -> {
-            if (!player.getMainHandStack().isOf(STICK)) {
-                return PendingRecipe.pass();
+        CraftingRecipeCallback.HOOK.register((player, input, result) -> {
+            // if the player is holding a stick and tries to craft sticks, the result will be empty, meaning no sticks can be crafted
+            if (player.getMainHandStack().isOf(STICK) && result.isOf(STICK)) {
+                return PendingResult.empty();
             }
 
-            World world = player.getWorld();
-
-            // test for sticks; this could also check the recipe entry identifier
-            return recipeManager.getFirstMatch(type, input, world)
-                    .map(RecipeEntry::value)
-                    .map(recipe -> recipe.getResult(world.getRegistryManager()))
-                    .filter(result -> result.isOf(STICK))
-                    .map(result -> PendingRecipe.empty())  // this is the resulting recipe; empty means none
-                    .orElse(PendingRecipe.pass());
+            return PendingResult.pass();
         });
 
-        CraftingRecipeCallback.HOOK.register((player, recipeManager, type, input, cached) -> {
-            if (!player.getMainHandStack().isOf(STICK)) {
-                return PendingRecipe.pass();
+        CraftingRecipeCallback.HOOK.register((player, input, result) -> {
+            // if the player is holding a stick and tries to craft a stone sword, a wooden sword will be the result
+            if (player.getMainHandStack().isOf(STICK) && result.isOf(Items.STONE_SWORD)) {
+                return PendingResult.of(new ItemStack(Items.WOODEN_SWORD));
             }
 
-            World world = player.getWorld();
+            return PendingResult.pass();
+        });
 
-            return recipeManager.getFirstMatch(type, input, world)
-                    .map(RecipeEntry::value)
-                    .map(recipe -> recipe.getResult(world.getRegistryManager()))
-                    .filter(result -> result.isOf(Items.STONE_SWORD))
-                    .map(result -> {
-                        // replace stone sword with wooden sword
-                        var woodenSword = RecipeUtils.getRecipe(recipeManager, Identifier.of("wooden_sword"), type);
-                        return PendingRecipe.of(woodenSword.orElse(null));
-                    })
-                    .orElse(PendingRecipe.pass());
+        CraftingRecipeCallback.HOOK.register((player, input, result) -> {
+            // if the player is holding a stick and tries to dye a bundle blue, the bundle will be dyed red instead using the transmute recipe
+            if (player.getMainHandStack().isOf(STICK) && result.isOf(Items.BLUE_BUNDLE)) {
+                MinecraftServer server = player.getServer();
+
+                if (server != null) {
+                    var key = RegistryKey.of(RegistryKeys.RECIPE, Identifier.of("red_bundle"));
+
+                    return server.getRecipeManager().get(key)
+                            .map(RecipeEntry::value)
+                            .map(recipe -> recipe instanceof CraftingRecipe craftingRecipe ? craftingRecipe : null)
+                            .map(craftingRecipe -> craftingRecipe.craft(input, server.getRegistryManager()))
+                            .map(PendingResult::of)
+                            .orElse(PendingResult.pass());
+                }
+            }
+
+            return PendingResult.pass();
         });
 
         EntityDamageCallback.HOOK.register((entity, source, amount)

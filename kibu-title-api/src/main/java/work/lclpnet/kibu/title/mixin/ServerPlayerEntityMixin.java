@@ -12,7 +12,7 @@ public class ServerPlayerEntityMixin implements TitleAccess {
 
     @SuppressWarnings("DataFlowIssue")
     @Unique
-    private final ServerPlayerTitle title = new ServerPlayerTitle((ServerPlayerEntity) (Object)  this);
+    private final ServerPlayerTitle title = new ServerPlayerTitle((ServerPlayerEntity) (Object) this);
 
     @Override
     public Title kibu$getTitle() {

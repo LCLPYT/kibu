@@ -4,6 +4,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,7 +35,7 @@ public class PlayerEntityMixin {
             ),
             cancellable = true
     )
-    public void kibu$onDamage(DamageSource source, float amount, CallbackInfo ci) {
+    public void kibu$onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfo ci) {
         @SuppressWarnings("DataFlowIssue")
         LivingEntity entity = (LivingEntity) (Object) this;
 

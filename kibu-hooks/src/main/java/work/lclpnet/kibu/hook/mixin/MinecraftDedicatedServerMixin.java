@@ -18,7 +18,7 @@ public class MinecraftDedicatedServerMixin {
 			),
 			method = "setupServer"
 	)
-	private void mplugins$afterWorldLoad(CallbackInfoReturnable<Boolean> cir) {
+	private void kibu$afterWorldLoad(CallbackInfoReturnable<Boolean> cir) {
 		MinecraftDedicatedServer self = (MinecraftDedicatedServer) (Object) this;
 		ServerWorldReadyCallback.HOOK.invoker().onWorldReady(self);
 	}

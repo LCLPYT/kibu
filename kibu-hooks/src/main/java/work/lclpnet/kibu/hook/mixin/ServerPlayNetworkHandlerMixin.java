@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.hook.mixin;
 
 import net.minecraft.entity.player.PlayerAbilities;
+import net.minecraft.entity.player.PlayerPosition;
 import net.minecraft.network.DisconnectionInfo;
 import net.minecraft.network.packet.c2s.play.*;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
@@ -18,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PositionRotation;
 
@@ -39,7 +39,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
         throw new AssertionError();
     }
 
-    @Shadow public abstract void requestTeleport(double x, double y, double z, float yaw, float pitch, Set<PositionFlag> set);
+    @Shadow public abstract void requestTeleport(double x, double y, double z, float yaw, float pitch);
 
     @Unique
     private double lastX = Double.NaN, lastY = Double.NaN, lastZ = Double.NaN;
@@ -206,7 +206,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
         if (PlayerMoveCallback.HOOK.invoker().onMove(player, from, to)) {
             // movement disallowed; reset
-            requestTeleport(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch(), Set.of());
+            requestTeleport(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch());
 
             ci.cancel();
             return;
@@ -258,23 +258,20 @@ public abstract class ServerPlayNetworkHandlerMixin {
         modifiedVelocityY = Double.NaN;
     }
 
-    @SuppressWarnings("InvalidInjectorMethodSignature")
     @Inject(
-            method = "requestTeleport(DDDFFLjava/util/Set;)V",
+            method = "requestTeleport(Lnet/minecraft/entity/player/PlayerPosition;Ljava/util/Set;)V",
             at = @At(
-                    value = "FIELD",
-                    target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;requestedTeleportPos:Lnet/minecraft/util/math/Vec3d;"
-            ),
-            locals = LocalCapture.CAPTURE_FAILSOFT
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;setPosition(Lnet/minecraft/entity/player/PlayerPosition;Ljava/util/Set;)V"
+            )
     )
-    public void kibu$onRequestTeleport(double _x, double _y, double _z, float _yaw, float _pitch, Set<PositionFlag> set, CallbackInfo ci,
-                                       double x, double y, double z, float yaw, float pitch) {
+    public void kibu$onRequestTeleport(PlayerPosition pos, Set<PositionFlag> flags, CallbackInfo ci) {
         teleporting = true;
-        lastX = x;
-        lastY = y;
-        lastZ = z;
-        lastYaw = yaw;
-        lastPitch = pitch;
+        lastX = player.getX();
+        lastY = player.getY();
+        lastZ = player.getZ();
+        lastYaw = player.getYaw();
+        lastPitch = player.getYaw();
     }
 
     @Inject(

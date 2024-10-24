@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.hook.mixin.item;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -9,7 +10,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
@@ -22,10 +22,9 @@ public class BlockItemMixin {
                     value = "INVOKE",
                     target = "Lnet/minecraft/item/BlockItem;place(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z"
             ),
-            cancellable = true,
-            locals = LocalCapture.CAPTURE_FAILHARD
+            cancellable = true
     )
-    public void kibu$onPlaceBlock(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> cir, ItemPlacementContext modifiedContext, BlockState newState) {
+    public void kibu$onPlaceBlock(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> cir, @Local BlockState newState) {
         final PlayerEntity player = context.getPlayer();
 
         if (BlockModificationHooks.PLACE_BLOCK.invoker().onPlace(context.getWorld(), context.getBlockPos(), player, newState)) {

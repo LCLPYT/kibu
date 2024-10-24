@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.entity.BrushableBlockEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import work.lclpnet.kibu.hook.util.MixinUtils;
@@ -16,10 +16,10 @@ public class BrushableBlockEntityMixin {
             method = "spawnItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+                    target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
             )
     )
-    public boolean kibu$onDropItem(World world, Entity entity, Operation<Boolean> original) {
+    public boolean kibu$onDropItem(ServerWorld world, Entity entity, Operation<Boolean> original) {
         return MixinUtils.wrapBlockEntityItemDrop(world, entity, original, this);
     }
 }

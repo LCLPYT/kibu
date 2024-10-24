@@ -3,6 +3,7 @@ package work.lclpnet.kibu.hook.mixin.entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.conversion.EntityConversionContext;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.VillagerEntity;
@@ -29,17 +30,17 @@ public class ZombieEntityMixin {
     }
 
     @WrapOperation(
-            method = "onKilledOther",
+            method = "infectVillager",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/passive/VillagerEntity;convertTo(Lnet/minecraft/entity/EntityType;Z)Lnet/minecraft/entity/mob/MobEntity;"
+                    target = "Lnet/minecraft/entity/passive/VillagerEntity;convertTo(Lnet/minecraft/entity/EntityType;Lnet/minecraft/entity/conversion/EntityConversionContext;Lnet/minecraft/entity/conversion/EntityConversionContext$Finalizer;)Lnet/minecraft/entity/mob/MobEntity;"
             )
     )
-    public <T extends MobEntity> MobEntity kibu$onInfestVillager(VillagerEntity instance, EntityType<T> entityType, boolean keepEquipment, Operation<MobEntity> original) {
+    public <T extends MobEntity> MobEntity kibu$onInfestVillager(VillagerEntity instance, EntityType<T> entityType, EntityConversionContext entityConversionContext, EntityConversionContext.Finalizer<T> finalizer, Operation<MobEntity> original) {
         if (EntityConvertCallback.HOOK.invoker().onConvert(instance, entityType)) {
             return null;
         }
 
-        return original.call(instance, entityType, keepEquipment);
+        return original.call(instance, entityType, entityConversionContext, finalizer);
     }
 }

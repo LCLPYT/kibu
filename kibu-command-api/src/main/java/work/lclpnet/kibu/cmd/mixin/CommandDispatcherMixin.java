@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.cmd.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -10,7 +11,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import work.lclpnet.kibu.cmd.type.RedirectAware;
 
 import java.util.ArrayList;
@@ -27,10 +27,9 @@ public class CommandDispatcherMixin {
                     value = "INVOKE",
                     target = "Lcom/mojang/brigadier/tree/RootCommandNode;addChild(Lcom/mojang/brigadier/tree/CommandNode;)V"
             ),
-            locals = LocalCapture.CAPTURE_FAILHARD,
             remap = false
     )
-    public <S> void beforeRegister(LiteralArgumentBuilder<S> builder, CallbackInfoReturnable<LiteralCommandNode<S>> cir, LiteralCommandNode<S> command) {
+    public <S> void beforeRegister(LiteralArgumentBuilder<S> builder, CallbackInfoReturnable<LiteralCommandNode<S>> cir, @Local LiteralCommandNode<S> command) {
         var redirect = command.getRedirect();
         if (!(redirect instanceof LiteralCommandNode<S> literal)) return;
 

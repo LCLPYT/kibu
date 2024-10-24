@@ -3,6 +3,7 @@ package work.lclpnet.kibu.util.math;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
@@ -49,6 +50,12 @@ public class Matrix3i {
                 elements[3] * x + elements[4] * y + elements[5] * z,
                 elements[6] * x + elements[7] * y + elements[8] * z
         );
+    }
+
+    public void transform(double x, double y, double z, Vector3d target) {
+        target.x = elements[0] * x + elements[1] * y + elements[2] * z;
+        target.y = elements[3] * x + elements[4] * y + elements[5] * z;
+        target.z = elements[6] * x + elements[7] * y + elements[8] * z;
     }
 
     public void transform(float x, float y, float z, Vector3f target) {

@@ -19,7 +19,7 @@
   "mixins": [],
   "depends": {
     "fabricloader": ">=${loader_version}",
-    "minecraft": "~1.21",
+    "minecraft": "~1.21.2",
     "java": ">=21",
     "fabric-api": "*",
     "kibu": "*"

@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.mixin.block;
 
+import net.minecraft.block.AbstractCoralBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.CoralParentBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 
-@Mixin(CoralParentBlock.class)
-public class CoralParentBlockMixin {
+@Mixin(AbstractCoralBlock.class)
+public class AbstractCoralBlockMixin {
 
     @Inject(
             method = "isInWater",

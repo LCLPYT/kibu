@@ -13,13 +13,11 @@ public abstract class MinecraftServerMixin {
     @Inject(
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/MinecraftServer;getNetworkIo()Lnet/minecraft/server/ServerNetworkIo;",
-                    ordinal = 0,
-                    shift = At.Shift.BEFORE
+                    target = "Lnet/minecraft/server/ServerNetworkIo;stop()V"
             ),
             method = "shutdown"
     )
-    private void mplugins$beforeGetNetworkIo(CallbackInfo ci) {
+    private void kibu$beforeGetNetworkIo(CallbackInfo ci) {
         MinecraftServer self = (MinecraftServer) (Object) this;
         ServerWorldUnreadyCallback.HOOK.invoker().onWorldUnready(self);
     }

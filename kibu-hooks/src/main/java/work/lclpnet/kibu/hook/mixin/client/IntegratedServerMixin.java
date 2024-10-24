@@ -18,7 +18,7 @@ public class IntegratedServerMixin {
 			),
 			method = "setupServer"
 	)
-	private void mplugins$afterWorldLoad(CallbackInfoReturnable<Boolean> cir) {
+	private void kibu$afterWorldLoad(CallbackInfoReturnable<Boolean> cir) {
 		IntegratedServer self = (IntegratedServer) (Object) this;
 		ServerWorldReadyCallback.HOOK.invoker().onWorldReady(self);
 	}

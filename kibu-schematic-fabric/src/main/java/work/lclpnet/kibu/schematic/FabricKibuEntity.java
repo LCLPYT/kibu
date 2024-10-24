@@ -2,6 +2,7 @@ package work.lclpnet.kibu.schematic;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtList;
@@ -92,7 +93,7 @@ public class FabricKibuEntity implements KibuEntity {
 
         nbt.put("Pos", posList);
 
-        Entity entity = EntityType.loadEntityWithPassengers(nbt, world, Function.identity());
+        Entity entity = EntityType.loadEntityWithPassengers(nbt, world, SpawnReason.STRUCTURE, Function.identity());
         if (entity == null) return false;
 
         Vec3d rootPos = entity.getPos();

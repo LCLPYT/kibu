@@ -137,9 +137,7 @@ public class KibuHooks implements ModInitializer {
                 PlayerUtils.syncPlayerItems(player);
             }
 
-            ActionResult actionResult = result.toActionResult();
-
-            return actionResult == ActionResult.PASS ? ActionResult.FAIL : actionResult;
+            return result == ActionResult.PASS ? ActionResult.FAIL : result;
         }
 
         return null;

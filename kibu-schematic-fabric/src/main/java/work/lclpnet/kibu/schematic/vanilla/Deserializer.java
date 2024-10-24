@@ -81,7 +81,7 @@ class Deserializer implements SchematicDeserializer {
     private void addBlockEntity(BlockStructure struct, KibuBlockPos kibuPos, BlockPos pos, BlockState state, NbtCompound nbt) {
         if (!state.hasBlockEntity()) return;
 
-        var type = Registries.BLOCK_ENTITY_TYPE.getOrEmpty(Identifier.of(nbt.getString("id")))
+        var type = Registries.BLOCK_ENTITY_TYPE.getOptionalValue(Identifier.of(nbt.getString("id")))
                 .orElse(null);
 
         if (type == null) return;

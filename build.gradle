@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT' apply false
+    id 'fabric-loom' version '1.8-SNAPSHOT' apply false
     id 'maven-publish'
     id 'gradle-build-utils' version '1.7.0'
 }
@@ -64,7 +64,7 @@ allprojects {
     }
 
     tasks.withType(JavaCompile).configureEach {
-        it.options.release.convention(21)
+        it.options.release = 21
     }
 
     java {

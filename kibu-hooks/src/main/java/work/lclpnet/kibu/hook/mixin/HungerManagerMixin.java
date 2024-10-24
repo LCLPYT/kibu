@@ -38,7 +38,7 @@ public class HungerManagerMixin implements PlayerAware {
     }
 
     @Redirect(
-            method = "*",
+            method = {"update", "addExhaustion"},
             at = @At(
                     value = "FIELD",
                     target = "Lnet/minecraft/entity/player/HungerManager;exhaustion:F",

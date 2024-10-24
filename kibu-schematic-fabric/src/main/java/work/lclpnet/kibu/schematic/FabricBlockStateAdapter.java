@@ -71,7 +71,7 @@ public class FabricBlockStateAdapter implements BlockStateAdapter {
     public Optional<FabricKibuBlockEntity> revert(KibuBlockEntity blockEntity) {
         Identifier id = Identifier.tryParse(blockEntity.getId());
 
-        return Registries.BLOCK_ENTITY_TYPE.getOrEmpty(id).map(type -> {
+        return Registries.BLOCK_ENTITY_TYPE.getOptionalValue(id).map(type -> {
             BlockPos pos = revert(blockEntity.getPosition());
             NbtCompound nbt = FabricNbtConversion.convert(blockEntity.createNbt(), NbtCompound.class);
 

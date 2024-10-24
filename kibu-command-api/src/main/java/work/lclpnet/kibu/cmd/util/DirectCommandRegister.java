@@ -5,10 +5,12 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
-import work.lclpnet.kibu.cmd.type.*;
+import work.lclpnet.kibu.cmd.type.CommandConsumer;
+import work.lclpnet.kibu.cmd.type.CommandFactory;
+import work.lclpnet.kibu.cmd.type.CommandRegister;
+import work.lclpnet.kibu.cmd.type.CommandRegistrationContext;
 
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 public class DirectCommandRegister<S> implements CommandRegister<S>, CommandRegistrationContext {
 

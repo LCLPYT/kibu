@@ -6,14 +6,14 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.brain.task.LookTargetUtil;
+import net.minecraft.entity.ai.brain.task.TargetUtil;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import work.lclpnet.kibu.hook.entity.EntityDropItemCallback;
 
-@Mixin(LookTargetUtil.class)
-public class LookTargetUtilMixin {
+@Mixin(TargetUtil.class)
+public class TargetUtilMixin {
 
     @WrapOperation(
             method = "give(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;F)V",
@@ -32,5 +32,4 @@ public class LookTargetUtilMixin {
 
         return original.call(world, entity);
     }
-
 }

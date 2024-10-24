@@ -1,9 +1,7 @@
 package work.lclpnet.kibu.hook.entity;
 
 import net.fabricmc.fabric.api.event.player.*;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.TypedActionResult;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -85,14 +83,14 @@ public class PlayerInteractionHooks {
     public static final Hook<UseItemCallback> USE_ITEM = HookFactory.createArrayBacked(UseItemCallback.class,
             listeners -> (player, world, hand) -> {
                 for (UseItemCallback event : listeners) {
-                    TypedActionResult<ItemStack> result = event.interact(player, world, hand);
+                    var result = event.interact(player, world, hand);
 
-                    if (result.getResult() != ActionResult.PASS) {
+                    if (result != ActionResult.PASS) {
                         return result;
                     }
                 }
 
-                return TypedActionResult.pass(ItemStack.EMPTY);
+                return ActionResult.PASS;
             }
     );
 

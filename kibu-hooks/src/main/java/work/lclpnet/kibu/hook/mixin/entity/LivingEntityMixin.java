@@ -7,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,9 +15,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.entity.EntityDamageCallback;
+import work.lclpnet.kibu.hook.entity.EntityDismountCallback;
 import work.lclpnet.kibu.hook.entity.EntityHealthCallback;
 import work.lclpnet.kibu.hook.entity.EntityStatusEffectCallback;
-import work.lclpnet.kibu.hook.entity.EntityDismountCallback;
 import work.lclpnet.kibu.hook.util.MixinUtils;
 
 @Mixin(LivingEntity.class)
@@ -55,7 +56,7 @@ public class LivingEntityMixin {
             ),
             cancellable = true
     )
-    public void kibu$onDamage(DamageSource source, float amount, CallbackInfo ci) {
+    public void kibu$onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfo ci) {
         @SuppressWarnings("DataFlowIssue")
         LivingEntity entity = (LivingEntity) (Object) this;
 

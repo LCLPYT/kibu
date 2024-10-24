@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
@@ -50,10 +51,10 @@ public class ServerPlayerEntityMixin {
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
             ),
-            cancellable = true,
-            locals = LocalCapture.CAPTURE_FAILHARD
+            cancellable = true
     )
-    public void kibu$onDropItem(ItemStack stack, boolean throwRandomly, boolean retainOwnership, CallbackInfoReturnable<ItemEntity> cir, ItemEntity item) {
+    public void kibu$onDropItem(ItemStack stack, boolean throwRandomly, boolean retainOwnership, CallbackInfoReturnable<ItemEntity> cir,
+                                @Local ItemEntity item) {
         @SuppressWarnings("DataFlowIssue")
         ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
 
@@ -68,10 +69,10 @@ public class ServerPlayerEntityMixin {
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z",
                     shift = At.Shift.AFTER
-            ),
-            locals = LocalCapture.CAPTURE_FAILHARD
+            )
     )
-    public void kibu$onDroppedItem(ItemStack stack, boolean throwRandomly, boolean retainOwnership, CallbackInfoReturnable<ItemEntity> cir, ItemEntity item) {
+    public void kibu$onDroppedItem(ItemStack stack, boolean throwRandomly, boolean retainOwnership, CallbackInfoReturnable<ItemEntity> cir,
+                                   @Local ItemEntity item) {
         @SuppressWarnings("DataFlowIssue")
         ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
 

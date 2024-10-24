@@ -1,22 +1,22 @@
 package work.lclpnet.kibu.hook.world;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.ExplosionImpl;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
 public class WorldPhysicsHooks {
 
-    public static final Hook<ExplosionHook> EXPLOSION = HookFactory.createArrayBacked(ExplosionHook.class, callbacks -> exploder -> {
+    public static final Hook<ExplosionHook> EXPLOSION = HookFactory.createArrayBacked(ExplosionHook.class, callbacks -> explosion -> {
         boolean cancelled = false;
 
         for (var callback : callbacks)
-            if (callback.onExplode(exploder))
+            if (callback.onExplode(explosion))
                 cancelled = true;
 
         return cancelled;
@@ -116,7 +116,7 @@ public class WorldPhysicsHooks {
     });
 
     public interface ExplosionHook {
-        boolean onExplode(Entity exploder);
+        boolean onExplode(ExplosionImpl explosion);
     }
 
     public interface FadeHook {

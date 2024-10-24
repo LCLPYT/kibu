@@ -13,7 +13,7 @@ import work.lclpnet.kibu.hook.util.MixinUtils;
 public class SnifferEntityMixin {
 
     @WrapOperation(
-            method = "dropSeeds",
+            method = "method_64178",  // this is a lambda in dropSeeds(); the name might change in the future
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"

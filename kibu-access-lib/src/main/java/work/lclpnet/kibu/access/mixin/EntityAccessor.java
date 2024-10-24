@@ -47,8 +47,8 @@ public interface EntityAccessor {
         throw new AssertionError();
     }
 
-    @Accessor("FALL_FLYING_FLAG_INDEX")
-    static int getFallFlyingFlagIndex() {
+    @Accessor("GLIDING_FLAG_INDEX")
+    static int getGlidingFlagIndex() {
         throw new AssertionError();
     }
 }

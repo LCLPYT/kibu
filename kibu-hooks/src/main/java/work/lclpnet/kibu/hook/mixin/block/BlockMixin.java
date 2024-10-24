@@ -28,9 +28,10 @@ public class BlockMixin {
             cancellable = true
     )
     private static void kibu$onTileDrop(World world, BlockPos pos, ItemStack stack, CallbackInfo ci) {
-        if (world.isClient || stack.isEmpty() || !world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) return;
+        if (world.isClient || stack.isEmpty() || !(world instanceof ServerWorld serverWorld)
+            || !serverWorld.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) return;
 
-        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(world, pos, stack)) {
+        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, stack)) {
             ci.cancel();
         }
     }
@@ -44,9 +45,10 @@ public class BlockMixin {
             cancellable = true
     )
     private static void kibu$onTileDrop(World world, BlockPos pos, Direction direction, ItemStack stack, CallbackInfo ci) {
-        if (world.isClient || stack.isEmpty() || !world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) return;
+        if (world.isClient || stack.isEmpty() || !(world instanceof ServerWorld serverWorld)
+            || !serverWorld.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) return;
 
-        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(world, pos, stack)) {
+        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, stack)) {
             ci.cancel();
         }
     }

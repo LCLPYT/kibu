@@ -13,7 +13,7 @@ import work.lclpnet.kibu.hook.util.MixinUtils;
 public class AbstractDecorationEntityMixin {
 
     @WrapOperation(
-            method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;",
+            method = "dropStack",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"

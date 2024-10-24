@@ -14,7 +14,7 @@ public class EntityAccess {
     public static final int SWIMMING_FLAG_INDEX = EntityAccessor.getSwimmingFlagIndex();
     public static final int INVISIBLE_FLAG_INDEX = EntityAccessor.getInvisibleFlagIndex();
     public static final int GLOWING_FLAG_INDEX = EntityAccessor.getGlowingFlagIndex();
-    public static final int FALL_FLYING_FLAG_INDEX = EntityAccessor.getFallFlyingFlagIndex();
+    public static final int GLIDING_FLAG_INDEX = EntityAccessor.getGlidingFlagIndex();
 
     private EntityAccess() {}
 

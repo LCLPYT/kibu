@@ -4,7 +4,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.Orientation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
-import net.minecraft.state.property.*;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.EnumProperty;
+import net.minecraft.state.property.IntProperty;
+import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -81,7 +84,7 @@ public class RotationUtil {
         Vec3i vec = optDir.get().getVector();
         vec = transformation.transform(vec);
 
-        Direction dir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
+        Direction dir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
         if (dir == null) return state;
 
         if (prop instanceof BooleanProperty boolProp) {
@@ -102,10 +105,6 @@ public class RotationUtil {
     }
 
     private static BlockState rotateProperty(BlockState state, Matrix3i transformation, Property<?> prop) {
-        if (prop instanceof DirectionProperty dirProp) {
-            return rotateDirectionProperty(state, transformation, dirProp);
-        }
-
         if (prop instanceof EnumProperty<?> enumProp) {
             return rotateEnumProperty(state, transformation, enumProp);
         }
@@ -115,17 +114,6 @@ public class RotationUtil {
         }
 
         return state;
-    }
-
-    private static BlockState rotateDirectionProperty(BlockState state, Matrix3i transformation, DirectionProperty prop) {
-        Direction dir = state.get(prop);
-        BlockPos vec = transformation.transform(dir.getVector());
-
-        Direction rotDir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
-
-        if (rotDir == null || !prop.getValues().contains(rotDir)) return state;
-
-        return state.with(prop, rotDir);
     }
 
     private static BlockState rotateIntProperty(BlockState state, Matrix3i transformation, IntProperty prop) {
@@ -144,6 +132,10 @@ public class RotationUtil {
     @SuppressWarnings("unchecked")
     private static BlockState rotateEnumProperty(BlockState state, Matrix3i transformation, EnumProperty<?> prop) {
         String name = prop.getName();
+
+        if ("facing".equals(name) && prop.getType() == Direction.class) {
+            return rotateDirectionProperty(state, transformation, (EnumProperty<Direction>) prop);
+        }
 
         if ("axis".equals(name)) {
             return rotateAxisEnum(state, transformation, prop);
@@ -168,14 +160,25 @@ public class RotationUtil {
         return state;
     }
 
+    private static BlockState rotateDirectionProperty(BlockState state, Matrix3i transformation, EnumProperty<Direction> prop) {
+        Direction dir = state.get(prop);
+        BlockPos vec = transformation.transform(dir.getVector());
+
+        Direction rotDir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
+
+        if (rotDir == null || !prop.getValues().contains(rotDir)) return state;
+
+        return state.with(prop, rotDir);
+    }
+
     private static BlockState rotateOrientationEnum(BlockState state, Matrix3i transformation, EnumProperty<Orientation> prop) {
         Orientation orientation = state.get(prop);
 
         BlockPos vec = transformation.transform(orientation.getFacing().getVector());
-        Direction facing = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
+        Direction facing = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
 
         vec = transformation.transform(orientation.getRotation().getVector());
-        Direction rotation = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
+        Direction rotation = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
 
         if (facing == null || rotation == null) {
             return state;
@@ -263,7 +266,7 @@ public class RotationUtil {
         Vec3i vec = dir.getVector();
         vec = transformation.transform(vec);
 
-        dir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
+        dir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
 
         if (dir == null) return state;
 
@@ -305,7 +308,7 @@ public class RotationUtil {
         if (entity instanceof AbstractDecorationEntity deco) {
             Direction facing = deco.getHorizontalFacing();
             Vec3i vec = transformation.transform(facing.getVector());
-            facing = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ());
+            facing = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
 
             if (facing != null) {
                 DecorationEntityAccess.setFacing(deco, facing);

@@ -146,6 +146,8 @@ public class KibuTestMod implements ModInitializer {
         WitherShootCallback.HOOK.register((wither, targetX, targetY, targetZ) -> wither.getWorld().isRaining());
 
         WorldPhysicsHooks.CORAL_DEATH.register((world, pos) -> world.isRaining());
+
+        WorldPhysicsHooks.EXPLOSION.register(explosion -> explosion.getWorld().isRaining());
     }
 
     private void useSeparateMapsForNether() {
@@ -323,5 +325,8 @@ public class KibuTestMod implements ModInitializer {
 
     private void misc() {
         PlayerSwingHandHook.HOOK.register((player, hand) -> System.out.println("player swings " + hand));
+
+        // prevent all movement when holding an echo shard in the offhand
+        PlayerMoveCallback.HOOK.register((player, from, to) -> player.getOffHandStack().isOf(Items.ECHO_SHARD));
     }
 }

@@ -271,7 +271,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
         lastY = player.getY();
         lastZ = player.getZ();
         lastYaw = player.getYaw();
-        lastPitch = player.getYaw();
+        lastPitch = player.getPitch();
     }
 
     @Inject(

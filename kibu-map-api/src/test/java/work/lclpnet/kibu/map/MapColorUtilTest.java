@@ -26,7 +26,7 @@ class MapColorUtilTest {
     @ParameterizedTest
     @MethodSource("provideColorBrightnessArgs")
     void mapColor(MapColor color, MapColor.Brightness brightness) {
-        int renderColor = MapColorUtil.abgr2argb(color.getRenderColor(brightness));
+        int renderColor = color.getRenderColor(brightness);
         byte mappedColor = MapColorUtil.mapColor(renderColor);
         byte expected = renderColor == 0 ? 0 : color.getRenderColorByte(brightness);
 

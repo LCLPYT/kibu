@@ -22,20 +22,11 @@ public class MapColorUtil {
 
             for (var brightness : brightnesses) {
                 int idx = Byte.toUnsignedInt(color.getRenderColorByte(brightness));
-                int abgr = color.getRenderColor(brightness);
+                int argb = color.getRenderColor(brightness);
 
-                renderColors[idx] = abgr2argb(abgr);
+                renderColors[idx] = argb;
             }
         }
-    }
-
-    public static int abgr2argb(int abgr) {
-        int r = abgr & 0xff;
-        int g = (abgr >> 8) & 0xff;
-        int b = (abgr >> 16) & 0xff;
-        int a = (abgr >> 24) & 0xff;
-
-        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
     private static int getArgb(boolean alpha, byte[] pixels, int i) {

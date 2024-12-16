@@ -134,10 +134,13 @@ public class EntityMixin {
 
     @Inject(
             method = "interact",
-            at = @At(
+            at = {@At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/Leashable;detachLeash(ZZ)V"
-            ),
+                    target = "Lnet/minecraft/entity/Leashable;detachLeash()V"
+            ), @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/Leashable;detachLeashWithoutDrop()V"
+            )},
             cancellable = true
     )
     public void kibu$beforeUnleashMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {

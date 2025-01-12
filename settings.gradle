@@ -29,4 +29,5 @@ include 'kibu-inventory-api'
 include 'kibu-translation-api'
 include 'kibu-map-api'
 include 'kibu-behaviour-api'
+include 'kibu-networking-api'
 

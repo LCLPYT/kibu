@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "kibu-networking-api",
+  "version": "${version}",
+  "name": "Kibu Networkring API",
+  "description": "An API for networking both the client and server.",
+  "authors": [
+    "LCLP"
+  ],
+  "contact": {
+    "homepage": "https://github.com/LCLPYT/kibu",
+    "sources": "https://github.com/LCLPYT/kibu"
+  },
+  "license": "MIT",
+  "icon": "assets/kibu-networking-api/icon.png",
+  "environment": "*",
+  "entrypoints": {},
+  "mixins": [
+    "kibu-networking-api.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "kibu-hook-api": "*",
+    "kibu-hooks": "*"
+  },
+  "suggests": {},
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "parent": "kibu"
+    }
+  }
+}

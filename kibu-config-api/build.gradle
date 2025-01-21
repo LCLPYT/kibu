@@ -3,25 +3,23 @@ plugins {
     id 'java-library'
 }
 
-archivesBaseName = "kibu-schematic-api"
-
-moduleDependencies(project, [
-        'kibu-nbt-api'
-])
+archivesBaseName = "kibu-config-api"
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             pom {
-                name = 'kibu-schematic-api'
-                description = 'Platform independent schematic API.'
+                name = 'kibu-config-api'
+                description = 'Platform independent configuration API.'
             }
         }
     }
 }
 
 dependencies {
-    testCompileOnly 'org.jetbrains:annotations:24.1.0'
+    implementation('com.electronwill.night-config:core:3.8.1')
+    implementation('com.electronwill.night-config:toml:3.8.1')
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'

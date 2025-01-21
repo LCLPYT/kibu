@@ -30,4 +30,5 @@ include 'kibu-translation-api'
 include 'kibu-map-api'
 include 'kibu-behaviour-api'
 include 'kibu-networking-api'
+include 'kibu-config-api'
 

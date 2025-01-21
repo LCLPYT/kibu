@@ -1,0 +1,29 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-config-api",
+	"version": "${version}",
+	"name": "Kibu Config API",
+	"description": "Platform independent configuration API.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-config-api/icon.png",
+	"environment": "*",
+	"entrypoints": {},
+	"mixins": [],
+	"depends": {
+		"java": ">=21"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

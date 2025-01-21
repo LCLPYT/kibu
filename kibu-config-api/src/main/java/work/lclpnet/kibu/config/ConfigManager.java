@@ -7,7 +7,6 @@ import com.electronwill.nightconfig.core.file.GenericBuilder;
 import com.electronwill.nightconfig.core.serde.ObjectDeserializer;
 import com.electronwill.nightconfig.core.serde.ObjectSerializer;
 import com.electronwill.nightconfig.core.serde.annotations.SerdeComment;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +17,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.function.UnaryOperator;
 
-@ApiStatus.Internal
 public class ConfigManager<C> implements ConfigAccess<C>, AutoCloseable {
 
     private final CommentedFileConfig fileConfig;

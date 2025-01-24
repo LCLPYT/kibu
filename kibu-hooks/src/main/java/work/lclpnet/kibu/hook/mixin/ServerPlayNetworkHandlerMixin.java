@@ -320,4 +320,15 @@ public abstract class ServerPlayNetworkHandlerMixin {
     public void kibu$onHandSwing(HandSwingC2SPacket packet, CallbackInfo ci) {
         PlayerSwingHandHook.HOOK.invoker().onSwingHand(player, packet.getHand());
     }
+
+    @Inject(
+            method = "onPlayerInput",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;setPlayerInput(Lnet/minecraft/util/PlayerInput;)V"
+            )
+    )
+    public void kibu$onPlayerInput(PlayerInputC2SPacket packet, CallbackInfo ci) {
+        PlayerInputCallback.HOOK.invoker().onInput(player, packet.input());
+    }
 }

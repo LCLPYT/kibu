@@ -328,5 +328,11 @@ public class KibuTestMod implements ModInitializer {
 
         // prevent all movement when holding an echo shard in the offhand
         PlayerMoveCallback.HOOK.register((player, from, to) -> player.getOffHandStack().isOf(Items.ECHO_SHARD));
+
+        PlayerInputCallback.HOOK.register((player, input) -> {
+            if (player.getMainHandStack().isOf(Items.FEATHER)) {
+                System.out.println("JUMP");
+            }
+        });
     }
 }

@@ -21,6 +21,8 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
@@ -331,8 +333,17 @@ public class KibuTestMod implements ModInitializer {
 
         PlayerInputCallback.HOOK.register((player, input) -> {
             if (player.getMainHandStack().isOf(Items.FEATHER)) {
-                System.out.println("JUMP");
+                System.out.println("input " + input);
             }
+        });
+
+        PlayerJumpCallback.HOOK.register(player -> {
+            if (player.getMainHandStack().isOf(Items.FEATHER)) {
+                player.playSoundToPlayer(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), SoundCategory.MASTER, 0.2f, 1f);
+                return player.getOffHandStack().isOf(STICK);
+            }
+
+            return false;
         });
     }
 }

@@ -18,6 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.player.PlayerDeathCallback;
 import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
+import work.lclpnet.kibu.hook.player.PlayerJumpCallback;
+import work.lclpnet.kibu.hook.player.PlayerMoveCallback;
+import work.lclpnet.kibu.hook.util.OnGroundDetector;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
@@ -69,6 +72,12 @@ public class KibuHooks implements ModInitializer {
 
             PlayerInventoryHooks.DROPPED_ITEM.invoker().onDroppedItem(event.player(), event.slot());
         });
+
+        PlayerMoveCallback.HOOK.register((player, from, to) -> player.getPlayerInput().jump()
+                && to.getY() > from.getY()
+                && player.isOnGround()
+                && OnGroundDetector.isOnGroundServer(player)
+                && PlayerJumpCallback.HOOK.invoker().onJump(player));
     }
 
     @NotNull

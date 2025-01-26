@@ -3,6 +3,7 @@ package work.lclpnet.test;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.mob.VexEntity;
@@ -329,7 +330,13 @@ public class KibuTestMod implements ModInitializer {
         PlayerSwingHandHook.HOOK.register((player, hand) -> System.out.println("player swings " + hand));
 
         // prevent all movement when holding an echo shard in the offhand
-        PlayerMoveCallback.HOOK.register((player, from, to) -> player.getOffHandStack().isOf(Items.ECHO_SHARD));
+        PlayerMoveCallback.HOOK.register((player, from, to) -> {
+            if (player.getMainHandStack().isOf(Items.POPPY) && player.getWorld().getBlockState(player.getBlockPos().down()).isOf(Blocks.DIAMOND_BLOCK)) {
+                player.teleport(player.getServerWorld(), player.getX(), player.getY() + 2, player.getZ(), Set.of(), 0f, 0f, true);
+            }
+
+            return player.getOffHandStack().isOf(Items.ECHO_SHARD);
+        });
 
         PlayerInputCallback.HOOK.register((player, input) -> {
             if (player.getMainHandStack().isOf(Items.FEATHER)) {

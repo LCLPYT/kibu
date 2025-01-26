@@ -46,7 +46,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
     @Unique
     private float lastYaw = Float.NaN, lastPitch = Float.NaN;
     @Unique
-    private boolean teleporting = false;
+    private boolean hookTeleported = false, teleporting = false;
     @Unique
     private double modifiedVelocityY = Double.NaN;
 
@@ -177,6 +177,8 @@ public abstract class ServerPlayNetworkHandlerMixin {
             cancellable = true
     )
     public void kibu$preMove(PlayerMoveC2SPacket packet, CallbackInfo ci) {
+        if (teleporting) return;
+
         if (Double.isNaN(lastX)) {
             lastX = player.getX();
             lastY = player.getY();
@@ -195,25 +197,27 @@ public abstract class ServerPlayNetworkHandlerMixin {
         double distance = Math.pow(toX - lastX, 2) + Math.pow(toY - lastY, 2) + Math.pow(toZ - lastZ, 2);
         float angle = Math.abs(toYaw - lastYaw) + Math.abs(toPitch - lastPitch);
 
-        if (!(distance >= 0.00390625) && !(angle >= 0.01f)) return;
+        if (distance < 0.00390625 && angle < 0.01f) return;
 
         PositionRotation from = new PositionRotation(lastX, lastY, lastZ, lastYaw, lastPitch);
         PositionRotation to = new PositionRotation(toX, toY, toZ, toYaw, toPitch);
 
-        teleporting = false;
-
         double motionY = player.getVelocity().getY();
 
-        if (PlayerMoveCallback.HOOK.invoker().onMove(player, from, to)) {
-            // movement disallowed; reset
-            requestTeleport(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch());
+        hookTeleported = false;
 
+        boolean cancel = PlayerMoveCallback.HOOK.invoker().onMove(player, from, to);
+
+        // the player was teleported by a hook
+        if (hookTeleported) {
             ci.cancel();
             return;
         }
 
-        // the player was teleported by a hook
-        if (teleporting) {
+        if (cancel) {
+            // movement disallowed; reset
+            requestTeleport(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch());
+
             ci.cancel();
             return;
         }
@@ -266,12 +270,13 @@ public abstract class ServerPlayNetworkHandlerMixin {
             )
     )
     public void kibu$onRequestTeleport(PlayerPosition pos, Set<PositionFlag> flags, CallbackInfo ci) {
+        hookTeleported = true;
         teleporting = true;
-        lastX = player.getX();
-        lastY = player.getY();
-        lastZ = player.getZ();
-        lastYaw = player.getYaw();
-        lastPitch = player.getPitch();
+        lastX = pos.position().x;
+        lastY = pos.position().y;
+        lastZ = pos.position().z;
+        lastYaw = pos.yaw();
+        lastPitch = pos.pitch();
     }
 
     @Inject(
@@ -307,6 +312,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             )
     )
     public void kibu$onTeleportConfirm(TeleportConfirmC2SPacket packet, CallbackInfo ci) {
+        teleporting = false;
         PlayerTeleportedCallback.HOOK.invoker().onTeleported(player);
     }
 

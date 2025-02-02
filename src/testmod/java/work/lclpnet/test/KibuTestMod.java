@@ -177,7 +177,7 @@ public class KibuTestMod implements ModInitializer {
         // cancel when holding a wither rose
         EntityHealthCallback.HOOK.register((entity, health)
                 -> entity instanceof ServerPlayerEntity player && player.getInventory() != null
-                   && player.getStackInHand(Hand.MAIN_HAND).isOf(Items.WITHER_ROSE));
+                && player.getStackInHand(Hand.MAIN_HAND).isOf(Items.WITHER_ROSE));
     }
 
     private static void doubleJump() {
@@ -294,20 +294,20 @@ public class KibuTestMod implements ModInitializer {
 
         EntityDamageCallback.HOOK.register((entity, source, amount)
                 -> entity instanceof ServerPlayerEntity player
-                   && player.getOffHandStack().isOf(STICK));
+                && player.getOffHandStack().isOf(STICK));
 
         ServerMessageHooks.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> !sender.getMainHandStack().isOf(STICK));
 
         // disallow mobs to target players who hold a stick
         EntityTargetCallback.HOOK.register((entity, target)
                 -> target instanceof ServerPlayerEntity player
-                   && player.getMainHandStack().isOf(STICK));
+                && player.getMainHandStack().isOf(STICK));
 
         EntityStatusEffectCallback.HOOK.register((entity, effect, source)
                 -> source != null
-                   && entity instanceof ServerPlayerEntity player
-                   && player.getMainHandStack().isOf(STICK)
-                   && !effect.getEffectType().value().isBeneficial());
+                && entity instanceof ServerPlayerEntity player
+                && player.getMainHandStack().isOf(STICK)
+                && !effect.getEffectType().value().isBeneficial());
 
         EntityBossBarCallback.HOOK.register((entity, bossBar, player) -> player.getMainHandStack().isOf(STICK));
 
@@ -316,8 +316,9 @@ public class KibuTestMod implements ModInitializer {
 
         ServerSendPacketCallback.HOOK.register((packet, handler)
                 -> handler instanceof ServerPlayNetworkHandler networkHandler
-                   && networkHandler.player.getStackInHand(Hand.MAIN_HAND).isOf(STICK)
-                   && (packet instanceof PlaySoundS2CPacket || packet instanceof PlaySoundFromEntityS2CPacket));
+                && networkHandler.player.getStackInHand(Hand.MAIN_HAND).isOf(STICK)
+                && (packet instanceof PlaySoundS2CPacket || packet instanceof PlaySoundFromEntityS2CPacket)
+                ? PendingResult.empty() : PendingResult.pass());
 
         WorldPhysicsHooks.REPLACE_DISK_ENCHANTMENT.register((world, pos, entity, state)
                 -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));

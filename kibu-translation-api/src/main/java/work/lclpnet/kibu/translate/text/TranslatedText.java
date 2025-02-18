@@ -40,21 +40,31 @@ public class TranslatedText implements TextTranslatable {
         return languageGetter.apply(player);
     }
 
-    public void acceptEach(Iterable<ServerPlayerEntity> players, BiConsumer<ServerPlayerEntity, Text> action) {
+    public void acceptEach(Iterable<? extends ServerPlayerEntity> players, BiConsumer<ServerPlayerEntity, Text> action) {
         for (ServerPlayerEntity player : players) {
-            RootText text = translateFor(player);
-
-            Text result = prefix != null ? prefix.copy().append(text) : text;
-
-            action.accept(player, result);
+            action.accept(player, textFor(player));
         }
     }
 
-    public void sendTo(Iterable<ServerPlayerEntity> players) {
+    public Text textFor(ServerPlayerEntity player) {
+        RootText text = translateFor(player);
+
+        return prefix != null ? prefix.copy().append(text) : text;
+    }
+
+    public void sendTo(ServerPlayerEntity player) {
+        sendTo(player, false);
+    }
+
+    public void sendTo(ServerPlayerEntity player, boolean overlay) {
+        player.sendMessage(textFor(player), overlay);
+    }
+
+    public void sendTo(Iterable<? extends ServerPlayerEntity> players) {
         sendTo(players, false);
     }
 
-    public void sendTo(Iterable<ServerPlayerEntity> players, boolean overlay) {
+    public void sendTo(Iterable<? extends ServerPlayerEntity> players, boolean overlay) {
         acceptEach(players, (player, text) -> player.sendMessageToClient(text, overlay));
     }
 

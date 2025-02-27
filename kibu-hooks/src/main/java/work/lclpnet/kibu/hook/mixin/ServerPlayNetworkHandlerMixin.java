@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.hook.player.*;
+import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.util.PositionRotation;
 
 import java.util.Set;
@@ -127,6 +128,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
         if (cancel) {
             ci.cancel();
             this.player.currentScreenHandler.syncState();
+            PlayerUtils.syncPlayerItems(player);
         }
     }
 

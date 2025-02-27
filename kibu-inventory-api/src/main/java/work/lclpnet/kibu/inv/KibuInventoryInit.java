@@ -31,7 +31,6 @@ public class KibuInventoryInit implements ModInitializer {
         Inventory source = event.inventory();
         Inventory target = event.targetInventory();
 
-        // TODO test swap offhand
         if (source instanceof RestrictedInventory inv) {
             return !inv.canEdit(player);
         }

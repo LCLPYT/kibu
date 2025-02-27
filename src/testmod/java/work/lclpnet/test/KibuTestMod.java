@@ -9,6 +9,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.mob.VexEntity;
 import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.passive.TropicalFishEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
@@ -24,6 +25,7 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
@@ -42,6 +44,9 @@ import work.lclpnet.kibu.hook.util.PendingResult;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 import work.lclpnet.kibu.hook.world.ItemScatterCallback;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.inv.prompt.OptionPrompt;
+import work.lclpnet.kibu.inv.prompt.TextPrompt;
+import work.lclpnet.kibu.inv.type.RestrictedInventory;
 import work.lclpnet.kibu.map.hook.MapStateCallback;
 
 import java.util.List;
@@ -62,7 +67,45 @@ public class KibuTestMod implements ModInitializer {
         entityEditor();
         preventBeyond300();
         teleportWithBrick();
+        inventoryTests();
         misc();
+    }
+
+    private void inventoryTests() {
+        PlayerInteractionHooks.USE_ITEM.register((_player, world, hand) -> {
+            if (world.isClient || hand != Hand.MAIN_HAND || !(_player instanceof ServerPlayerEntity player))
+                return ActionResult.PASS;
+
+            return switch (player.getMainHandStack().getItem()) {
+                case Item it when it == Items.BOOK -> {
+                    TextPrompt.open(player, Text.literal("Input Text"), "Your text...", s -> !s.isBlank())
+                            .thenAccept(val -> player.sendMessage(Text.literal("You typed: " + val.orElse("nothing"))));
+
+                    yield ActionResult.SUCCESS_SERVER;
+                }
+                case Item it when it == Items.RESIN_CLUMP -> {
+                    enum Opts { FOO, BAR }
+
+                    OptionPrompt.open(player, Text.literal("Choose something"), List.of(Opts.FOO, Opts.BAR), opt -> switch (opt) {
+                        case FOO -> new ItemStack(Items.DIAMOND);
+                        case BAR -> new ItemStack(Items.EMERALD);
+                    }).thenAccept(val -> player.sendMessage(Text.literal("You chose: " + val.map(Opts::name).orElse("nothing"))));
+
+                    yield ActionResult.SUCCESS_SERVER;
+                }
+                case Item it when it == Items.NAUTILUS_SHELL -> {
+                    var inv = new RestrictedInventory(2, Text.literal("Unmodifiable inventory"));
+
+                    inv.setStack(3, new ItemStack(Items.DIAMOND_BLOCK, 11));
+                    inv.setStack(14, new ItemStack(Items.ELYTRA));
+
+                    player.openHandledScreen(inv);
+
+                    yield ActionResult.SUCCESS_SERVER;
+                }
+                default -> ActionResult.PASS;
+            };
+        });
     }
 
     private void teleportWithBrick() {

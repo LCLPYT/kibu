@@ -9,9 +9,6 @@ jobs:
       contents: write  # required to create a release on the repository
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-tags: 'true'
-          fetch-depth: '0'
 
       - uses: actions/setup-java@v4
         with:

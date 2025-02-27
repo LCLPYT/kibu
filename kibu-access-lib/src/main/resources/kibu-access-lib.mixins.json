@@ -19,6 +19,7 @@
     "GoatEntityMixin",
     "HorseEntityAccessor",
     "ItemDisplayEntityAccessor",
+    "MarkerEntityAccessor",
     "PigEntityAccessor",
     "SaddledComponentMixin",
     "SerializableTeamAccessor",

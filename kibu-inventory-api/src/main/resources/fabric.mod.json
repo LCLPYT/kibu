@@ -17,7 +17,9 @@
 	"entrypoints": {
 		"main": ["work.lclpnet.kibu.inv.KibuInventoryInit"]
 	},
-	"mixins": [],
+	"mixins": [
+		"kibu-inventory-api.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "~1.21.2",

@@ -80,7 +80,7 @@ public class TextPrompt {
 
                 // invalidate tracked data
                 ((ScreenHandlerAccessor) this).getTrackedPropertyValues().set(0, 1);
-                setPreviousTrackedSlotMutable(2, invalidateStack);
+                setReceivedStack(2, invalidateStack);
             }
 
             super.sendContentUpdates();

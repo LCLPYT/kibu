@@ -22,7 +22,7 @@ class FabricNbtConversionTest {
 
         NbtCompound compound = FabricNbtConversion.convert(tag, NbtCompound.class);
         assertEquals(3, compound.getKeys().size());
-        assertTrue(compound.getBoolean("test"));
+        assertTrue(compound.getBoolean("test").orElseThrow());
         assertEquals("world", compound.getString("hello"));
         assertEquals(5, compound.getInt("c"));
     }

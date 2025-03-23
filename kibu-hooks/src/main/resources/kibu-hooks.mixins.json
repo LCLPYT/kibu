@@ -42,7 +42,7 @@
     "block.DecoratedPotBlockMixin",
     "block.FarmlandBlockMixin",
     "block.IceBlockMixin",
-    "block.LecternBlockMixin",
+    "block.LecternBlockEntityMixin",
     "block.LeveledCauldronBlockMixin",
     "block.PressurePlateBlockMixin",
     "block.PumpkinBlockMixin",

@@ -10,7 +10,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import work.lclpnet.kibu.jnbt.CompoundTag;
-import work.lclpnet.kibu.jnbt.NBTConstants;
 import work.lclpnet.kibu.mc.BlockStateAdapter;
 import work.lclpnet.kibu.mc.KibuBlockPos;
 import work.lclpnet.kibu.nbt.FabricNbtConversion;
@@ -81,7 +80,9 @@ class Deserializer implements SchematicDeserializer {
     private void addBlockEntity(BlockStructure struct, KibuBlockPos kibuPos, BlockPos pos, BlockState state, NbtCompound nbt) {
         if (!state.hasBlockEntity()) return;
 
-        var type = Registries.BLOCK_ENTITY_TYPE.getOptionalValue(Identifier.of(nbt.getString("id")))
+        String id = nbt.getString("id").orElse("");
+
+        var type = Registries.BLOCK_ENTITY_TYPE.getOptionalValue(Identifier.of(id))
                 .orElse(null);
 
         if (type == null) return;
@@ -95,9 +96,7 @@ class Deserializer implements SchematicDeserializer {
         for (StructureTemplate.StructureEntityInfo entity : entities) {
             NbtCompound nbt = entity.nbt;
 
-            if (nbt.contains("TileX", NBTConstants.TYPE_INT)
-                && nbt.contains("TileY", NBTConstants.TYPE_INT)
-                && nbt.contains("TileZ", NBTConstants.TYPE_INT)) {
+            if (nbt.contains("TileX") && nbt.contains("TileY") && nbt.contains("TileZ")) {
                 nbt.putInt("TileX", entity.blockPos.getX());
                 nbt.putInt("TileY", entity.blockPos.getY());
                 nbt.putInt("TileZ", entity.blockPos.getZ());

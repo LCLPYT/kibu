@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import work.lclpnet.kibu.access.entity.PlayerInventoryAccess;
 import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.util.PositionRotation;
@@ -95,7 +96,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             cancellable = true
     )
     public void kibu$beforeSwapHands(PlayerActionC2SPacket packet, CallbackInfo ci) {
-        boolean cancel = PlayerInventoryHooks.SWAP_HANDS.invoker().onSwapHands(player, player.getInventory().selectedSlot);
+        boolean cancel = PlayerInventoryHooks.SWAP_HANDS.invoker().onSwapHands(player, PlayerInventoryAccess.getSelectedSlot(player));
         if (cancel) {
             ci.cancel();
         }
@@ -109,20 +110,20 @@ public abstract class ServerPlayNetworkHandlerMixin {
             )
     )
     public void kibu$afterSwapHands(PlayerActionC2SPacket packet, CallbackInfo ci) {
-        PlayerInventoryHooks.SWAPPED_HANDS.invoker().onSwappedHands(player, player.getInventory().selectedSlot);
+        PlayerInventoryHooks.SWAPPED_HANDS.invoker().onSwappedHands(player, PlayerInventoryAccess.getSelectedSlot(player));
     }
 
     @Inject(
             method = "onClickSlot",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/network/packet/c2s/play/ClickSlotC2SPacket;getSlot()I"
+                    target = "Lnet/minecraft/network/packet/c2s/play/ClickSlotC2SPacket;slot()S"
             ),
             cancellable = true
     )
     public void kibu$onClickSlot(ClickSlotC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.ClickEvent(player, packet.getSlot(), packet.getButton(), packet.getStack(),
-                packet.getActionType(), packet.getModifiedStacks());
+        var event = new PlayerInventoryHooks.ClickEvent(player, packet.slot(), packet.button(), packet.cursor(),
+                packet.actionType(), packet.modifiedStacks());
 
         boolean cancel = PlayerInventoryHooks.MODIFY_INVENTORY.invoker().onModify(event);
         if (cancel) {
@@ -137,8 +138,8 @@ public abstract class ServerPlayNetworkHandlerMixin {
             at = @At("TAIL")
     )
     public void kibu$onClickedSlot(ClickSlotC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.ClickEvent(player, packet.getSlot(), packet.getButton(), packet.getStack(),
-                packet.getActionType(), packet.getModifiedStacks());
+        var event = new PlayerInventoryHooks.ClickEvent(player, packet.slot(), packet.button(), packet.cursor(),
+                packet.actionType(), packet.modifiedStacks());
 
         PlayerInventoryHooks.MODIFIED_INVENTORY.invoker().onModified(event);
     }

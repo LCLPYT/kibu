@@ -16,7 +16,8 @@
 	"environment": "*",
 	"entrypoints": {},
 	"mixins": [
-		"kibu-schematic-fabric.mixins.json"
+		"kibu-schematic-fabric-schematic.mixins.json",
+		"kibu-schematic-fabric-nbt.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=${loader_version}",

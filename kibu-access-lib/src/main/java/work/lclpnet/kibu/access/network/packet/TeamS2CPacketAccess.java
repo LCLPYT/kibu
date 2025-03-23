@@ -41,12 +41,12 @@ public class TeamS2CPacketAccess {
     }
 
     public static TeamS2CPacket.SerializableTeam withNameTagVisibilityRule(TeamS2CPacket.SerializableTeam team, AbstractTeam.VisibilityRule rule) {
-        ((SerializableTeamAccessor) team).setNameTagVisibilityRule(rule.name);
+        ((SerializableTeamAccessor) team).setNameTagVisibilityRule(rule);
         return team;
     }
 
     public static TeamS2CPacket.SerializableTeam withCollisionRule(TeamS2CPacket.SerializableTeam team, AbstractTeam.CollisionRule rule) {
-        ((SerializableTeamAccessor) team).setCollisionRule(rule.name);
+        ((SerializableTeamAccessor) team).setCollisionRule(rule);
         return team;
     }
 

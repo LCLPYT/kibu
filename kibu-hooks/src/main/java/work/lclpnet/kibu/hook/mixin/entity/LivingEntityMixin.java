@@ -2,10 +2,13 @@ package work.lclpnet.kibu.hook.mixin.entity;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
@@ -18,6 +21,8 @@ import work.lclpnet.kibu.hook.entity.EntityDamageCallback;
 import work.lclpnet.kibu.hook.entity.EntityDismountCallback;
 import work.lclpnet.kibu.hook.entity.EntityHealthCallback;
 import work.lclpnet.kibu.hook.entity.EntityStatusEffectCallback;
+import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
+import work.lclpnet.kibu.hook.player.PlayerMountHooks;
 import work.lclpnet.kibu.hook.util.MixinUtils;
 
 @Mixin(LivingEntity.class)
@@ -96,6 +101,36 @@ public class LivingEntityMixin {
 
         if (EntityDismountCallback.HOOK.invoker().onDismount(self, vehicle)) {
             ci.cancel();
+        }
+    }
+
+    @Inject(
+            method = "stopRiding",
+            at = @At("TAIL")
+    )
+    public void kibu$onStoppedRiding(CallbackInfo ci, @Local Entity vehicle) {
+        if (vehicle == null) return;
+
+        LivingEntity self = (LivingEntity) (Object) this;
+
+        if (self instanceof ServerPlayerEntity player) {
+            PlayerMountHooks.DISMOUNTED.invoker().doAfter(player, vehicle);
+        }
+    }
+
+    @Inject(
+            method = "dropItem",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+            ),
+            cancellable = true
+    )
+    public void kibu$onDropItem(ItemStack stack, boolean dropAtSelf, boolean retainOwnership, CallbackInfoReturnable<ItemEntity> cir, @Local ItemEntity item) {
+        LivingEntity self = (LivingEntity) (Object) this;
+
+        if (self instanceof ServerPlayerEntity player && PlayerInventoryHooks.DROP_ITEM_ENTITY.invoker().onDropItemEntity(player, item)) {
+            cir.setReturnValue(null);
         }
     }
 }

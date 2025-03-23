@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.access.mixin;
 
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
+import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,11 +25,11 @@ public interface SerializableTeamAccessor {
 
     @Accessor
     @Mutable
-    void setNameTagVisibilityRule(String nameTagVisibilityRule);
+    void setNameTagVisibilityRule(AbstractTeam.VisibilityRule nameTagVisibilityRule);
 
     @Accessor
     @Mutable
-    void setCollisionRule(String collisionRule);
+    void setCollisionRule(AbstractTeam.CollisionRule collisionRule);
 
     @Accessor
     @Mutable

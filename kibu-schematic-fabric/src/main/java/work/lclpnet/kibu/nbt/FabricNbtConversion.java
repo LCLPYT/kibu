@@ -2,6 +2,7 @@ package work.lclpnet.kibu.nbt;
 
 import net.minecraft.nbt.*;
 import work.lclpnet.kibu.jnbt.*;
+import work.lclpnet.kibu.nbt.mixin.NbtListAccessor;
 
 import static work.lclpnet.kibu.jnbt.NBTConstants.*;
 
@@ -93,10 +94,11 @@ public class FabricNbtConversion {
             case TYPE_FLOAT -> new FloatTag(((NbtFloat) tag).floatValue());
             case TYPE_DOUBLE -> new DoubleTag(((NbtDouble) tag).doubleValue());
             case TYPE_BYTE_ARRAY -> new ByteArrayTag(((NbtByteArray) tag).getByteArray());
-            case TYPE_STRING -> new StringTag(tag.asString());
+            case TYPE_STRING -> new StringTag(tag.asString().orElse(""));
             case TYPE_LIST -> {
                 NbtList nbt = (NbtList) tag;
-                var list = new ListTag(nbt.getHeldType());
+                byte valueType = ((NbtListAccessor) (Object) nbt).invokeGetValueType();
+                var list = new ListTag(valueType);
 
                 for (NbtElement element : nbt) {
                     Tag converted = convert(element);

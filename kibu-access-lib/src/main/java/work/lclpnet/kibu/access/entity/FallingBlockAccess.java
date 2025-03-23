@@ -9,7 +9,7 @@ public class FallingBlockAccess {
     private FallingBlockAccess() {}
 
     public static void setBlockState(FallingBlockEntity entity, BlockState state) {
-        ((FallingBlockEntityAccessor) entity).setBlock(state);
+        ((FallingBlockEntityAccessor) entity).setBlockState(state);
     }
 
     public static void setDropItem(FallingBlockEntity entity, boolean dropItem) {

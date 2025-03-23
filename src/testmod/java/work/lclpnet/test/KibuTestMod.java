@@ -12,7 +12,6 @@ import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.map.MapState;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundFromEntityS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -152,7 +151,7 @@ public class KibuTestMod implements ModInitializer {
                 }
             }
             else if (entity instanceof TropicalFishEntity tropicalFish) {
-                TropicalFishEntityAccess.setVariant(tropicalFish, TropicalFishEntity.Variety.BETTY, DyeColor.BLUE, DyeColor.GREEN);
+                TropicalFishEntityAccess.setVariant(tropicalFish, TropicalFishEntity.Pattern.BETTY, DyeColor.BLUE, DyeColor.GREEN);
             }
             else if (entity instanceof VexEntity vex) {
                 VexEntityBehaviour.setForceClipping(vex, !VexEntityBehaviour.isForceClipping(vex));
@@ -202,7 +201,7 @@ public class KibuTestMod implements ModInitializer {
                 return null;
             }
 
-            return world.getPersistentStateManager().get(MapState.getPersistentStateType(), id.asString());
+            return world.getMapState(id);
         });
     }
 

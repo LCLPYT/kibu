@@ -3,8 +3,8 @@ package work.lclpnet.kibu.access.entity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.decoration.Brightness;
 import net.minecraft.entity.decoration.DisplayEntity;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.AffineTransformation;
 import work.lclpnet.kibu.access.mixin.BlockDisplayEntityAccessor;
@@ -34,12 +34,12 @@ public class DisplayEntityAccess {
         return ((ItemDisplayEntityAccessor) entity).invokeGetItemStack();
     }
 
-    public static void setTransformationMode(DisplayEntity.ItemDisplayEntity entity, ModelTransformationMode mode) {
-        ((ItemDisplayEntityAccessor) entity).invokeSetTransformationMode(mode);
+    public static void setTransformationMode(DisplayEntity.ItemDisplayEntity entity, ItemDisplayContext mode) {
+        ((ItemDisplayEntityAccessor) entity).invokeSetItemDisplayContext(mode);
     }
 
-    public static ModelTransformationMode getTransformationMode(DisplayEntity.ItemDisplayEntity entity) {
-        return ((ItemDisplayEntityAccessor) entity).invokeGetTransformationMode();
+    public static ItemDisplayContext getTransformationMode(DisplayEntity.ItemDisplayEntity entity) {
+        return ((ItemDisplayEntityAccessor) entity).invokeGetItemDisplayContext();
     }
 
     // TextDisplayEntity

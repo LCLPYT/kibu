@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.access.mixin;
 
 import net.minecraft.entity.decoration.DisplayEntity;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ModelTransformationMode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
@@ -16,8 +16,8 @@ public interface ItemDisplayEntityAccessor {
     ItemStack invokeGetItemStack();
 
     @Invoker
-    void invokeSetTransformationMode(ModelTransformationMode transformationMode);
+    void invokeSetItemDisplayContext(ItemDisplayContext itemDisplayContext);
 
     @Invoker
-    ModelTransformationMode invokeGetTransformationMode();
+    ItemDisplayContext invokeGetItemDisplayContext();
 }

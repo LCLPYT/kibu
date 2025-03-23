@@ -8,6 +8,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.screen.sync.ItemStackHash;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
@@ -202,8 +203,8 @@ public class PlayerInventoryHooks {
         void onModified(CreativeClickEvent event);
     }
 
-    public record ClickEvent(ServerPlayerEntity player, int slot, int button, ItemStack cursorStack,
-                             SlotActionType action, Int2ObjectMap<ItemStack> modified) {
+    public record ClickEvent(ServerPlayerEntity player, int slot, int button, ItemStackHash cursor,
+                             SlotActionType action, Int2ObjectMap<ItemStackHash> modified) {
         public boolean isDropAction() {
             return action == SlotActionType.THROW || (action == SlotActionType.PICKUP && slot == -999);
         }
@@ -274,7 +275,7 @@ public class PlayerInventoryHooks {
         @Override
         public String toString() {
             return "ClickEvent{player=%s, slot=%d, button=%d, cursorStack=%s, action=%s, modified=%s}"
-                    .formatted(player, slot, button, cursorStack, action, modified);
+                    .formatted(player, slot, button, cursor, action, modified);
         }
     }
 

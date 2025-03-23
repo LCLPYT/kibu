@@ -8,8 +8,8 @@ public class TropicalFishEntityAccess {
 
     private TropicalFishEntityAccess() {}
 
-    public static void setVariant(TropicalFishEntity tropicalFish, TropicalFishEntity.Variety variety, DyeColor baseColor, DyeColor patternColor) {
-        int id = TropicalFishEntityAccessor.invokeGetVariantId(variety, baseColor, patternColor);
+    public static void setVariant(TropicalFishEntity tropicalFish, TropicalFishEntity.Pattern pattern, DyeColor baseColor, DyeColor patternColor) {
+        int id = TropicalFishEntityAccessor.invokeGetVariantId(pattern, baseColor, patternColor);
         ((TropicalFishEntityAccessor) tropicalFish).invokeSetTropicalFishVariant(id);
     }
 }

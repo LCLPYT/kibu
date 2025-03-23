@@ -2,7 +2,6 @@ package work.lclpnet.kibu.map;
 
 import net.minecraft.block.MapColor;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtSizeTracker;
 import org.junit.jupiter.api.Test;
@@ -58,10 +57,10 @@ class MapColorUtilTest {
             nbt = NbtIo.readCompressed(in, NbtSizeTracker.ofUnlimitedBytes());
         }
 
-        NbtCompound data = nbt.getCompound("data");
-        assertTrue(data.contains("colors", NbtElement.BYTE_ARRAY_TYPE));
+        NbtCompound data = nbt.getCompound("data").orElseThrow();
+        assertTrue(data.contains("colors"));
 
-        byte[] expected = data.getByteArray("colors");
+        byte[] expected = data.getByteArray("colors").orElseThrow();
 
         byte[] actual = MapColorUtil.toBytes(img);
 

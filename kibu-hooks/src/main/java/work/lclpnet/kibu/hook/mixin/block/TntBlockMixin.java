@@ -22,7 +22,7 @@ public class TntBlockMixin {
             method = "onUseWithItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/TntBlock;primeTnt(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/LivingEntity;)V"
+                    target = "Lnet/minecraft/block/TntBlock;primeTnt(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/LivingEntity;)Z"
             ),
             cancellable = true
     )

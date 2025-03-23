@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface TropicalFishEntityAccessor {
 
     @Invoker
-    static int invokeGetVariantId(TropicalFishEntity.Variety variety, DyeColor baseColor, DyeColor patternColor) {
+    static int invokeGetVariantId(TropicalFishEntity.Pattern pattern, DyeColor baseColor, DyeColor patternColor) {
         throw new AssertionError();
     }
 

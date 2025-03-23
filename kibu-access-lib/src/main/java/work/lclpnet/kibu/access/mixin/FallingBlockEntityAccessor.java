@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface FallingBlockEntityAccessor {
 
     @Accessor
-    void setBlock(BlockState state);
+    void setBlockState(BlockState state);
 
     @Accessor
     void setDestroyedOnLanding(boolean destroyedOnLanding);

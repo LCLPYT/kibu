@@ -23,8 +23,8 @@ class FabricNbtConversionTest {
         NbtCompound compound = FabricNbtConversion.convert(tag, NbtCompound.class);
         assertEquals(3, compound.getKeys().size());
         assertTrue(compound.getBoolean("test").orElseThrow());
-        assertEquals("world", compound.getString("hello"));
-        assertEquals(5, compound.getInt("c"));
+        assertEquals("world", compound.getString("hello").orElseThrow());
+        assertEquals(5, compound.getInt("c").orElseThrow());
     }
 
     @Test
@@ -50,9 +50,9 @@ class FabricNbtConversionTest {
 
         NbtList list = FabricNbtConversion.convert(tag, NbtList.class);
         assertEquals(3, list.size());
-        assertEquals(5.1d, list.getDouble(0));
-        assertEquals(0.001d, list.getDouble(1));
-        assertEquals(10.5d, list.getDouble(2));
+        assertEquals(5.1d, list.getDouble(0).orElseThrow());
+        assertEquals(0.001d, list.getDouble(1).orElseThrow());
+        assertEquals(10.5d, list.getDouble(2).orElseThrow());
     }
 
     @Test

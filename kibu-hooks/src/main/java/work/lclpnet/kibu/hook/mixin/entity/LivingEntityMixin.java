@@ -94,9 +94,6 @@ public class LivingEntityMixin {
     public void kibu$onStopRiding(CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
 
-        // players are handled in ServerPlayerEntityMixin
-        if (self instanceof ServerPlayerEntity) return;
-
         Entity vehicle = self.getVehicle();
 
         if (EntityDismountCallback.HOOK.invoker().onDismount(self, vehicle)) {

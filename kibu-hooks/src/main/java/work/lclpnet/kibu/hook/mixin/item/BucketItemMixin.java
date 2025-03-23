@@ -1,6 +1,7 @@
 package work.lclpnet.kibu.hook.mixin.item;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.BucketItem;
@@ -29,7 +30,7 @@ public class BucketItemMixin {
             method = "use",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/FluidDrainable;tryDrainFluid(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;"
+                    target = "Lnet/minecraft/block/FluidDrainable;tryDrainFluid(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;"
             ),
             cancellable = true
     )
@@ -54,12 +55,12 @@ public class BucketItemMixin {
             ),
             cancellable = true
     )
-    public void kibu$onPlaceFluid(PlayerEntity player, World world, BlockPos pos, BlockHitResult blockHitResult, CallbackInfoReturnable<Boolean> cir) {
-        if (BlockModificationHooks.PLACE_FLUID.invoker().onTransfer(world, pos, player, fluid)) {
+    public void kibu$onPlaceFluid(LivingEntity user, World world, BlockPos pos, BlockHitResult hitResult, CallbackInfoReturnable<Boolean> cir) {
+        if (BlockModificationHooks.PLACE_FLUID.invoker().onTransfer(world, pos, user, fluid)) {
             cir.setReturnValue(false);
 
-            if (player instanceof ServerPlayerEntity) {
-                ((ServerPlayerEntity) player).networkHandler.sendPacket(new BlockUpdateS2CPacket(player.getWorld(), pos));
+            if (user instanceof ServerPlayerEntity player) {
+                player.networkHandler.sendPacket(new BlockUpdateS2CPacket(player.getServerWorld(), pos));
                 PlayerUtils.syncPlayerItems(player);
             }
         }

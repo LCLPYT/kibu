@@ -17,7 +17,7 @@ public class PlayerInventoryMixin {
 
     @Shadow @Final public PlayerEntity player;
 
-    @Shadow public int selectedSlot;
+    @Shadow private int selectedSlot;
 
     @Inject(
             method = "dropSelectedItem",

@@ -28,6 +28,7 @@
 		"java": ">=21",
 		"fabric-api": "*",
 		"kibu-hook-api": "*",
+		"kibu-access-lib": "*",
 		"com_github_llamalad7_mixinextras": ">=0.2.0"
 	},
 	"suggests": {},

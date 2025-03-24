@@ -20,7 +20,6 @@
     "HorseEntityAccessor",
     "ItemDisplayEntityAccessor",
     "PigEntityAccessor",
-    "PlayerInventoryAccessor",
     "SaddledComponentMixin",
     "SerializableTeamAccessor",
     "ServerPlayerEntityMixin",

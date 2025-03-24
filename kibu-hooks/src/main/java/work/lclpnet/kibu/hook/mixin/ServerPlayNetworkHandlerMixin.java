@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.access.entity.PlayerInventoryAccess;
 import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 import work.lclpnet.kibu.hook.util.PositionRotation;
@@ -96,7 +95,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             cancellable = true
     )
     public void kibu$beforeSwapHands(PlayerActionC2SPacket packet, CallbackInfo ci) {
-        boolean cancel = PlayerInventoryHooks.SWAP_HANDS.invoker().onSwapHands(player, PlayerInventoryAccess.getSelectedSlot(player));
+        boolean cancel = PlayerInventoryHooks.SWAP_HANDS.invoker().onSwapHands(player, player.getInventory().getSelectedSlot());
         if (cancel) {
             ci.cancel();
         }
@@ -110,7 +109,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
             )
     )
     public void kibu$afterSwapHands(PlayerActionC2SPacket packet, CallbackInfo ci) {
-        PlayerInventoryHooks.SWAPPED_HANDS.invoker().onSwappedHands(player, PlayerInventoryAccess.getSelectedSlot(player));
+        PlayerInventoryHooks.SWAPPED_HANDS.invoker().onSwappedHands(player, player.getInventory().getSelectedSlot());
     }
 
     @Inject(

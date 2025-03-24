@@ -5,8 +5,7 @@ plugins {
 archivesBaseName = "kibu-hooks"
 
 moduleDependencies(project, [
-        'kibu-hook-api',
-        'kibu-access-lib'
+        'kibu-hook-api'
 ])
 
 publishing {

@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FarmlandBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.mob.VexEntity;
@@ -42,6 +43,7 @@ import work.lclpnet.kibu.hook.network.ServerSendPacketCallback;
 import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PendingResult;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
+import work.lclpnet.kibu.hook.world.FarmlandMoistureChangeCallback;
 import work.lclpnet.kibu.hook.world.ItemScatterCallback;
 import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 import work.lclpnet.kibu.inv.prompt.OptionPrompt;
@@ -125,6 +127,8 @@ public class KibuTestMod implements ModInitializer {
         AffectedByDaylightCallback.HOOK.register(entity -> entity.getY() > 300);
         EntityTeleportCallback.HOOK.register((entity, x, y, z) -> entity.getY() > 300);
         ProjectileCanHitCallback.HOOK.register((projectile, entity) -> entity.getY() <= 300);
+        FarmlandMoistureChangeCallback.HOOK.register((world, pos, moisture)
+                -> pos.getY() > 300 && moisture < world.getBlockState(pos).get(FarmlandBlock.MOISTURE));
     }
 
     private void entityEditor() {

@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
@@ -62,8 +63,9 @@ public abstract class FarmlandBlockMixin extends Block {
             cancellable = true
     )
     private static void kibu$setToDirt(Entity entity, BlockState state, World world, BlockPos pos, CallbackInfo ci) {
-        if (world instanceof ServerWorld serverWorld && FarmlandMoistureChangeCallback.HOOK.invoker()
-                .onMoistureChange(serverWorld, pos, -1)) {
+        if (world instanceof ServerWorld serverWorld
+                && state.isOf(Blocks.FARMLAND)
+                && FarmlandMoistureChangeCallback.HOOK.invoker().onMoistureChange(serverWorld, pos, -1)) {
             ci.cancel();
         }
     }

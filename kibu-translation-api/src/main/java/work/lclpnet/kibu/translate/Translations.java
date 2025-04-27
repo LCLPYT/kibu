@@ -71,6 +71,14 @@ public class Translations {
         return translator.translate(language, key, args);
     }
 
+    public String translate(String language, String key) {
+        return translator.translate(language, key);
+    }
+
+    public String translate(String language, String key, Object... args) {
+        return translator.translate(language, key, args);
+    }
+
     public String translate(ServerCommandSource source, String key) {
         ServerPlayerEntity player = source.getPlayer();
 

@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class OsUtil {
 
-    public static @NotNull Path getOsDataDir() {
+    public static @NotNull Path getCacheDir() {
         String os = System.getProperty("os.name").toLowerCase();
         String userHome = System.getProperty("user.home");
 
@@ -29,12 +29,12 @@ public class OsUtil {
             return Path.of(userHome, "Library", "Application Support");
         }
 
-        // Linux: $XDG_DATA_HOME (default ~/.local/share)
+        // Linux: $XDG_CACHE_HOME (default ~/.cache)
         // https://specifications.freedesktop.org/basedir-spec/latest/
-        String xdgDataHome = System.getenv("XDG_DATA_HOME");
+        String xdgDataHome = System.getenv("XDG_CACHE_HOME");
 
         if (xdgDataHome == null || xdgDataHome.isEmpty()) {
-            return Path.of(userHome, ".local", "share");
+            return Path.of(userHome, ".cache");
         }
 
         return Path.of(xdgDataHome);

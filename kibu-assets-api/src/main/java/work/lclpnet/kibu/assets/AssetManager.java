@@ -523,7 +523,7 @@ public class AssetManager {
 
         synchronized (AssetManager.class) {
             if (sharedInstance == null) {
-                Path assetsRoot = OsUtil.getOsDataDir().resolve("kibu").resolve("mc_assets");
+                Path assetsRoot = OsUtil.getCacheDir().resolve("kibu").resolve("mc_assets");
                 Logger logger = LoggerFactory.getLogger(AssetManager.class);
 
                 sharedInstance = new AssetManager(assetsRoot, minecraftVersion, logger);

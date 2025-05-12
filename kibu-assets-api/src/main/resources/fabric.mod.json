@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "kibu-assets-api",
+	"version": "${version}",
+	"name": "Kibu Assets API",
+	"description": "A library of for interacting with the game files of Minecraft.",
+	"authors": [
+		"LCLP"
+	],
+	"contact": {
+		"homepage": "https://github.com/LCLPYT/kibu",
+		"sources": "https://github.com/LCLPYT/kibu"
+	},
+	"license": "MIT",
+	"icon": "assets/kibu-assets-lib/icon.png",
+	"environment": "*",
+	"depends": {
+		"java": ">=21"
+	},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"],
+			"parent": "kibu"
+		}
+	}
+}

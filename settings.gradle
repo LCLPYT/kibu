@@ -32,3 +32,5 @@ include 'kibu-behaviour-api'
 include 'kibu-networking-api'
 include 'kibu-config-api'
 
+
+include 'kibu-assets-api'

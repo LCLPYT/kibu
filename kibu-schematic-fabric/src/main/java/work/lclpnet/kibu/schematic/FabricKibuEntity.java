@@ -7,10 +7,14 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.NbtWriteView;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import work.lclpnet.kibu.jnbt.CompoundTag;
 import work.lclpnet.kibu.mc.KibuEntity;
 import work.lclpnet.kibu.nbt.FabricNbtConversion;
@@ -22,18 +26,32 @@ import java.util.function.Function;
 
 public class FabricKibuEntity implements KibuEntity {
 
+    private static final Logger logger = LoggerFactory.getLogger(FabricKibuEntity.class);
+
     private final EntityType<?> type;
     private final Vec3d pos;
     private final NbtCompound nbt;
 
     public FabricKibuEntity(Entity entity) {
-        this(entity.getType(), entity.getPos(), entity.writeNbt(new NbtCompound()));
+        this(entity.getType(), entity.getPos(), createNbt(entity));
     }
 
     public FabricKibuEntity(EntityType<?> type, Vec3d pos, NbtCompound nbt) {
         this.type = type;
         this.pos = pos;
         this.nbt = nbt;
+    }
+
+    private static NbtCompound createNbt(Entity entity) {
+        var registries = entity.getWorld().getRegistryManager();
+
+        try (ErrorReporter.Logging logging = new ErrorReporter.Logging(entity.getErrorReporterContext(), logger)) {
+            NbtWriteView view = NbtWriteView.create(logging, registries);
+
+            entity.writeData(view);
+
+            return view.getNbt();
+        }
     }
 
     @Override

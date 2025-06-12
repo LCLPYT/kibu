@@ -93,7 +93,7 @@ public class SchematicCommand {
     }
 
     private void pasteSchematic(ServerPlayerEntity player, BlockStructure structure) {
-        ServerWorld world = player.getServerWorld();
+        ServerWorld world = player.getWorld();
         BlockPos pos = player.getBlockPos();
 
         StructureWriter.placeStructure(structure, world, pos, Matrix3i.makeRotationY(1));

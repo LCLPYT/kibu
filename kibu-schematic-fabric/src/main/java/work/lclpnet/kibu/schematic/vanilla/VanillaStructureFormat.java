@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.schematic.vanilla;
 
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.structure.StructureTemplateManager;
 import work.lclpnet.kibu.schematic.api.*;
@@ -8,11 +9,13 @@ import work.lclpnet.kibu.schematic.type.KibuServerView;
 public class VanillaStructureFormat implements SchematicFormat {
 
     private final StructureTemplateManager manager;
+    private final RegistryWrapper.WrapperLookup registries;
     private volatile SchematicDeserializer deserializer = null;
     private volatile SchematicReader reader = null;
 
-    public VanillaStructureFormat(StructureTemplateManager manager) {
+    public VanillaStructureFormat(StructureTemplateManager manager, RegistryWrapper.WrapperLookup registries) {
         this.manager = manager;
+        this.registries = registries;
     }
 
     @Override
@@ -26,7 +29,7 @@ public class VanillaStructureFormat implements SchematicFormat {
 
         synchronized (this) {
             if (deserializer == null) {
-                deserializer = new Deserializer(manager);
+                deserializer = new Deserializer(manager, registries);
             }
         }
 

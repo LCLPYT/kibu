@@ -31,7 +31,7 @@ public class BehaviourCommand {
         boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
         ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
 
-        ServerWorldBehaviour.setFluidTicksEnabled(player.getServerWorld(), enabled);
+        ServerWorldBehaviour.setFluidTicksEnabled(player.getWorld(), enabled);
 
         player.sendMessage(Text.literal("Set behaviour fluid_ticks to \"" + enabled + "\""));
 

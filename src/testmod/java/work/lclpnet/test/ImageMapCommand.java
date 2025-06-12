@@ -67,7 +67,7 @@ public class ImageMapCommand {
     }
 
     private void processImage(ServerPlayerEntity player, BufferedImage img) {
-        ServerWorld world = player.getServerWorld();
+        ServerWorld world = player.getWorld();
 
         MapIdComponent id = MapUtil.allocateMapId(world, 0, 0, 0, false, false, world.getRegistryKey());
         MapState mapState = world.getMapState(id);

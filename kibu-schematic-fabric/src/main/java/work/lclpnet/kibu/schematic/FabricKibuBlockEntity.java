@@ -4,9 +4,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.NbtReadView;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import work.lclpnet.kibu.jnbt.CompoundTag;
 import work.lclpnet.kibu.mc.KibuBlockEntity;
 import work.lclpnet.kibu.mc.KibuBlockPos;
@@ -15,6 +20,8 @@ import work.lclpnet.kibu.nbt.FabricNbtConversion;
 import java.util.Objects;
 
 public class FabricKibuBlockEntity implements KibuBlockEntity {
+
+    private static final Logger logger = LoggerFactory.getLogger(FabricKibuBlockEntity.class);
 
     private final BlockEntityType<?> type;
     private final BlockPos pos;
@@ -56,7 +63,7 @@ public class FabricKibuBlockEntity implements KibuBlockEntity {
         var optBlockEntity = world.getBlockEntity(pos, type);
 
         if (optBlockEntity.isPresent()) {
-            optBlockEntity.get().read(nbt, world.getRegistryManager());
+            readBlockEntityNbt(optBlockEntity.get(), world.getRegistryManager());
             return true;
         }
 
@@ -64,11 +71,19 @@ public class FabricKibuBlockEntity implements KibuBlockEntity {
 
         if (blockEntity == null) return false;
 
-        blockEntity.read(nbt, world.getRegistryManager());
+        readBlockEntityNbt(blockEntity, world.getRegistryManager());
         blockEntity.setWorld(world);
 
         world.addBlockEntity(blockEntity);
 
         return true;
+    }
+
+    private void readBlockEntityNbt(BlockEntity blockEntity, RegistryWrapper.WrapperLookup registries) {
+        try (var logging = new ErrorReporter.Logging(blockEntity.getReporterContext(), FabricKibuBlockEntity.logger)) {
+            blockEntity.read(NbtReadView.create(logging, registries, nbt));
+        } catch (Throwable t) {
+            FabricKibuBlockEntity.logger.error("Failed to read nbt data for block entity {} at {}", type, pos, t);
+        }
     }
 }

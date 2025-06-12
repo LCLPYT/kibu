@@ -1,5 +1,6 @@
 package work.lclpnet.kibu.schematic.mixin;
 
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.structure.StructureTemplateManager;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +14,8 @@ import work.lclpnet.kibu.schematic.vanilla.VanillaStructureFormat;
 public abstract class MinecraftServerMixin implements KibuServerView {
 
     @Shadow public abstract StructureTemplateManager getStructureTemplateManager();
+
+    @Shadow public abstract DynamicRegistryManager.Immutable getRegistryManager();
 
     @Unique
     private final Object vanillaStructureFormatLock = new Object();
@@ -28,7 +31,9 @@ public abstract class MinecraftServerMixin implements KibuServerView {
         synchronized (vanillaStructureFormatLock) {
             if (vanillaStructureFormat == null) {
                 var manager = getStructureTemplateManager();
-                vanillaStructureFormat = new VanillaStructureFormat(manager);
+                var registries = getRegistryManager();
+
+                vanillaStructureFormat = new VanillaStructureFormat(manager, registries);
             }
         }
 

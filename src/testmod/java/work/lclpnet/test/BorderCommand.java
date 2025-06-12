@@ -29,7 +29,7 @@ public class BorderCommand {
 
         warning = !warning;
 
-        var packet = new WorldBorderWarningBlocksChangedS2CPacket(player.getServerWorld().getWorldBorder());
+        var packet = new WorldBorderWarningBlocksChangedS2CPacket(player.getWorld().getWorldBorder());
 
         if (warning) {
             WorldBorderWarningBlocksChangedS2CPacketAccess.withWarningBlocks(packet, Integer.MAX_VALUE);

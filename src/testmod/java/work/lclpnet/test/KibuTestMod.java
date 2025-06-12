@@ -112,7 +112,7 @@ public class KibuTestMod implements ModInitializer {
     private void teleportWithBrick() {
         PlayerInteractionHooks.USE_ITEM.register((player, world, hand) -> {
             if (!world.isClient && player.getMainHandStack().isOf(Items.BRICK) && player instanceof ServerPlayerEntity sp) {
-                sp.teleport(sp.getServerWorld(), sp.getX(), sp.getY() + 20, sp.getZ(), Set.of(), sp.getYaw(), sp.getPitch(), true);
+                sp.teleport(sp.getWorld(), sp.getX(), sp.getY() + 20, sp.getZ(), Set.of(), sp.getYaw(), sp.getPitch(), true);
                 return ActionResult.SUCCESS_SERVER;
             }
 
@@ -379,7 +379,7 @@ public class KibuTestMod implements ModInitializer {
         // prevent all movement when holding an echo shard in the offhand
         PlayerMoveCallback.HOOK.register((player, from, to) -> {
             if (player.getMainHandStack().isOf(Items.POPPY) && player.getWorld().getBlockState(player.getBlockPos().down()).isOf(Blocks.DIAMOND_BLOCK)) {
-                player.teleport(player.getServerWorld(), player.getX(), player.getY() + 2, player.getZ(), Set.of(), 0f, 0f, true);
+                player.teleport(player.getWorld(), player.getX(), player.getY() + 2, player.getZ(), Set.of(), 0f, 0f, true);
             }
 
             return player.getOffHandStack().isOf(Items.ECHO_SHARD);

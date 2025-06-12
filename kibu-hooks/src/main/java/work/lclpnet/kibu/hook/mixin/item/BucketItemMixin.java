@@ -60,7 +60,7 @@ public class BucketItemMixin {
             cir.setReturnValue(false);
 
             if (user instanceof ServerPlayerEntity player) {
-                player.networkHandler.sendPacket(new BlockUpdateS2CPacket(player.getServerWorld(), pos));
+                player.networkHandler.sendPacket(new BlockUpdateS2CPacket(player.getWorld(), pos));
                 PlayerUtils.syncPlayerItems(player);
             }
         }

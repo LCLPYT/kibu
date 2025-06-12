@@ -45,7 +45,7 @@ public class FabricStructureWrapper implements FabricStructureView {
     }
 
     public static int getDataVersion() {
-        return SharedConstants.getGameVersion().getSaveVersion().getId();
+        return SharedConstants.getGameVersion().dataVersion().id();
     }
 
     @NotNull

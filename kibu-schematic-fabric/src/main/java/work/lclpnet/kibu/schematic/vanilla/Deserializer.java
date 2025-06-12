@@ -4,11 +4,16 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.storage.NbtReadView;
 import net.minecraft.structure.StructureTemplate;
 import net.minecraft.structure.StructureTemplateManager;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import work.lclpnet.kibu.jnbt.CompoundTag;
 import work.lclpnet.kibu.mc.BlockStateAdapter;
 import work.lclpnet.kibu.mc.KibuBlockPos;
@@ -26,10 +31,14 @@ import java.util.List;
 
 class Deserializer implements SchematicDeserializer {
 
-    private final StructureTemplateManager manager;
+    private static final Logger logger = LoggerFactory.getLogger(Deserializer.class);
 
-    Deserializer(StructureTemplateManager manager) {
+    private final StructureTemplateManager manager;
+    private final RegistryWrapper.WrapperLookup registries;
+
+    Deserializer(StructureTemplateManager manager, RegistryWrapper.WrapperLookup registries) {
         this.manager = manager;
+        this.registries = registries;
     }
 
     @Override
@@ -102,7 +111,13 @@ class Deserializer implements SchematicDeserializer {
                 nbt.putInt("TileZ", entity.blockPos.getZ());
             }
 
-            var type = EntityType.fromNbt(nbt).orElse(null);
+            EntityType<?> type;
+
+            try (var logging = new ErrorReporter.Logging(logger)) {
+                var view = NbtReadView.create(logging, registries, nbt);
+
+                type = EntityType.fromData(view).orElse(null);
+            }
 
             if (type == null) continue;
 

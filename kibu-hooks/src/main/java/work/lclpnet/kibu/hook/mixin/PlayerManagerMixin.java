@@ -80,7 +80,7 @@ public abstract class PlayerManagerMixin {
     public void kibu$afterConnected(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         PlayerConnectionHooks.JOIN.invoker().act(player);
 
-        var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.getServerWorld(),
+        var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.getWorld(),
                 player.getPos(), player.getYaw(), player.getPitch());
 
         PlayerSpawnLocationCallback.HOOK.invoker().onSpawn(data);
@@ -98,7 +98,7 @@ public abstract class PlayerManagerMixin {
     public void kibu$afterRespawn(ServerPlayerEntity oldPlayer, boolean alive, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayerEntity> cir) {
         ServerPlayerEntity player = cir.getReturnValue();
 
-        var data = new PlayerSpawnLocationCallback.LocationData(player, false, player.getServerWorld(),
+        var data = new PlayerSpawnLocationCallback.LocationData(player, false, player.getWorld(),
                 player.getPos(), player.getYaw(), player.getPitch());
 
         PlayerSpawnLocationCallback.HOOK.invoker().onSpawn(data);

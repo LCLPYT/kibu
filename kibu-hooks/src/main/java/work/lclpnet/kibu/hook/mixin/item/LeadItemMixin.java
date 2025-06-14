@@ -1,9 +1,8 @@
 package work.lclpnet.kibu.hook.mixin.item;
 
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Leashable;
-import net.minecraft.entity.decoration.LeashKnotEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.LeadItem;
 import net.minecraft.util.ActionResult;
@@ -13,8 +12,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import work.lclpnet.kibu.hook.entity.LeashAttachCallback;
-import work.lclpnet.kibu.hook.entity.LeashEntityToBlockCallback;
+import work.lclpnet.kibu.hook.entity.leash.LeashEntitiesToBlockCallback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(LeadItem.class)
 public class LeadItemMixin {
@@ -23,27 +24,25 @@ public class LeadItemMixin {
             method = "attachHeldMobsToBlock",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/decoration/LeashKnotEntity;getOrCreate(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/entity/decoration/LeashKnotEntity;"
+                    target = "Ljava/util/List;iterator()Ljava/util/Iterator;"
             ),
             cancellable = true
     )
-    private static void kibu$beforePlaceLeashKnot(PlayerEntity player, World world, BlockPos pos, CallbackInfoReturnable<ActionResult> cir) {
-        if (LeashAttachCallback.HOOK.invoker().onAttach(player, world, pos)) {
+    private static void kibu$attachToBlock(PlayerEntity player, World world, BlockPos pos, CallbackInfoReturnable<ActionResult> cir,
+                                           @Local List<Leashable> list) {
+
+        if (list.isEmpty()) return;
+
+        List<Entity> entities = new ArrayList<>(list.size());
+
+        for (Leashable leashable : list) {
+            if (leashable instanceof Entity entity) {
+                entities.add(entity);
+            }
+        }
+
+        if (LeashEntitiesToBlockCallback.HOOK.invoker().onLeashToBlock(player, pos, entities)) {
             cir.setReturnValue(ActionResult.PASS);
         }
-    }
-
-    @WrapWithCondition(
-            method = "attachHeldMobsToBlock",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/entity/Leashable;attachLeash(Lnet/minecraft/entity/Entity;Z)V"
-            )
-    )
-    private static boolean kibu$attachLeashAllowed(Leashable instance, Entity leashHolder, boolean sendPacket) {
-        Entity currentHolder = instance.getLeashHolder();
-        if (!(currentHolder instanceof PlayerEntity player) || !(leashHolder instanceof LeashKnotEntity leashKnot)) return true;
-
-        return !LeashEntityToBlockCallback.HOOK.invoker().onLeashToBlock(player, instance, leashKnot);
     }
 }

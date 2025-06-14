@@ -2,7 +2,7 @@ package work.lclpnet.kibu.hook.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import net.minecraft.network.PacketCallbacks;
+import io.netty.channel.ChannelFutureListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.server.network.ServerCommonNetworkHandler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +19,9 @@ public class ServerCommonNetworkHandlerMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$send(Packet<?> packet, PacketCallbacks callbacks, CallbackInfo ci, @Local(argsOnly = true) LocalRef<Packet<?>> capture) {
+    public void kibu$send(Packet<?> packet, ChannelFutureListener channelFutureListener, CallbackInfo ci,
+                          @Local(argsOnly = true) LocalRef<Packet<?>> capture) {
+
         ServerCommonNetworkHandler self = (ServerCommonNetworkHandler) (Object) this;
 
         var res = ServerSendPacketCallback.HOOK.invoker().overridePacket(packet, self);

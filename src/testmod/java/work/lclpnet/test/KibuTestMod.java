@@ -10,6 +10,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.mob.VexEntity;
 import net.minecraft.entity.passive.GoatEntity;
 import net.minecraft.entity.passive.TropicalFishEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -38,6 +39,7 @@ import work.lclpnet.kibu.access.entity.TropicalFishEntityAccess;
 import work.lclpnet.kibu.behaviour.entity.VexEntityBehaviour;
 import work.lclpnet.kibu.hook.ServerMessageHooks;
 import work.lclpnet.kibu.hook.entity.*;
+import work.lclpnet.kibu.hook.entity.leash.*;
 import work.lclpnet.kibu.hook.network.ServerSendPacketCallback;
 import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PendingResult;
@@ -262,17 +264,14 @@ public class KibuTestMod implements ModInitializer {
 
         ArmorStandManipulateCallback.HOOK.register((armorStand, player, slot, stack, hand) -> player.getStackInHand(hand).isOf(STICK));
 
-        ItemUseOnEntityCallback.HOOK.register((player, entity, hand, stack) -> player.getOffHandStack().isOf(STICK));
+        ItemUseOnEntityCallback.HOOK.register((player, entity, hand, stack) -> cancelOffhand(player));
 
-        LeashAttachCallback.HOOK.register((player, world, pos) -> player.getOffHandStack().isOf(STICK));
-
-        LeashDetachCallback.HOOK.register((player, leashKnot) -> player.getOffHandStack().isOf(STICK));
-
-        LeashEntityCallback.HOOK.register((player, entity) -> player.getOffHandStack().isOf(STICK));
-
-        UnleashEntityCallback.HOOK.register((player, entity) -> player.getOffHandStack().isOf(STICK));
-
-        LeashEntityToBlockCallback.HOOK.register((player, entity, leashKnot) -> player.getOffHandStack().isOf(STICK));
+        LeashEntityCallback.HOOK.register((player, entity) -> cancelOffhand(player));
+        UnleashEntityCallback.HOOK.register((player, entity) -> cancelOffhand(player));
+        LeashDestroyCallback.HOOK.register((player, leashed) -> cancelOffhand(player));
+        LeashEntitiesToBlockCallback.HOOK.register((player, pos, entities) -> cancelOffhand(player));
+        LeashEntitiesToEntityCallback.HOOK.register((player, pos, entities) -> cancelOffhand(player));
+        LeashKnotTakeCallback.HOOK.register((player, leashKnot) -> cancelOffhand(player));
 
         ProjectilePickupCallback.HOOK.register((player, projectile) -> player.getMainHandStack().isOf(STICK));
 
@@ -284,15 +283,15 @@ public class KibuTestMod implements ModInitializer {
         PlayerRecipeNotificationCallback.HOOK.register((player, recipeEntry, displayEntry) -> player.getMainHandStack().isOf(STICK));
 
         BlockModificationHooks.DECORATIVE_POT_STORE.register((world, pos, entity)
-                -> entity instanceof ServerPlayerEntity player && player.getOffHandStack().isOf(STICK));
+                -> entity instanceof ServerPlayerEntity player && cancelOffhand(player));
 
         ProjectileHooks.BREAK_DECORATED_POT.register((projectile, hit) -> {
             if (!(projectile.getOwner() instanceof ServerPlayerEntity player)) return false;
 
-            return player.getOffHandStack().isOf(STICK);
+            return cancelOffhand(player);
         });
 
-        PlayerInventoryHooks.DROP_ITEM_ENTITY.register((player, itemEntity) -> player.getOffHandStack().isOf(STICK));
+        PlayerInventoryHooks.DROP_ITEM_ENTITY.register((player, itemEntity) -> cancelOffhand(player));
 
         PlayerInventoryHooks.DROPPED_ITEM_ENTITY.register((player, itemEntity) -> {
             if (player.getMainHandStack().isOf(STICK)) {
@@ -340,7 +339,7 @@ public class KibuTestMod implements ModInitializer {
 
         EntityDamageCallback.HOOK.register((entity, source, amount)
                 -> entity instanceof ServerPlayerEntity player
-                && player.getOffHandStack().isOf(STICK));
+                && cancelOffhand(player));
 
         ServerMessageHooks.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> !sender.getMainHandStack().isOf(STICK));
 
@@ -373,6 +372,10 @@ public class KibuTestMod implements ModInitializer {
                 -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));
     }
 
+    private boolean cancelOffhand(PlayerEntity player) {
+        return player.getOffHandStack().isOf(STICK);
+    }
+
     private void misc() {
         PlayerSwingHandHook.HOOK.register((player, hand) -> System.out.println("player swings " + hand));
 
@@ -394,7 +397,7 @@ public class KibuTestMod implements ModInitializer {
         PlayerJumpCallback.HOOK.register(player -> {
             if (player.getMainHandStack().isOf(Items.FEATHER)) {
                 player.playSoundToPlayer(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), SoundCategory.MASTER, 0.2f, 1f);
-                return player.getOffHandStack().isOf(STICK);
+                return cancelOffhand(player);
             }
 
             return false;

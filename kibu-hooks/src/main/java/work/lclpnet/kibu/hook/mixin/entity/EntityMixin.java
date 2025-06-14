@@ -2,6 +2,7 @@ package work.lclpnet.kibu.hook.mixin.entity;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.Portal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Leashable;
@@ -18,11 +19,22 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import work.lclpnet.kibu.hook.entity.*;
+import work.lclpnet.kibu.hook.entity.EntityDismountCallback;
+import work.lclpnet.kibu.hook.entity.EntityMountCallback;
+import work.lclpnet.kibu.hook.entity.EntityRemovedCallback;
+import work.lclpnet.kibu.hook.entity.EntityUsePortalCallback;
+import work.lclpnet.kibu.hook.entity.leash.LeashDestroyCallback;
+import work.lclpnet.kibu.hook.entity.leash.LeashEntitiesToEntityCallback;
+import work.lclpnet.kibu.hook.entity.leash.LeashEntityCallback;
+import work.lclpnet.kibu.hook.entity.leash.UnleashEntityCallback;
 import work.lclpnet.kibu.hook.player.PlayerSneakCallback;
 import work.lclpnet.kibu.hook.player.PlayerSprintCallback;
 import work.lclpnet.kibu.hook.util.MixinUtils;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 @Mixin(Entity.class)
 public class EntityMixin {
@@ -66,7 +78,7 @@ public class EntityMixin {
     }
 
     @WrapOperation(
-            method = "dropStack(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;",
+            method = "dropStack(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/entity/ItemEntity;",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
@@ -114,20 +126,21 @@ public class EntityMixin {
             method = "interact",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/Leashable;attachLeash(Lnet/minecraft/entity/Entity;Z)V"
+                    target = "Lnet/minecraft/entity/Leashable;isLeashed()Z"
             ),
             cancellable = true
     )
-    public void kibu$beforeLeashMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onLeash(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         Entity self = (Entity) (Object) this;
 
-        if (LeashEntityCallback.HOOK.invoker().onLeash(player, (Leashable) self)) {
+        if (LeashEntityCallback.HOOK.invoker().onLeash(player, self)) {
             cir.setReturnValue(ActionResult.PASS);
 
             // fix de-sync
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 PlayerUtils.syncPlayerItems(player);
-                serverPlayer.networkHandler.sendPacket(new EntityAttachS2CPacket(self, null));
+                Entity leashHolder = ((Leashable) self).getLeashHolder();
+                serverPlayer.networkHandler.sendPacket(new EntityAttachS2CPacket(self, leashHolder));
             }
         }
     }
@@ -136,7 +149,8 @@ public class EntityMixin {
             method = "interact",
             at = {@At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/Leashable;detachLeash()V"
+                    target = "Lnet/minecraft/entity/Leashable;detachLeash()V",
+                    ordinal = 0
             ), @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/entity/Leashable;detachLeashWithoutDrop()V"
@@ -144,11 +158,51 @@ public class EntityMixin {
             cancellable = true
     )
     public void kibu$beforeUnleashMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        Leashable self = (Leashable) this;
+        Entity self = (Entity) (Object) this;
 
         if (UnleashEntityCallback.HOOK.invoker().onUnleash(player, self)) {
             cir.setReturnValue(ActionResult.PASS);
         }
+    }
+
+    @Inject(
+            method = "detachAllHeldLeashes",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public void kibu$onDestroyLeash(PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
+        var self = (Entity) (Object) this;
+
+        if (LeashDestroyCallback.HOOK.invoker().onLeashDestroy(player, self)) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    @WrapOperation(
+            method = "interact",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/Leashable;collectLeashablesAround(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;)Ljava/util/List;"
+            )
+    )
+    public List<Leashable> kibu$collectEntitiesToLeash(Entity leashHolder, Predicate<Leashable> leashablePredicate, Operation<List<Leashable>> original,
+                                                       @Local(argsOnly = true) PlayerEntity player) {
+
+        List<Leashable> list = original.call(leashHolder, leashablePredicate);
+        List<Entity> entities = new ArrayList<>(list.size());
+
+        for (Leashable leashable : list) {
+            if (leashable instanceof Entity entity) {
+                entities.add(entity);
+            }
+        }
+
+        if (LeashEntitiesToEntityCallback.HOOK.invoker().onLeashToEntity(player, leashHolder, entities)) {
+            // cancelled, return empty list so that caller continues
+            return List.of();
+        }
+
+        return list;
     }
 
     @Inject(

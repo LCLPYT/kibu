@@ -370,6 +370,8 @@ public class KibuTestMod implements ModInitializer {
 
         EntityUsePortalCallback.HOOK.register((entity, portal, pos)
                 -> entity instanceof ServerPlayerEntity player && player.getMainHandStack().isOf(STICK));
+
+        PlayerWaypointCallback.HOOK.register((player, waypoint) -> player.getMainHandStack().isOf(STICK));
     }
 
     private boolean cancelOffhand(PlayerEntity player) {

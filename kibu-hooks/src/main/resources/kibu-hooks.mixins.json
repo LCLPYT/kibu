@@ -20,6 +20,7 @@
     "ServerPlayerInteractionManagerMixin",
     "ServerPlayNetworkHandlerMixin",
     "ServerRecipeBookMixin",
+    "ServerWaypointHandlerMixin",
     "ServerWorldMixin",
     "StatusEffectUtilMixin",
     "WorldMixin",

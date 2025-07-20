@@ -12,6 +12,7 @@
     "BlockDisplayEntityAccessor",
     "DamageTrackerAccessor",
     "DisplayEntityAccessor",
+    "DisplayEntityMixin",
     "EntityAccessor",
     "ExplosionImplAccessor",
     "FallingBlockEntityAccessor",

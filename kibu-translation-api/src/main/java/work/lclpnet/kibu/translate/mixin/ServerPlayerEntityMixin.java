@@ -18,6 +18,9 @@ public class ServerPlayerEntityMixin {
     public void kibu$fireLanguageEvent(SyncedClientOptions packet, CallbackInfo ci) {
         ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
 
+        // ignore early call during the join process
+        if (self.networkHandler == null) return;
+
         LanguageChangedCallback.HOOK.invoker().onChanged(self, packet.language(), LanguageChangedCallback.Reason.PLAYER);
     }
 }

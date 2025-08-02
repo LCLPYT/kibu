@@ -46,6 +46,8 @@ public class TranslatedBossBar extends ServerBossBar implements CustomBossBar {
 
     @Override
     public void addPlayer(ServerPlayerEntity player) {
+        if (player.networkHandler == null) return;  // prevent NPE if someone calls this too early in the join process
+
         final String language = translations.getLanguage(player);
         final UUID uuid = player.getUuid();
 

@@ -75,7 +75,11 @@ public abstract class PlayerManagerMixin {
 
     @Inject(
             method = "onPlayerConnect",
-            at = @At("TAIL")
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;onSpawn()V",
+                    shift = At.Shift.AFTER
+            )
     )
     public void kibu$afterConnected(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         PlayerConnectionHooks.JOIN.invoker().act(player);

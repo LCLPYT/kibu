@@ -22,6 +22,10 @@ public class ModTranslations {
     private ModTranslations() {}
 
     public static TranslationLoader assetTranslationLoader(String modId, Logger logger) {
+        return assetTranslationLoader(modId, modId, logger);
+    }
+
+    public static TranslationLoader assetTranslationLoader(String modId, String assetsId, Logger logger) {
         var locations = FabricLoader.getInstance()
                 .getModContainer(modId)
                 .orElseThrow(() -> new NoSuchElementException("Failed to find mod container"))
@@ -37,7 +41,7 @@ public class ModTranslations {
                 }).filter(Objects::nonNull)
                 .toArray(URL[]::new);
 
-        return UrlArchiveTranslationLoader.ofJson(locations, List.of("assets/%s/lang/".formatted(modId)), logger);
+        return UrlArchiveTranslationLoader.ofJson(locations, List.of("assets/%s/lang/".formatted(assetsId)), logger);
     }
 
     /**

@@ -106,6 +106,13 @@ subprojects {
     publishMavenJavaPublicationToMavenRepository.onlyIf {
         return !checkProjectIsDeployed(project, props)
     }
+
+    afterEvaluate {
+        tasks.find { (it.name == "genSources") }?.setEnabled(false)
+        tasks.find { (it.name == "genSourcesWithCfr") }?.setEnabled(false)
+        tasks.find { (it.name == "genSourcesWithFernFlower") }?.setEnabled(false)
+        tasks.find { (it.name == "genSourcesWithVineFlowerCo") }?.setEnabled(false)
+    }
 }
 
 import work.lclpnet.build.task.GithubDeploymentTask

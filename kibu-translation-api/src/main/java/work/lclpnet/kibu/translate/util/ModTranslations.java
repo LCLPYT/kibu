@@ -4,6 +4,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import work.lclpnet.kibu.translate.Translations;
 import work.lclpnet.translations.DefaultLanguageTranslator;
+import work.lclpnet.translations.Translator;
 import work.lclpnet.translations.loader.TranslationLoader;
 import work.lclpnet.translations.loader.UrlArchiveTranslationLoader;
 
@@ -54,11 +55,30 @@ public class ModTranslations {
      * @return A {@link Result} containing the resulting {@link Translations} and a void future as callback for when the translations are loaded.
      */
     public static Result fromAssets(String modId, Logger logger) {
+        return fromAssets(modId, logger, false);
+    }
+
+    /**
+     * Loads translation files from the <code>assets/modid/lang/</code> directory of a mod.
+     * This method will load the standard translations files that would otherwise be available on the client in the I18n class.
+     * However, unlike the Minecraft translations, not every translation source from each mod is merged.
+     * The resulting {@link Translations} only contains the translations of the specified mod.
+     * @param modId The mod id.
+     * @param logger A logger.
+     * @param autoPrefix Whether to automatically prepend the mod id to translation keys.
+     * @return A {@link Result} containing the resulting {@link Translations} and a void future as callback for when the translations are loaded.
+     */
+    public static Result fromAssets(String modId, Logger logger, boolean autoPrefix) {
         var loader = assetTranslationLoader(modId, logger);
-        var translator = new DefaultLanguageTranslator(loader);
+        var baseTranslator = new DefaultLanguageTranslator(loader);
+
+        Translator translator = autoPrefix
+                ? new ScopedTranslator(baseTranslator, modId + ".")
+                : baseTranslator;
+
         var translations = new Translations(translator);
 
-        var whenLoaded = translator.reload();
+        var whenLoaded = baseTranslator.reload();
 
         return new Result(translations, whenLoaded);
     }

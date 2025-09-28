@@ -89,14 +89,14 @@ public class EntityMixin {
     }
 
     @Inject(
-            method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z",
+            method = "startRiding(Lnet/minecraft/entity/Entity;ZZ)Z",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/entity/Entity;hasVehicle()Z"
             ),
             cancellable = true
     )
-    public void kibu$onStartRiding(Entity entity, boolean force, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onStartRiding(Entity entity, boolean force, boolean emitEvent, CallbackInfoReturnable<Boolean> cir) {
         Entity self = (Entity) (Object) this;
 
         if (EntityMountCallback.HOOK.invoker().onMount(self, entity, force)) {

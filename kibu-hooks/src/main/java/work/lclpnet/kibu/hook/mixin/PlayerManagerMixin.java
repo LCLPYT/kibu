@@ -1,16 +1,16 @@
 package work.lclpnet.kibu.hook.mixin;
 
-import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerConfigEntry;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.UserCache;
+import net.minecraft.util.NameToIdCache;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,16 +51,16 @@ public abstract class PlayerManagerMixin {
             )
     )
     public void kibu$sendCustomJoinMessage(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
-        GameProfile gameprofile = player.getGameProfile();
-        UserCache userCache = this.server.getUserCache();
+        PlayerConfigEntry configEntry = player.getPlayerConfigEntry();
+        NameToIdCache nameToIdCache = this.server.getApiServices().nameToIdCache();
 
-        if (userCache == null) return;
+        if (nameToIdCache == null) return;
 
-        GameProfile byUuid = userCache.getByUuid(gameprofile.getId()).orElse(null);
-        String s = byUuid == null ? gameprofile.getName() : byUuid.getName();
+        PlayerConfigEntry byUuid = nameToIdCache.getByUuid(configEntry.id()).orElse(null);
+        String s = byUuid == null ? configEntry.name() : byUuid.name();
 
         final MutableText originalText;
-        if (player.getGameProfile().getName().equalsIgnoreCase(s)) {
+        if (player.getGameProfile().name().equalsIgnoreCase(s)) {
             originalText = Text.translatable("multiplayer.player.joined", player.getDisplayName());
         } else {
             originalText = Text.translatable("multiplayer.player.joined.renamed", player.getDisplayName(), s);
@@ -84,8 +84,8 @@ public abstract class PlayerManagerMixin {
     public void kibu$afterConnected(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         PlayerConnectionHooks.JOIN.invoker().act(player);
 
-        var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.getWorld(),
-                player.getPos(), player.getYaw(), player.getPitch());
+        var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.getEntityWorld(),
+                player.getEntityPos(), player.getYaw(), player.getPitch());
 
         PlayerSpawnLocationCallback.HOOK.invoker().onSpawn(data);
 
@@ -102,8 +102,8 @@ public abstract class PlayerManagerMixin {
     public void kibu$afterRespawn(ServerPlayerEntity oldPlayer, boolean alive, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayerEntity> cir) {
         ServerPlayerEntity player = cir.getReturnValue();
 
-        var data = new PlayerSpawnLocationCallback.LocationData(player, false, player.getWorld(),
-                player.getPos(), player.getYaw(), player.getPitch());
+        var data = new PlayerSpawnLocationCallback.LocationData(player, false, player.getEntityWorld(),
+                player.getEntityPos(), player.getYaw(), player.getPitch());
 
         PlayerSpawnLocationCallback.HOOK.invoker().onSpawn(data);
 

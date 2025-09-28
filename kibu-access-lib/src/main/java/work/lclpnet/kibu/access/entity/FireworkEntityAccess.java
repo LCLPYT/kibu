@@ -10,7 +10,7 @@ public class FireworkEntityAccess {
     private FireworkEntityAccess() {}
 
     public static void explode(FireworkRocketEntity fireworkRocket) {
-        World world = fireworkRocket.getWorld();
+        World world = fireworkRocket.getEntityWorld();
 
         if (world instanceof ServerWorld serverWorld) {
             ((FireworkRocketEntityAccessor) fireworkRocket).invokeExplodeAndRemove(serverWorld);

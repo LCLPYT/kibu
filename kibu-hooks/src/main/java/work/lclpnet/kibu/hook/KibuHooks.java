@@ -84,7 +84,7 @@ public class KibuHooks implements ModInitializer {
     private static ActionResult onUseCake(PlayerEntity player, Hand hand, BlockHitResult hitResult) {
         final var itemStack = player.getStackInHand(hand);
         final var pos = hitResult.getBlockPos();
-        final var world = player.getWorld();
+        final var world = player.getEntityWorld();
         final var state = world.getBlockState(pos);
 
         if (itemStack.isIn(ItemTags.CANDLES) && state.get(CakeBlock.BITES) == 0 && Block.getBlockFromItem(itemStack.getItem()) instanceof CandleBlock) {
@@ -106,7 +106,7 @@ public class KibuHooks implements ModInitializer {
 
     private ActionResult onUseCandleCake(PlayerEntity player, BlockHitResult hitResult) {
         final var pos = hitResult.getBlockPos();
-        final var world = player.getWorld();
+        final var world = player.getEntityWorld();
         final var state = world.getBlockState(pos);
 
         if (!state.get(CandleCakeBlock.LIT) || !BlockModificationHooks.EXTINGUISH_CANDLE.invoker().onModify(world, pos, player)) {

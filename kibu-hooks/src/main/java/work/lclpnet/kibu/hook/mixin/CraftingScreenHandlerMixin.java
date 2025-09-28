@@ -34,7 +34,7 @@ public class CraftingScreenHandlerMixin {
         }
 
         return pending.get()
-                .filter(stack -> stack.isItemEnabled(player.getWorld().getEnabledFeatures()))
+                .filter(stack -> stack.isItemEnabled(player.getEntityWorld().getEnabledFeatures()))
                 .orElse(ItemStack.EMPTY);
     }
 }

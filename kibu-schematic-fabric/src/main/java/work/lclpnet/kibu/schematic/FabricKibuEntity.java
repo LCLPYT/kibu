@@ -33,7 +33,7 @@ public class FabricKibuEntity implements KibuEntity {
     private final NbtCompound nbt;
 
     public FabricKibuEntity(Entity entity) {
-        this(entity.getType(), entity.getPos(), createNbt(entity));
+        this(entity.getType(), entity.getEntityPos(), createNbt(entity));
     }
 
     public FabricKibuEntity(EntityType<?> type, Vec3d pos, NbtCompound nbt) {
@@ -43,7 +43,7 @@ public class FabricKibuEntity implements KibuEntity {
     }
 
     private static NbtCompound createNbt(Entity entity) {
-        var registries = entity.getWorld().getRegistryManager();
+        var registries = entity.getEntityWorld().getRegistryManager();
 
         try (ErrorReporter.Logging logging = new ErrorReporter.Logging(entity.getErrorReporterContext(), logger)) {
             NbtWriteView view = NbtWriteView.create(logging, registries);
@@ -121,10 +121,10 @@ public class FabricKibuEntity implements KibuEntity {
         Entity entity = EntityType.loadEntityWithPassengers(nbt, world, SpawnReason.STRUCTURE, Function.identity());
         if (entity == null) return false;
 
-        Vec3d rootPos = entity.getPos();
+        Vec3d rootPos = entity.getEntityPos();
 
         entity.streamSelfAndPassengers().forEach(e -> {
-            Vec3d rel = e.getPos().subtract(rootPos);
+            Vec3d rel = e.getEntityPos().subtract(rootPos);
             e.setPosition(pos.add(rel));
             e.setUuid(UUID.randomUUID());
 

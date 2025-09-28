@@ -2,7 +2,7 @@ package work.lclpnet.kibu.inv.prompt;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.ContainerUser;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -98,8 +98,8 @@ public class OptionPrompt {
         }
 
         @Override
-        public void onClose(PlayerEntity player) {
-            super.onClose(player);
+        public void onClose(ContainerUser user) {
+            super.onClose(user);
 
             future.complete(Optional.empty());
         }

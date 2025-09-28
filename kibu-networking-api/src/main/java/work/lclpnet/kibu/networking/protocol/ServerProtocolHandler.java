@@ -45,7 +45,7 @@ public class ServerProtocolHandler {
             GameProfile profile = ((ServerLoginNetworkHandlerAccessor) handler).getProfile();
 
             if (profile != null) {
-                removePlayer(profile.getId());
+                removePlayer(profile.id());
             }
         });
 
@@ -87,7 +87,7 @@ public class ServerProtocolHandler {
             return;
         }
 
-        UUID uuid = profile.getId();
+        UUID uuid = profile.id();
 
         synchronized (this) {
             playerVersions.put(uuid, version);

@@ -29,7 +29,7 @@ public class TeamCommand {
     private int act(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
 
-        Scoreboard scoreboard = player.getWorld().getScoreboard();
+        Scoreboard scoreboard = player.getEntityWorld().getScoreboard();
         Team team = scoreboard.getTeam("kibu_test");
 
         if (team == null) {

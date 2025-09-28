@@ -27,7 +27,7 @@ public class EyeOfEnderEntityMixin {
             EyeOfEnderEntity self = (EyeOfEnderEntity) (Object) this;
 
             // display the break animation
-            self.getWorld().syncWorldEvent(WorldEvents.EYE_OF_ENDER_BREAKS, self.getBlockPos(), 0);
+            self.getEntityWorld().syncWorldEvent(WorldEvents.EYE_OF_ENDER_BREAKS, self.getBlockPos(), 0);
         }
 
         return allowed;

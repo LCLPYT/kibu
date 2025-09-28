@@ -76,7 +76,7 @@ public class KibuTestMod implements ModInitializer {
 
     private void inventoryTests() {
         PlayerInteractionHooks.USE_ITEM.register((_player, world, hand) -> {
-            if (world.isClient || hand != Hand.MAIN_HAND || !(_player instanceof ServerPlayerEntity player))
+            if (world.isClient() || hand != Hand.MAIN_HAND || !(_player instanceof ServerPlayerEntity player))
                 return ActionResult.PASS;
 
             return switch (player.getMainHandStack().getItem()) {
@@ -113,8 +113,8 @@ public class KibuTestMod implements ModInitializer {
 
     private void teleportWithBrick() {
         PlayerInteractionHooks.USE_ITEM.register((player, world, hand) -> {
-            if (!world.isClient && player.getMainHandStack().isOf(Items.BRICK) && player instanceof ServerPlayerEntity sp) {
-                sp.teleport(sp.getWorld(), sp.getX(), sp.getY() + 20, sp.getZ(), Set.of(), sp.getYaw(), sp.getPitch(), true);
+            if (!world.isClient() && player.getMainHandStack().isOf(Items.BRICK) && player instanceof ServerPlayerEntity sp) {
+                sp.teleport(sp.getEntityWorld(), sp.getX(), sp.getY() + 20, sp.getZ(), Set.of(), sp.getYaw(), sp.getPitch(), true);
                 return ActionResult.SUCCESS_SERVER;
             }
 
@@ -136,7 +136,7 @@ public class KibuTestMod implements ModInitializer {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             ItemStack stack = player.getStackInHand(hand);
 
-            if (stack.isOf(Items.BLAZE_ROD) && player instanceof ServerPlayerEntity serverPlayer && !world.isClient && hitResult != null) {
+            if (stack.isOf(Items.BLAZE_ROD) && player instanceof ServerPlayerEntity serverPlayer && !world.isClient() && hitResult != null) {
                 toggleInvisibility(entity, serverPlayer);
 
                 return ActionResult.SUCCESS;
@@ -192,9 +192,9 @@ public class KibuTestMod implements ModInitializer {
 
         EntityDropItemCallback.HOOK.register((world, entity, itemEntity) -> world.isRaining());
 
-        EntityConvertCallback.HOOK.register((entity, type) -> entity.getWorld().isRaining());
+        EntityConvertCallback.HOOK.register((entity, type) -> entity.getEntityWorld().isRaining());
 
-        WitherShootCallback.HOOK.register((wither, targetX, targetY, targetZ) -> wither.getWorld().isRaining());
+        WitherShootCallback.HOOK.register((wither, targetX, targetY, targetZ) -> wither.getEntityWorld().isRaining());
 
         WorldPhysicsHooks.CORAL_DEATH.register((world, pos) -> world.isRaining());
 
@@ -320,18 +320,16 @@ public class KibuTestMod implements ModInitializer {
         CraftingRecipeCallback.HOOK.register((player, input, result) -> {
             // if the player is holding a stick and tries to dye a bundle blue, the bundle will be dyed red instead using the transmute recipe
             if (player.getMainHandStack().isOf(STICK) && result.isOf(Items.BLUE_BUNDLE)) {
-                MinecraftServer server = player.getServer();
+                MinecraftServer server = player.getEntityWorld().getServer();
 
-                if (server != null) {
-                    var key = RegistryKey.of(RegistryKeys.RECIPE, Identifier.of("red_bundle"));
+                var key = RegistryKey.of(RegistryKeys.RECIPE, Identifier.of("red_bundle"));
 
-                    return server.getRecipeManager().get(key)
-                            .map(RecipeEntry::value)
-                            .map(recipe -> recipe instanceof CraftingRecipe craftingRecipe ? craftingRecipe : null)
-                            .map(craftingRecipe -> craftingRecipe.craft(input, server.getRegistryManager()))
-                            .map(PendingResult::of)
-                            .orElse(PendingResult.pass());
-                }
+                return server.getRecipeManager().get(key)
+                        .map(RecipeEntry::value)
+                        .map(recipe -> recipe instanceof CraftingRecipe craftingRecipe ? craftingRecipe : null)
+                        .map(craftingRecipe -> craftingRecipe.craft(input, server.getRegistryManager()))
+                        .map(PendingResult::of)
+                        .orElse(PendingResult.pass());
             }
 
             return PendingResult.pass();
@@ -383,8 +381,8 @@ public class KibuTestMod implements ModInitializer {
 
         // prevent all movement when holding an echo shard in the offhand
         PlayerMoveCallback.HOOK.register((player, from, to) -> {
-            if (player.getMainHandStack().isOf(Items.POPPY) && player.getWorld().getBlockState(player.getBlockPos().down()).isOf(Blocks.DIAMOND_BLOCK)) {
-                player.teleport(player.getWorld(), player.getX(), player.getY() + 2, player.getZ(), Set.of(), 0f, 0f, true);
+            if (player.getMainHandStack().isOf(Items.POPPY) && player.getEntityWorld().getBlockState(player.getBlockPos().down()).isOf(Blocks.DIAMOND_BLOCK)) {
+                player.teleport(player.getEntityWorld(), player.getX(), player.getY() + 2, player.getZ(), Set.of(), 0f, 0f, true);
             }
 
             return player.getOffHandStack().isOf(Items.ECHO_SHARD);

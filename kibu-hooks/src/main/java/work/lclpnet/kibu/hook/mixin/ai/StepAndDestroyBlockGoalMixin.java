@@ -33,7 +33,7 @@ public abstract class StepAndDestroyBlockGoalMixin {
             cancellable = true
     )
     public void kibu$onDestroyBlock(CallbackInfo ci) {
-        final var world = this.stepAndDestroyMob.getWorld();
+        final var world = this.stepAndDestroyMob.getEntityWorld();
         final var pos = tweakToProperPos(this.stepAndDestroyMob.getBlockPos(), world);
 
         if (BlockModificationHooks.TRAMPLE_TURTLE_EGG.invoker().onModify(world, pos, this.stepAndDestroyMob)) {
@@ -48,7 +48,7 @@ public abstract class StepAndDestroyBlockGoalMixin {
             cancellable = true
     )
     public void kibu$interceptCanStart(CallbackInfoReturnable<Boolean> cir) {
-        if (BlockModificationHooks.CAN_MOB_GRIEF.invoker().onModify(this.stepAndDestroyMob.getWorld(), this.stepAndDestroyMob.getBlockPos(), this.stepAndDestroyMob)) {
+        if (BlockModificationHooks.CAN_MOB_GRIEF.invoker().onModify(this.stepAndDestroyMob.getEntityWorld(), this.stepAndDestroyMob.getBlockPos(), this.stepAndDestroyMob)) {
             cir.setReturnValue(false);
         }
     }

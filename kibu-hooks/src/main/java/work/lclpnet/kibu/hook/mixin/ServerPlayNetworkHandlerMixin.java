@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.mixin;
 
+import net.minecraft.entity.EntityPosition;
 import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.entity.player.PlayerPosition;
 import net.minecraft.network.DisconnectionInfo;
 import net.minecraft.network.packet.c2s.play.*;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
@@ -265,13 +265,13 @@ public abstract class ServerPlayNetworkHandlerMixin {
     }
 
     @Inject(
-            method = "requestTeleport(Lnet/minecraft/entity/player/PlayerPosition;Ljava/util/Set;)V",
+            method = "requestTeleport(Lnet/minecraft/entity/EntityPosition;Ljava/util/Set;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;setPosition(Lnet/minecraft/entity/player/PlayerPosition;Ljava/util/Set;)V"
+                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;setPosition(Lnet/minecraft/entity/EntityPosition;Ljava/util/Set;)V"
             )
     )
-    public void kibu$onRequestTeleport(PlayerPosition pos, Set<PositionFlag> flags, CallbackInfo ci) {
+    public void kibu$onRequestTeleport(EntityPosition pos, Set<PositionFlag> flags, CallbackInfo ci) {
         hookTeleported = true;
         teleporting = true;
         lastX = pos.position().x;

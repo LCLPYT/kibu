@@ -13,6 +13,6 @@ public class OnGroundDetector {
         double y = player.getY();
         Box box = player.getBoundingBox().withMinY(y - tol).withMaxY(y + 1e-5);
 
-        return player.getWorld().getBlockCollisions(player, box).iterator().hasNext();
+        return player.getEntityWorld().getBlockCollisions(player, box).iterator().hasNext();
     }
 }

@@ -73,7 +73,7 @@ public class SchematicCommand {
         String name = StringArgumentType.getString(ctx, "name");
         ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
 
-        loadAndPlace(ctx, read("structures/" + name, VanillaStructureFormat.get(player.getServer())), player);
+        loadAndPlace(ctx, read("structures/" + name, VanillaStructureFormat.get(player.getEntityWorld().getServer())), player);
 
         return 1;
     }
@@ -93,7 +93,7 @@ public class SchematicCommand {
     }
 
     private void pasteSchematic(ServerPlayerEntity player, BlockStructure structure) {
-        ServerWorld world = player.getWorld();
+        ServerWorld world = player.getEntityWorld();
         BlockPos pos = player.getBlockPos();
 
         StructureWriter.placeStructure(structure, world, pos, Matrix3i.makeRotationY(1));

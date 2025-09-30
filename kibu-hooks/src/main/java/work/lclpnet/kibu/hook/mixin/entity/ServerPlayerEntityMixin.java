@@ -19,7 +19,7 @@ public class ServerPlayerEntityMixin {
             method = "startRiding",
             at = @At("RETURN")
     )
-    public void kibu$onStartedRiding(Entity vehicle, boolean force, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onStartedRiding(Entity vehicle, boolean force, boolean emitEvent, CallbackInfoReturnable<Boolean> cir) {
         if (vehicle == null || !cir.getReturnValue()) return;
 
         @SuppressWarnings("DataFlowIssue")

@@ -6,15 +6,18 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.particle.BlockParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.collection.Pool;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.ExplosionBehavior;
 import net.minecraft.world.explosion.ExplosionImpl;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,11 +32,16 @@ public class ServerWorldMixin {
             method = "createExplosion",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/explosion/ExplosionImpl;explode()V"
+                    target = "Lnet/minecraft/world/explosion/ExplosionImpl;explode()I"
             ),
             cancellable = true
     )
-    public void kibu$onExplode(Entity entity, DamageSource damageSource, ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, World.ExplosionSourceType explosionSourceType, ParticleEffect smallParticle, ParticleEffect largeParticle, RegistryEntry<SoundEvent> soundEvent, CallbackInfo ci, @Local ExplosionImpl explosion) {
+    public void kibu$onExplode(@Nullable Entity entity, @Nullable DamageSource damageSource,
+                               @Nullable ExplosionBehavior behavior, double x, double y, double z, float power,
+                               boolean createFire, World.ExplosionSourceType explosionSourceType,
+                               ParticleEffect smallParticle, ParticleEffect largeParticle,
+                               Pool<BlockParticleEffect> blockParticles, RegistryEntry<SoundEvent> soundEvent,
+                               CallbackInfo ci, @Local ExplosionImpl explosion) {
         if (WorldPhysicsHooks.EXPLOSION.invoker().onExplode(explosion)) {
             ci.cancel();
         }

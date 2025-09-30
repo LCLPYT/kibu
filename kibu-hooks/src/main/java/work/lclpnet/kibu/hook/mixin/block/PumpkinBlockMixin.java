@@ -15,13 +15,13 @@ import work.lclpnet.kibu.hook.util.MixinUtils;
 public class PumpkinBlockMixin {
 
     @WrapOperation(
-            method = "onUseWithItem",
+            method = "method_72609",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
             )
     )
-    private boolean kibu$onDropItem(World world, Entity entity, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
+    private static boolean kibu$onDropItem(World world, Entity entity, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
         return MixinUtils.wrapBlockItemDrop(world, entity, original, pos);
     }
 }

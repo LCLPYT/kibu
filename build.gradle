@@ -57,9 +57,12 @@ allprojects {
     processResources {
         inputs.property "version", project.version
         inputs.property "loader_version", project.loader_version
+        inputs.property "minecraft_compat", project.minecraft_compat
 
         filesMatching("fabric.mod.json") {
-            expand "version": project.version, "loader_version": project.loader_version
+            expand "version": project.version,
+                    "loader_version": project.loader_version,
+                    "minecraft_compat": project.minecraft_compat
         }
     }
 
@@ -200,9 +203,12 @@ remapJar {
 processTestmodResources {
     inputs.property "version", project.version
     inputs.property "loader_version", project.loader_version
+    inputs.property "minecraft_compat", project.minecraft_compat
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version, "loader_version": project.loader_version
+        expand "version": project.version,
+                "loader_version": project.loader_version,
+                "minecraft_compat": project.minecraft_compat
     }
 }
 

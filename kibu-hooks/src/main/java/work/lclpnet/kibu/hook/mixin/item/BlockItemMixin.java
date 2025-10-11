@@ -35,4 +35,14 @@ public class BlockItemMixin {
             }
         }
     }
+
+    @Inject(
+            method = "place(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z",
+            at = @At("RETURN")
+    )
+    public void kibu$onBlockPlaced(ItemPlacementContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
+        if (!cir.getReturnValueZ()) return;
+
+        BlockModificationHooks.BLOCK_PLACED.invoker().onModified(context.getWorld(), context.getBlockPos(), context.getPlayer());
+    }
 }

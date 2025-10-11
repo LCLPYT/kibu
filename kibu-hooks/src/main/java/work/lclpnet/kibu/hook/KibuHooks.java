@@ -33,6 +33,9 @@ public class KibuHooks implements ModInitializer {
             return !BlockModificationHooks.BREAK_BLOCK.invoker().onModify(world, pos, player);
         });
 
+        PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity)
+                -> BlockModificationHooks.BLOCK_BROKEN.invoker().onModified(world, pos, player));
+
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             final var state = world.getBlockState(hitResult.getBlockPos());
 

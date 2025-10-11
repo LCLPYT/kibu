@@ -25,6 +25,12 @@ public class BlockModificationHooks {
         return cancelled;
     });
 
+    public static final Hook<BlockModifiedHook> BLOCK_PLACED = HookFactory.createArrayBacked(BlockModifiedHook.class, hooks -> (world, pos, entity) -> {
+        for (var hook : hooks) {
+            hook.onModified(world, pos, entity);
+        }
+    });
+
     public static final Hook<BlockModifyHook> BREAK_BLOCK = HookFactory.createArrayBacked(BlockModifyHook.class, callbacks -> (world, pos, entity) -> {
         boolean cancelled = false;
 
@@ -33,6 +39,12 @@ public class BlockModificationHooks {
                 cancelled = true;
 
         return cancelled;
+    });
+
+    public static final Hook<BlockModifiedHook> BLOCK_BROKEN = HookFactory.createArrayBacked(BlockModifiedHook.class, hooks -> (world, pos, entity) -> {
+        for (var hook : hooks) {
+            hook.onModified(world, pos, entity);
+        }
     });
 
     public static final Hook<FluidTransferHook> PLACE_FLUID = HookFactory.createArrayBacked(FluidTransferHook.class, callbacks -> (world, pos, entity, fluid) -> {
@@ -197,6 +209,10 @@ public class BlockModificationHooks {
 
     public interface BlockModifyHook {
         boolean onModify(World world, BlockPos pos, Entity entity);
+    }
+
+    public interface BlockModifiedHook {
+        void onModified(World world, BlockPos pos, Entity entity);
     }
 
     public interface FluidTransferHook {

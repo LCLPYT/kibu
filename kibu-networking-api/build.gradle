@@ -2,7 +2,9 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-networking-api"
+base {
+    archivesName = "kibu-networking-api"
+}
 
 moduleDependencies(project, [
         'kibu-hooks'
@@ -10,7 +12,7 @@ moduleDependencies(project, [
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-networking-api'
                 description = 'Networking API for both client and server'

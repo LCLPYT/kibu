@@ -2,7 +2,9 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-schematic-fabric"
+base {
+    archivesName = "kibu-schematic-fabric"
+}
 
 moduleDependencies(project, [
         'kibu-nbt-api',
@@ -12,7 +14,7 @@ moduleDependencies(project, [
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-schematic-fabric'
                 description = 'Kibu schematic and NBT API for Fabric'

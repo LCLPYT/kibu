@@ -2,7 +2,9 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-assets-api"
+base {
+    archivesName = "kibu-assets-api"
+}
 
 dependencies {
     implementation("org.slf4j:slf4j-api:2.0.17")
@@ -16,7 +18,7 @@ dependencies {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-assets-api'
                 description = 'A library of for interacting with the game files of Minecraft.'

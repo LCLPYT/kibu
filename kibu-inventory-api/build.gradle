@@ -2,7 +2,9 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-inventory-api"
+base {
+    archivesName = "kibu-inventory-api"
+}
 
 moduleDependencies(project, [
         'kibu-hook-api',
@@ -11,7 +13,7 @@ moduleDependencies(project, [
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-inventory-api'
                 description = 'An API to easily use inventory screens.'

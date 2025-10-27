@@ -80,7 +80,7 @@ allprojects {
 
     [jar, sourcesJar].each {
         it.from(rootProject.file('LICENSE')) {
-            rename { "${it}_${project.archivesBaseName}"}
+            rename { "${it}_${project.base.archivesName}"}
         }
     }
 
@@ -98,8 +98,8 @@ subprojects {
 
     publishing {
         publications {
-            mavenJava(MavenPublication) {
-                artifactId = project.archivesBaseName
+            create("mavenJava", MavenPublication) {
+                artifactId = project.base.archivesName
 
                 from components.java
             }
@@ -118,6 +118,8 @@ subprojects {
     }
 }
 
+
+import groovy.xml.XmlSlurper
 import work.lclpnet.build.task.GithubDeploymentTask
 
 def env = System.getenv()
@@ -140,8 +142,8 @@ tasks.register("github", GithubDeploymentTask) {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifactId = project.archivesBaseName
+        create("mavenJava", MavenPublication) {
+            artifactId = project.base.archivesName
 
             from components.java
 
@@ -213,7 +215,7 @@ processTestmodResources {
 }
 
 def checkProjectIsDeployed(Project project, Properties props) {
-    def url = "${getDeployUrl(props)}/${project.group.toString().replace('.', '/')}/${project.archivesBaseName}/maven-metadata.xml"
+    def url = "${getDeployUrl(props)}/${project.group.toString().replace('.', '/')}/${project.base.archivesName}/maven-metadata.xml"
 
     String xml
     try {
@@ -222,7 +224,7 @@ def checkProjectIsDeployed(Project project, Properties props) {
         return false
     }
 
-    def meta = new groovy.xml.XmlSlurper().parseText(xml)
+    def meta = new XmlSlurper().parseText(xml)
     def versions = meta.versioning.versions.version*.text()
 
     return versions.contains(project.version)

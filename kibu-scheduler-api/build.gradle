@@ -2,11 +2,13 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-scheduler-api"
+base {
+    archivesName = "kibu-scheduler-api"
+}
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-scheduler-api'
                 description = 'Kibu task scheduler API'

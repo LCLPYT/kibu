@@ -2,7 +2,9 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-map-api"
+base {
+    archivesName = "kibu-map-api"
+}
 
 moduleDependencies(project, [
         'kibu-hook-api'
@@ -10,7 +12,7 @@ moduleDependencies(project, [
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-map-api'
                 description = 'API for interacting with filled map items.'

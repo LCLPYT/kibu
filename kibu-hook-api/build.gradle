@@ -2,11 +2,13 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-hook-api"
+base {
+    archivesName = "kibu-hook-api"
+}
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-hook-api'
                 description = 'Event based hook API with registration/unregistration.'

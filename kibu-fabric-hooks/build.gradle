@@ -2,7 +2,9 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-fabric-hooks"
+base {
+    archivesName = "kibu-fabric-hooks"
+}
 
 moduleDependencies(project, [
         'kibu-hook-api'
@@ -10,7 +12,7 @@ moduleDependencies(project, [
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-fabric-hooks'
                 description = 'A Fabric-API event extension to use them as hooks.'

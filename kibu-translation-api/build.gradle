@@ -2,7 +2,9 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-translation-api"
+base {
+    archivesName = "kibu-translation-api"
+}
 
 moduleDependencies(project, [
         'kibu-access-lib',
@@ -11,7 +13,7 @@ moduleDependencies(project, [
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-translation-api'
                 description = 'An API for server-sided translations.'

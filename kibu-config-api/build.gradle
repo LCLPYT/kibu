@@ -3,11 +3,13 @@ plugins {
     id 'java-library'
 }
 
-archivesBaseName = "kibu-config-api"
+base {
+    archivesName = "kibu-config-api"
+}
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-config-api'
                 description = 'Platform independent configuration API.'

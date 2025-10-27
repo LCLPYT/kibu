@@ -2,11 +2,13 @@ plugins {
     id 'java'
 }
 
-archivesBaseName = "kibu-access-lib"
+base {
+    archivesName = "kibu-access-lib"
+}
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        named("mavenJava", MavenPublication) {
             pom {
                 name = 'kibu-access-lib'
                 description = 'A library of common accessors that don\'t really fit in other modules.'

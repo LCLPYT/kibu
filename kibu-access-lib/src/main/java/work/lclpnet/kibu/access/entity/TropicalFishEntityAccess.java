@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.access.entity;
 
-import net.minecraft.world.entity.animal.TropicalFish;
+import net.minecraft.world.entity.animal.fish.TropicalFish;
 import net.minecraft.world.item.DyeColor;
 import work.lclpnet.kibu.access.mixin.TropicalFishAccessor;
 

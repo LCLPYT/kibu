@@ -3,10 +3,11 @@ package work.lclpnet.kibu.schematic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityProcessor;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.storage.TagValueOutput;
@@ -21,7 +22,6 @@ import work.lclpnet.kibu.util.RotationUtil;
 import work.lclpnet.kibu.util.math.Matrix3i;
 
 import java.util.UUID;
-import java.util.function.Function;
 
 public class FabricKibuEntity implements KibuEntity {
 
@@ -55,7 +55,7 @@ public class FabricKibuEntity implements KibuEntity {
 
     @Override
     public String getId() {
-        ResourceLocation id = EntityType.getKey(type);
+        Identifier id = EntityType.getKey(type);
 
         if (id == null) throw new IllegalStateException("Entity type not registered");
 
@@ -117,7 +117,7 @@ public class FabricKibuEntity implements KibuEntity {
 
         nbt.put("Pos", posList);
 
-        Entity entity = EntityType.loadEntityRecursive(nbt, world, EntitySpawnReason.STRUCTURE, Function.identity());
+        Entity entity = EntityType.loadEntityRecursive(nbt, world, EntitySpawnReason.STRUCTURE, EntityProcessor.NOP);
         if (entity == null) return false;
 
         Vec3 rootPos = entity.position();

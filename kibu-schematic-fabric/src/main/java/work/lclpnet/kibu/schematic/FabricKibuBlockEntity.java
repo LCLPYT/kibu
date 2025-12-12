@@ -2,7 +2,7 @@ package work.lclpnet.kibu.schematic;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -38,7 +38,7 @@ public class FabricKibuBlockEntity implements KibuBlockEntity {
 
     @Override
     public String getId() {
-        ResourceLocation id = BlockEntityType.getKey(type);
+        Identifier id = BlockEntityType.getKey(type);
 
         if (id == null) throw new IllegalStateException("Block entity type not registered");
 

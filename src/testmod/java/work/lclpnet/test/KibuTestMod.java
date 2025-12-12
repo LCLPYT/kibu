@@ -9,8 +9,8 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -19,7 +19,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.TropicalFish;
+import net.minecraft.world.entity.animal.fish.TropicalFish;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
@@ -56,6 +56,7 @@ import java.util.List;
 import java.util.Set;
 
 import static net.minecraft.world.item.Items.STICK;
+import static work.lclpnet.kibu.access.entity.ServerPlayerAccess.playSoundToPlayer;
 
 public class KibuTestMod implements ModInitializer {
 
@@ -322,7 +323,7 @@ public class KibuTestMod implements ModInitializer {
             if (player.getMainHandItem().is(STICK) && result.is(Items.BLUE_BUNDLE)) {
                 MinecraftServer server = player.level().getServer();
 
-                var key = ResourceKey.create(Registries.RECIPE, ResourceLocation.parse("red_bundle"));
+                var key = ResourceKey.create(Registries.RECIPE, Identifier.parse("red_bundle"));
 
                 return server.getRecipeManager().byKey(key)
                         .map(RecipeHolder::value)
@@ -396,7 +397,7 @@ public class KibuTestMod implements ModInitializer {
 
         PlayerJumpCallback.HOOK.register(player -> {
             if (player.getMainHandItem().is(Items.FEATHER)) {
-                player.playNotifySound(SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.MASTER, 0.2f, 1f);
+                playSoundToPlayer(player, SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.MASTER, 0.2f, 1f);
                 return cancelOffhand(player);
             }
 

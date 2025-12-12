@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.access.entity;
 
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.animal.horse.Horse;
-import net.minecraft.world.entity.animal.horse.Markings;
-import net.minecraft.world.entity.animal.horse.Variant;
+import net.minecraft.world.entity.animal.equine.Horse;
+import net.minecraft.world.entity.animal.equine.Markings;
+import net.minecraft.world.entity.animal.equine.Variant;
 import net.minecraft.world.item.ItemStack;
 import work.lclpnet.kibu.access.mixin.HorseAccessor;
 

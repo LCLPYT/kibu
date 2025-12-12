@@ -2,7 +2,7 @@ package work.lclpnet.kibu.translate.bossbar;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.bossevents.CustomBossEvent;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,7 +20,7 @@ import java.util.function.UnaryOperator;
 public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar {
 
     private final BossBarProvider bossBarProvider;
-    private final ResourceLocation identifier;
+    private final Identifier identifier;
     private final Translations translations;
     private final String defaultLanguage;
     private final Map<String, CustomBossEvent> localizedBars = new HashMap<>();
@@ -30,11 +30,11 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
     private boolean visible = true;
     private net.minecraft.network.chat.Style titleStyle = net.minecraft.network.chat.Style.EMPTY;
 
-    public TranslatedBossBar(BossBarProvider bossBarProvider, ResourceLocation identifier, Translations translations, String translationKey, Object[] args) {
+    public TranslatedBossBar(BossBarProvider bossBarProvider, Identifier identifier, Translations translations, String translationKey, Object[] args) {
         this(bossBarProvider, identifier, translations, "en_us", translationKey, args);
     }
 
-    public TranslatedBossBar(BossBarProvider bossBarProvider, ResourceLocation identifier, Translations translations, String defaultLanguage, String translationKey, Object[] args) {
+    public TranslatedBossBar(BossBarProvider bossBarProvider, Identifier identifier, Translations translations, String defaultLanguage, String translationKey, Object[] args) {
         super(null, BossBarColor.WHITE, BossBarOverlay.PROGRESS);
         this.bossBarProvider = bossBarProvider;
         this.translations = translations;
@@ -111,7 +111,7 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
         Component localizedTitle = getLocalizedTitle(language);
 
         String suffix = ("_" + language).replaceAll("[^a-z0-9/._-]", "");  // remove invalid characters
-        ResourceLocation localizedId = identifier.withSuffix(suffix);
+        Identifier localizedId = identifier.withSuffix(suffix);
 
         return createBossBar(localizedId, localizedTitle);
     }
@@ -125,7 +125,7 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
     }
 
     @NotNull
-    private CustomBossEvent createBossBar(ResourceLocation id, Component title) {
+    private CustomBossEvent createBossBar(Identifier id, Component title) {
         CustomBossEvent bossBar = bossBarProvider.createBossBar(id, title);
 
         bossBar.setProgress(progress);

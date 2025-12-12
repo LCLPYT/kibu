@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -69,7 +69,7 @@ public class FabricBlockStateAdapter implements BlockStateAdapter {
     }
 
     public Optional<FabricKibuBlockEntity> revert(KibuBlockEntity blockEntity) {
-        ResourceLocation id = ResourceLocation.tryParse(blockEntity.getId());
+        Identifier id = Identifier.tryParse(blockEntity.getId());
 
         return BuiltInRegistries.BLOCK_ENTITY_TYPE.getOptional(id).map(type -> {
             BlockPos pos = revert(blockEntity.getPosition());

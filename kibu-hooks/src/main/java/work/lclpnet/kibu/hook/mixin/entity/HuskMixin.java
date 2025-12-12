@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.Husk;
+import net.minecraft.world.entity.monster.zombie.Husk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

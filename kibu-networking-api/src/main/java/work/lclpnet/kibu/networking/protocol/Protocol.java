@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.networking.protocol;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.IntPredicate;
 
@@ -10,9 +10,9 @@ import java.util.function.IntPredicate;
  * @param version   The local version of the protocol. Will be sent to peer(s) in the login process.
  * @param supported A predicate that determines if a version is supported
  */
-public record Protocol(ResourceLocation id, int version, IntPredicate supported) {
+public record Protocol(Identifier id, int version, IntPredicate supported) {
 
-    public Protocol(ResourceLocation id, int version) {
+    public Protocol(Identifier id, int version) {
         this(id, version, peer -> peer == version);
     }
 }

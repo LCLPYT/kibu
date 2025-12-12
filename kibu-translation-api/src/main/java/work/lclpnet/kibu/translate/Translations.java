@@ -4,7 +4,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import work.lclpnet.kibu.access.PlayerLanguage;
@@ -158,7 +158,7 @@ public class Translations {
         return TranslatedText.create(language -> translateText(language, key, args), this::getLanguage);
     }
 
-    public Partial<TranslatedBossBar, BossBarProvider> translateBossBar(ResourceLocation id, String key, Object... args) {
+    public Partial<TranslatedBossBar, BossBarProvider> translateBossBar(Identifier id, String key, Object... args) {
         return handler -> {
             TranslatedBossBar bar = new TranslatedBossBar(handler, id, this, key, args);
             translatedBars.add(bar);

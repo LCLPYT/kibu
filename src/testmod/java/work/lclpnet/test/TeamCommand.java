@@ -22,7 +22,7 @@ public class TeamCommand {
 
     private LiteralArgumentBuilder<CommandSourceStack> command() {
         return Commands.literal("kibu:team")
-                .requires(s -> s.hasPermission(2))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .executes(this::act);
     }
 

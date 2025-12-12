@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.access.entity;
 
 import net.minecraft.world.entity.ItemBasedSteering;
-import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.pig.Pig;
 import work.lclpnet.kibu.access.mixin.PigAccessor;
 import work.lclpnet.kibu.access.type.KibuSaddledComponent;
 

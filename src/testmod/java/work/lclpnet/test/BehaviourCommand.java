@@ -6,6 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import work.lclpnet.kibu.behaviour.world.ServerWorldBehaviour;
@@ -21,7 +22,7 @@ public class BehaviourCommand {
 
     private LiteralArgumentBuilder<CommandSourceStack> command() {
         return literal("kibu:behaviour")
-                .requires(s -> s.hasPermission(2))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(literal("fluid_ticks")
                         .then(argument("enabled", BoolArgumentType.bool())
                                 .executes(this::modifyFluidTicks)));

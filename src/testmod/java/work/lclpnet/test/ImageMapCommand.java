@@ -29,7 +29,7 @@ public class ImageMapCommand {
 
     public void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("kibu:imagemap")
-                .requires(s -> s.hasPermission(2))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.argument("name", StringArgumentType.string())
                         .executes(this::giveMap)));
     }

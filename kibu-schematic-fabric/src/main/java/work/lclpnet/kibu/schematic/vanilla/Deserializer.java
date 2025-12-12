@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -90,7 +90,7 @@ class Deserializer implements SchematicDeserializer {
 
         String id = nbt.getString("id").orElse("");
 
-        var type = BuiltInRegistries.BLOCK_ENTITY_TYPE.getOptional(ResourceLocation.parse(id))
+        var type = BuiltInRegistries.BLOCK_ENTITY_TYPE.getOptional(Identifier.parse(id))
                 .orElse(null);
 
         if (type == null) return;

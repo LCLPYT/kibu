@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.util;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -17,7 +17,7 @@ public class BlockStateUtils {
     @NotNull
     public static String stringify(BlockState state) {
         Block block = state.getBlock();
-        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(block);
+        Identifier blockId = BuiltInRegistries.BLOCK.getKey(block);
 
         var builder = new StringBuilder();
         builder.append(blockId);
@@ -65,7 +65,7 @@ public class BlockStateUtils {
             propertiesPart = string.substring(propertiesStart + 1, propertiesEnd);
         }
 
-        var identifier = ResourceLocation.parse(blockPart);
+        var identifier = Identifier.parse(blockPart);
         var block = BuiltInRegistries.BLOCK.getValue(identifier);
         var state = block.defaultBlockState();
 

@@ -5,14 +5,14 @@ import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.animal.horse.Markings;
 import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.item.ItemStack;
-import work.lclpnet.kibu.access.mixin.HorseEntityAccessor;
+import work.lclpnet.kibu.access.mixin.HorseAccessor;
 
 public class HorseEntityAccess {
 
     private HorseEntityAccess() {}
 
     public static void setVariant(Horse horse, Variant color, Markings marking) {
-        ((HorseEntityAccessor) horse).invokeSetVariantAndMarkings(color, marking);
+        ((HorseAccessor) horse).invokeSetVariantAndMarkings(color, marking);
     }
 
     /**

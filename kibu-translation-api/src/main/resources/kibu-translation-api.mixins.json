@@ -7,8 +7,8 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "BossBarManagerMixin",
-    "CommandBossBarMixin",
-    "ServerPlayerEntityMixin"
+    "CommandBossEventMixin",
+    "CustomBossEventsMixin",
+    "ServerPlayerMixin"
   ]
 }

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import work.lclpnet.kibu.hook.mixin.access.AbstractPressurePlateBlockAccessor;
+import work.lclpnet.kibu.hook.mixin.access.BasePressurePlateBlockAccessor;
 import work.lclpnet.kibu.hook.world.PressurePlateCallback;
 
 @Mixin(PressurePlateBlock.class)
@@ -27,7 +27,7 @@ public class PressurePlateBlockMixin {
     )
     public void kibu$onGetRedstoneOutput(Level world, BlockPos pos, CallbackInfoReturnable<Integer> cir,
                                          @Local Class<? extends Entity> entityClass) {
-        AABB box = AbstractPressurePlateBlockAccessor.getBox().move(pos);
+        AABB box = BasePressurePlateBlockAccessor.getBox().move(pos);
 
         var entities = world.getEntitiesOfClass(entityClass, box, EntitySelector.NO_SPECTATORS
                 .and((entity) -> !entity.isIgnoringBlockTriggers()));

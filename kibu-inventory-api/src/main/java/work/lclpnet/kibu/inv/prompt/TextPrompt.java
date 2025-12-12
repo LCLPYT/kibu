@@ -14,7 +14,7 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
-import work.lclpnet.kibu.inv.mixin.ScreenHandlerAccessor;
+import work.lclpnet.kibu.inv.mixin.AbstractContainerMenuAccessor;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -79,7 +79,7 @@ public class TextPrompt {
                 setData(0, 0);
 
                 // invalidate tracked data
-                ((ScreenHandlerAccessor) this).getRemoteDataSlots().set(0, 1);
+                ((AbstractContainerMenuAccessor) this).getRemoteDataSlots().set(0, 1);
                 setRemoteSlot(2, invalidateStack);
             }
 

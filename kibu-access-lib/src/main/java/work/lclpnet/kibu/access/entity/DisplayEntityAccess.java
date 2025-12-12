@@ -9,10 +9,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import work.lclpnet.kibu.access.mixin.BlockDisplayEntityAccessor;
-import work.lclpnet.kibu.access.mixin.DisplayEntityAccessor;
-import work.lclpnet.kibu.access.mixin.ItemDisplayEntityAccessor;
-import work.lclpnet.kibu.access.mixin.TextDisplayEntityAccessor;
+import work.lclpnet.kibu.access.mixin.BlockDisplayAccessor;
+import work.lclpnet.kibu.access.mixin.DisplayAccessor;
+import work.lclpnet.kibu.access.mixin.ItemDisplayAccessor;
+import work.lclpnet.kibu.access.mixin.TextDisplayAccessor;
 import work.lclpnet.kibu.access.type.KibuDisplayEntity;
 
 public class DisplayEntityAccess {
@@ -25,7 +25,7 @@ public class DisplayEntityAccess {
     }
 
     public static BlockState getBlockState(Display.BlockDisplay entity) {
-        return ((BlockDisplayEntityAccessor) entity).invokeGetBlockState();
+        return ((BlockDisplayAccessor) entity).invokeGetBlockState();
     }
 
     // ItemDisplayEntity
@@ -34,7 +34,7 @@ public class DisplayEntityAccess {
     }
 
     public static ItemStack getItemStack(Display.ItemDisplay entity) {
-        return ((ItemDisplayEntityAccessor) entity).invokeGetItemStack();
+        return ((ItemDisplayAccessor) entity).invokeGetItemStack();
     }
 
     public static void setTransformationMode(Display.ItemDisplay entity, ItemDisplayContext mode) {
@@ -42,7 +42,7 @@ public class DisplayEntityAccess {
     }
 
     public static ItemDisplayContext getTransformationMode(Display.ItemDisplay entity) {
-        return ((ItemDisplayEntityAccessor) entity).invokeGetItemTransform();
+        return ((ItemDisplayAccessor) entity).invokeGetItemTransform();
     }
 
     // TextDisplayEntity
@@ -51,7 +51,7 @@ public class DisplayEntityAccess {
     }
 
     public static Component getText(Display.TextDisplay entity) {
-        return ((TextDisplayEntityAccessor) entity).invokeGetText();
+        return ((TextDisplayAccessor) entity).invokeGetText();
     }
 
     public static void setLineWidth(Display.TextDisplay entity, int lineWidth) {
@@ -59,7 +59,7 @@ public class DisplayEntityAccess {
     }
 
     public static int getLineWidth(Display.TextDisplay entity) {
-        return ((TextDisplayEntityAccessor) entity).invokeGetLineWidth();
+        return ((TextDisplayAccessor) entity).invokeGetLineWidth();
     }
 
     public static void setTextOpacity(Display.TextDisplay entity, byte textOpacity) {
@@ -67,7 +67,7 @@ public class DisplayEntityAccess {
     }
 
     public static byte getTextOpacity(Display.TextDisplay entity) {
-        return ((TextDisplayEntityAccessor) entity).invokeGetTextOpacity();
+        return ((TextDisplayAccessor) entity).invokeGetTextOpacity();
     }
 
     public static void setBackground(Display.TextDisplay entity, int background) {
@@ -75,7 +75,7 @@ public class DisplayEntityAccess {
     }
 
     public static int getBackground(Display.TextDisplay entity) {
-        return ((TextDisplayEntityAccessor) entity).invokeGetBackgroundColor();
+        return ((TextDisplayAccessor) entity).invokeGetBackgroundColor();
     }
 
     public static void setDisplayFlags(Display.TextDisplay entity, byte displayFlags) {
@@ -83,7 +83,7 @@ public class DisplayEntityAccess {
     }
 
     public static byte getDisplayFlags(Display.TextDisplay entity) {
-        return ((TextDisplayEntityAccessor) entity).invokeGetFlags();
+        return ((TextDisplayAccessor) entity).invokeGetFlags();
     }
 
     // common DisplayEntity
@@ -92,7 +92,7 @@ public class DisplayEntityAccess {
     }
 
     public static Transformation getTransformation(Display entity) {
-        return DisplayEntityAccessor.invokeCreateTransformation(entity.getEntityData());
+        return DisplayAccessor.invokeCreateTransformation(entity.getEntityData());
     }
 
     public static void setInterpolationDuration(Display entity, int interpolationDuration) {
@@ -100,7 +100,7 @@ public class DisplayEntityAccess {
     }
 
     public static int getInterpolationDuration(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetTransformationInterpolationDuration();
+        return ((DisplayAccessor) entity).invokeGetTransformationInterpolationDuration();
     }
 
     public static void setStartInterpolation(Display entity, int startDuration) {
@@ -108,7 +108,7 @@ public class DisplayEntityAccess {
     }
 
     public static int getStartInterpolation(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetTransformationInterpolationDelay();
+        return ((DisplayAccessor) entity).invokeGetTransformationInterpolationDelay();
     }
 
     public static void setBillboardMode(Display entity, Display.BillboardConstraints billboardMode) {
@@ -116,7 +116,7 @@ public class DisplayEntityAccess {
     }
 
     public static Display.BillboardConstraints getBillboardMode(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetBillboardConstraints();
+        return ((DisplayAccessor) entity).invokeGetBillboardConstraints();
     }
 
     public static void setBrightness(Display entity, Brightness brightness) {
@@ -124,7 +124,7 @@ public class DisplayEntityAccess {
     }
 
     public static int getBrightness(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetPackedBrightnessOverride();
+        return ((DisplayAccessor) entity).invokeGetPackedBrightnessOverride();
     }
 
     public static void setViewRange(Display entity, float viewRange) {
@@ -132,7 +132,7 @@ public class DisplayEntityAccess {
     }
 
     public static float getViewRange(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetViewRange();
+        return ((DisplayAccessor) entity).invokeGetViewRange();
     }
 
     public static void setShadowRadius(Display entity, float shadowRadius) {
@@ -140,7 +140,7 @@ public class DisplayEntityAccess {
     }
 
     public static float getShadowRadius(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetShadowRadius();
+        return ((DisplayAccessor) entity).invokeGetShadowRadius();
     }
 
     public static void setShadowStrength(Display entity, float shadowStrength) {
@@ -148,7 +148,7 @@ public class DisplayEntityAccess {
     }
 
     public static float getShadowStrength(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetShadowStrength();
+        return ((DisplayAccessor) entity).invokeGetShadowStrength();
     }
 
     public static void setDisplayWidth(Display entity, float displayWidth) {
@@ -156,7 +156,7 @@ public class DisplayEntityAccess {
     }
 
     public static float getDisplayWidth(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetWidth();
+        return ((DisplayAccessor) entity).invokeGetWidth();
     }
 
     public static void setDisplayHeight(Display entity, float displayHeight) {
@@ -164,7 +164,7 @@ public class DisplayEntityAccess {
     }
 
     public static float getDisplayHeight(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetHeight();
+        return ((DisplayAccessor) entity).invokeGetHeight();
     }
 
     public static void setGlowColorOverride(Display entity, int glowColorOverride) {
@@ -172,7 +172,7 @@ public class DisplayEntityAccess {
     }
 
     public static int getGlowColorOverride(Display entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetGlowColorOverride();
+        return ((DisplayAccessor) entity).invokeGetGlowColorOverride();
     }
 
     public static void setTranslation(Display entity, Vector3f translation) {

@@ -16,7 +16,7 @@ import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import work.lclpnet.kibu.map.MapColorUtil;
 import work.lclpnet.kibu.map.MapUtil;
-import work.lclpnet.kibu.map.mixin.MapStateAccessor;
+import work.lclpnet.kibu.map.mixin.MapItemSavedDataAccessor;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -77,7 +77,7 @@ public class ImageMapCommand {
         byte[] imgData = MapColorUtil.toBytes(img);
         System.arraycopy(imgData, 0, mapState.colors, 0, Math.min(mapState.colors.length, imgData.length));
 
-        ((MapStateAccessor) mapState).setLocked(true);
+        ((MapItemSavedDataAccessor) mapState).setLocked(true);
         mapState.setDirty();
 
         ItemStack stack = new ItemStack(Items.FILLED_MAP);

@@ -12,7 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import org.slf4j.Logger;
 import work.lclpnet.kibu.hook.player.PlayerConnectionHooks;
-import work.lclpnet.kibu.networking.mixin.ServerLoginNetworkHandlerAccessor;
+import work.lclpnet.kibu.networking.mixin.ServerLoginPacketListenerAccessor;
 
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class ServerProtocolHandler {
         ServerLoginConnectionEvents.QUERY_START.register(this::onLoginStart);
 
         ServerLoginConnectionEvents.DISCONNECT.register((handler, server) -> {
-            GameProfile profile = ((ServerLoginNetworkHandlerAccessor) handler).getAuthenticatedProfile();
+            GameProfile profile = ((ServerLoginPacketListenerAccessor) handler).getAuthenticatedProfile();
 
             if (profile != null) {
                 removePlayer(profile.id());
@@ -80,7 +80,7 @@ public class ServerProtocolHandler {
             logger.debug("Protocol {} version of client {} is not supported (client_version={}, server_version={})", protocol.id(), handler.getUserName(), version, protocol.version());
         }
 
-        GameProfile profile = ((ServerLoginNetworkHandlerAccessor) handler).getAuthenticatedProfile();
+        GameProfile profile = ((ServerLoginPacketListenerAccessor) handler).getAuthenticatedProfile();
 
         if (profile == null) {
             logger.error("Game profile is not set, but should be initialized by now...");

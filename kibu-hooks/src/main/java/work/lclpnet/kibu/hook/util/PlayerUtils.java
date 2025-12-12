@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.ContainerSynchronizer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import work.lclpnet.kibu.hook.mixin.access.ScreenHandlerAccessor;
+import work.lclpnet.kibu.hook.mixin.access.AbstractContainerMenuAccessor;
 
 public class PlayerUtils {
 
@@ -26,7 +26,7 @@ public class PlayerUtils {
         AbstractContainerMenu handler = player.containerMenu;
         if (handler == null) return;  // no screen open, ignore
 
-        ContainerSynchronizer syncHandler = ((ScreenHandlerAccessor) handler).getSynchronizer();
+        ContainerSynchronizer syncHandler = ((AbstractContainerMenuAccessor) handler).getSynchronizer();
         if (syncHandler == null) return;  // cannot sync, ignore
 
         syncHandler.sendCarriedChange(handler, handler.getCarried());

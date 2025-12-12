@@ -12,6 +12,7 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -50,8 +51,9 @@ public class BucketItemMixin {
     @Inject(
             method = "emptyContents",
             at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/dimension/DimensionType;ultraWarm()Z"
+                    value = "FIELD",
+                    target = "Lnet/minecraft/world/attribute/EnvironmentAttributes;WATER_EVAPORATES:Lnet/minecraft/world/attribute/EnvironmentAttribute;",
+                    opcode = Opcodes.GETSTATIC
             ),
             cancellable = true
     )

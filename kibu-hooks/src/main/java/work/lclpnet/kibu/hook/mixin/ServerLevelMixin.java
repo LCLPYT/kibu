@@ -78,7 +78,7 @@ public class ServerLevelMixin {
 
         // fire snow fall event a second time to determine if entities should be pushed
         if (WorldPhysicsHooks.SNOW_FALL.invoker().onSnowFall(w, pos)) {
-            // cancelled, do not push entities and return original block state
+            // canceled, do not push entities and return original block state
             return from;
         }
 

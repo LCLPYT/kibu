@@ -37,7 +37,7 @@ public class RespawnAnchorBlockMixin {
             method = "useWithoutItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/block/RespawnAnchorBlock;explode(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"
+                    target = "Lnet/minecraft/world/level/block/RespawnAnchorBlock;explode(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;)V"
             ),
             cancellable = true
     )

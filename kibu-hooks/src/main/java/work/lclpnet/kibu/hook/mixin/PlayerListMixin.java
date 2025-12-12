@@ -54,8 +54,6 @@ public abstract class PlayerListMixin {
         NameAndId configEntry = player.nameAndId();
         UserNameToIdResolver nameToIdCache = this.server.services().nameToIdCache();
 
-        if (nameToIdCache == null) return;
-
         NameAndId byUuid = nameToIdCache.get(configEntry.id()).orElse(null);
         String s = byUuid == null ? configEntry.name() : byUuid.name();
 

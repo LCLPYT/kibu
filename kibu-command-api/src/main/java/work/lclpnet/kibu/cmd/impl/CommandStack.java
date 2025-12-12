@@ -2,7 +2,7 @@ package work.lclpnet.kibu.cmd.impl;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import org.jetbrains.annotations.NotNull;
 import work.lclpnet.kibu.cmd.type.CommandFactory;
 import work.lclpnet.kibu.cmd.type.CommandReference;
@@ -75,17 +75,17 @@ public class CommandStack implements CommandRegistrar {
     }
 
     @Override
-    public CommandReference<ServerCommandSource> registerCommand(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public CommandReference<CommandSourceStack> registerCommand(LiteralArgumentBuilder<CommandSourceStack> command) {
         return current().registerCommand(command);
     }
 
     @Override
-    public CommandReference<ServerCommandSource> registerCommand(CommandFactory<ServerCommandSource> factory) {
+    public CommandReference<CommandSourceStack> registerCommand(CommandFactory<CommandSourceStack> factory) {
         return current().registerCommand(factory);
     }
 
     @Override
-    public void unregisterCommand(LiteralCommandNode<ServerCommandSource> command) {
+    public void unregisterCommand(LiteralCommandNode<CommandSourceStack> command) {
         current().unregisterCommand(command);
     }
 

@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.entity;
 
 import net.fabricmc.fabric.api.event.player.*;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResult;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -13,28 +13,28 @@ public class PlayerInteractionHooks {
     public static final Hook<AttackEntityCallback> ATTACK_ENTITY = HookFactory.createArrayBacked(AttackEntityCallback.class,
             (listeners) -> (player, world, hand, entity, hitResult) -> {
                 for (AttackEntityCallback event : listeners) {
-                    ActionResult result = event.interact(player, world, hand, entity, hitResult);
+                    InteractionResult result = event.interact(player, world, hand, entity, hitResult);
 
-                    if (result != ActionResult.PASS) {
+                    if (result != InteractionResult.PASS) {
                         return result;
                     }
                 }
 
-                return ActionResult.PASS;
+                return InteractionResult.PASS;
             }
     );
 
     public static final Hook<AttackBlockCallback> ATTACK_BLOCK = HookFactory.createArrayBacked(AttackBlockCallback.class,
             (listeners) -> (player, world, hand, pos, direction) -> {
                 for (AttackBlockCallback event : listeners) {
-                    ActionResult result = event.interact(player, world, hand, pos, direction);
+                    InteractionResult result = event.interact(player, world, hand, pos, direction);
 
-                    if (result != ActionResult.PASS) {
+                    if (result != InteractionResult.PASS) {
                         return result;
                     }
                 }
 
-                return ActionResult.PASS;
+                return InteractionResult.PASS;
             }
     );
 
@@ -55,28 +55,28 @@ public class PlayerInteractionHooks {
     public static final Hook<UseBlockCallback> USE_BLOCK = HookFactory.createArrayBacked(UseBlockCallback.class,
             (listeners) -> (player, world, hand, hitResult) -> {
                 for (UseBlockCallback event : listeners) {
-                    ActionResult result = event.interact(player, world, hand, hitResult);
+                    InteractionResult result = event.interact(player, world, hand, hitResult);
 
-                    if (result != ActionResult.PASS) {
+                    if (result != InteractionResult.PASS) {
                         return result;
                     }
                 }
 
-                return ActionResult.PASS;
+                return InteractionResult.PASS;
             }
     );
 
     public static final Hook<UseEntityCallback> USE_ENTITY = HookFactory.createArrayBacked(UseEntityCallback.class,
             (listeners) -> (player, world, hand, entity, hitResult) -> {
                 for (UseEntityCallback event : listeners) {
-                    ActionResult result = event.interact(player, world, hand, entity, hitResult);
+                    InteractionResult result = event.interact(player, world, hand, entity, hitResult);
 
-                    if (result != ActionResult.PASS) {
+                    if (result != InteractionResult.PASS) {
                         return result;
                     }
                 }
 
-                return ActionResult.PASS;
+                return InteractionResult.PASS;
             }
     );
 
@@ -85,12 +85,12 @@ public class PlayerInteractionHooks {
                 for (UseItemCallback event : listeners) {
                     var result = event.interact(player, world, hand);
 
-                    if (result != ActionResult.PASS) {
+                    if (result != InteractionResult.PASS) {
                         return result;
                     }
                 }
 
-                return ActionResult.PASS;
+                return InteractionResult.PASS;
             }
     );
 

@@ -1,11 +1,11 @@
 package work.lclpnet.kibu.cmd.type;
 
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.Commands;
 
 public interface CommandRegistrationContext {
 
-    CommandRegistryAccess registryAccess();
+    CommandBuildContext registryAccess();
 
-    CommandManager.RegistrationEnvironment environment();
+    Commands.CommandSelection environment();
 }

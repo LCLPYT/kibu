@@ -3,7 +3,7 @@ package work.lclpnet.kibu.cmd.util;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.commands.Commands;
 import org.junit.jupiter.api.Test;
 import work.lclpnet.kibu.cmd.type.CommandConsumer;
 
@@ -14,7 +14,7 @@ class DirectCommandRegisterTest {
     @Test
     void testRegister() {
         var dispatcher = new CommandDispatcher<String>();
-        var register = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var register = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
 
         var consumer = new TestConsumer();
         assertTrue(register.register(LiteralArgumentBuilder.literal("test"), consumer));
@@ -25,7 +25,7 @@ class DirectCommandRegisterTest {
     @Test
     void testRegisterFactory() {
         var dispatcher = new CommandDispatcher<String>();
-        var register = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var register = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
 
         var consumer = new TestConsumer();
         assertTrue(register.register(context -> LiteralArgumentBuilder.literal("test"), consumer));
@@ -36,7 +36,7 @@ class DirectCommandRegisterTest {
     @Test
     void testUnregister() {
         var dispatcher = new CommandDispatcher<String>();
-        var register = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var register = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
 
         var consumer = new TestConsumer();
         assertTrue(register.register(LiteralArgumentBuilder.literal("test"), consumer));

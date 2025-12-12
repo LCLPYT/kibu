@@ -3,7 +3,7 @@ package work.lclpnet.kibu.cmd.util;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import work.lclpnet.kibu.cmd.KibuCommands;
 import work.lclpnet.kibu.cmd.type.RedirectAware;
 
@@ -20,7 +20,7 @@ public class CommandDispatcherUtils {
     public static <S> void unregister(CommandDispatcher<S> dispatcher, LiteralCommandNode<S> command) {
         var root = dispatcher.getRoot();
 
-        var dependants = new ArrayList<LiteralCommandNode<ServerCommandSource>>();
+        var dependants = new ArrayList<LiteralCommandNode<CommandSourceStack>>();
 
         try {
             var children = CommandInternals.getChildren(root);
@@ -46,7 +46,7 @@ public class CommandDispatcherUtils {
                         // if the commandNode is a literal, add it for removal
                         if (commandNode instanceof LiteralCommandNode<?>) {
                             @SuppressWarnings("unchecked")
-                            LiteralCommandNode<ServerCommandSource> literal = (LiteralCommandNode<ServerCommandSource>) commandNode;
+                            LiteralCommandNode<CommandSourceStack> literal = (LiteralCommandNode<CommandSourceStack>) commandNode;
 
                             dependants.add(literal);
                         }

@@ -1,17 +1,17 @@
 package work.lclpnet.kibu.util;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.enums.Orientation;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.AbstractDecorationEntity;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.FrontAndTop;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.HangingEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import work.lclpnet.kibu.access.entity.DecorationEntityAccess;
 import work.lclpnet.kibu.util.math.Matrix3i;
@@ -68,35 +68,35 @@ public class RotationUtil {
 
     // for blocks which have properties like east=true,north=none etc. e.g. fences or walls
     private static BlockState checkDirectionalProps(BlockState state, Matrix3i transformation, Property<?> prop, Map<String, String> directionalProps) {
-        if ((!(prop instanceof BooleanProperty boolProp) || !state.get(boolProp))
-            && (!(prop instanceof EnumProperty<?> enumProp) || state.get(enumProp).asString().equals("none"))) {
+        if ((!(prop instanceof BooleanProperty boolProp) || !state.getValue(boolProp))
+            && (!(prop instanceof EnumProperty<?> enumProp) || state.getValue(enumProp).getSerializedName().equals("none"))) {
             return state;
         }
 
         String name = prop.getName();
 
         var optDir = HORIZONTAL.stream()
-                .filter(d -> name.equals(d.asString()))
+                .filter(d -> name.equals(d.getSerializedName()))
                 .findAny();
 
         if (optDir.isEmpty()) return state;
 
-        Vec3i vec = optDir.get().getVector();
+        Vec3i vec = optDir.get().getUnitVec3i();
         vec = transformation.transform(vec);
 
-        Direction dir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
+        Direction dir = Direction.getNearest(vec.getX(), vec.getY(), vec.getZ(), null);
         if (dir == null) return state;
 
         if (prop instanceof BooleanProperty boolProp) {
-            state = state.with(boolProp, false);
-            directionalProps.put(dir.asString(), "true");
+            state = state.setValue(boolProp, false);
+            directionalProps.put(dir.getSerializedName(), "true");
         } else {
             EnumProperty<?> enumProp = (EnumProperty<?>) prop;
 
-            directionalProps.put(dir.asString(), state.get(enumProp).asString());
+            directionalProps.put(dir.getSerializedName(), state.getValue(enumProp).getSerializedName());
 
             // check if there is a value "none"
-            if (prop.stream().map(v -> v.property().name(v.value())).anyMatch("none"::equals)) {
+            if (prop.getAllValues().map(v -> v.property().getName(v.value())).anyMatch("none"::equals)) {
                 state = BlockStateUtils.with(state, enumProp, "none");
             }
         }
@@ -109,31 +109,31 @@ public class RotationUtil {
             return rotateEnumProperty(state, transformation, enumProp);
         }
 
-        if (prop instanceof IntProperty intProp) {
+        if (prop instanceof IntegerProperty intProp) {
             return rotateIntProperty(state, transformation, intProp);
         }
 
         return state;
     }
 
-    private static BlockState rotateIntProperty(BlockState state, Matrix3i transformation, IntProperty prop) {
+    private static BlockState rotateIntProperty(BlockState state, Matrix3i transformation, IntegerProperty prop) {
         if (!"rotation".equals(prop.getName())) return state;
 
-        int precision = prop.getValues().size();
-        Vector3f vec = getVector(state.get(prop), precision);
+        int precision = prop.getPossibleValues().size();
+        Vector3f vec = getVector(state.getValue(prop), precision);
         transformation.transform(vec, vec);
 
         int rotation = getRotation(vec, precision);
-        if (!prop.getValues().contains(rotation)) return state;
+        if (!prop.getPossibleValues().contains(rotation)) return state;
 
-        return state.with(prop, rotation);
+        return state.setValue(prop, rotation);
     }
 
     @SuppressWarnings("unchecked")
     private static BlockState rotateEnumProperty(BlockState state, Matrix3i transformation, EnumProperty<?> prop) {
         String name = prop.getName();
 
-        if ("facing".equals(name) && prop.getType() == Direction.class) {
+        if ("facing".equals(name) && prop.getValueClass() == Direction.class) {
             return rotateDirectionProperty(state, transformation, (EnumProperty<Direction>) prop);
         }
 
@@ -153,50 +153,50 @@ public class RotationUtil {
             return rotateShapeEnum(state, transformation, prop);
         }
 
-        if ("orientation".equals(name) && prop.getType() == Orientation.class) {
-            return rotateOrientationEnum(state, transformation, (EnumProperty<Orientation>) prop);
+        if ("orientation".equals(name) && prop.getValueClass() == FrontAndTop.class) {
+            return rotateOrientationEnum(state, transformation, (EnumProperty<FrontAndTop>) prop);
         }
 
         return state;
     }
 
     private static BlockState rotateDirectionProperty(BlockState state, Matrix3i transformation, EnumProperty<Direction> prop) {
-        Direction dir = state.get(prop);
-        BlockPos vec = transformation.transform(dir.getVector());
+        Direction dir = state.getValue(prop);
+        BlockPos vec = transformation.transform(dir.getUnitVec3i());
 
-        Direction rotDir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
+        Direction rotDir = Direction.getNearest(vec.getX(), vec.getY(), vec.getZ(), null);
 
-        if (rotDir == null || !prop.getValues().contains(rotDir)) return state;
+        if (rotDir == null || !prop.getPossibleValues().contains(rotDir)) return state;
 
-        return state.with(prop, rotDir);
+        return state.setValue(prop, rotDir);
     }
 
-    private static BlockState rotateOrientationEnum(BlockState state, Matrix3i transformation, EnumProperty<Orientation> prop) {
-        Orientation orientation = state.get(prop);
+    private static BlockState rotateOrientationEnum(BlockState state, Matrix3i transformation, EnumProperty<FrontAndTop> prop) {
+        FrontAndTop orientation = state.getValue(prop);
 
-        BlockPos vec = transformation.transform(orientation.getFacing().getVector());
-        Direction facing = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
+        BlockPos vec = transformation.transform(orientation.front().getUnitVec3i());
+        Direction facing = Direction.getNearest(vec.getX(), vec.getY(), vec.getZ(), null);
 
-        vec = transformation.transform(orientation.getRotation().getVector());
-        Direction rotation = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
+        vec = transformation.transform(orientation.top().getUnitVec3i());
+        Direction rotation = Direction.getNearest(vec.getX(), vec.getY(), vec.getZ(), null);
 
         if (facing == null || rotation == null) {
             return state;
         }
 
-        Orientation rotOrientation = Orientation.byDirections(facing, rotation);
+        FrontAndTop rotOrientation = FrontAndTop.fromFrontAndTop(facing, rotation);
 
         if (rotOrientation == null) {
             return state;
         }
 
-        return state.with(prop, rotOrientation);
+        return state.setValue(prop, rotOrientation);
     }
 
     private static BlockState rotateShapeEnum(BlockState state, Matrix3i transformation, EnumProperty<?> prop) {
         if (!transformation.isHorizontalFlip()) return state;
 
-        String val = state.get(prop).asString();
+        String val = state.getValue(prop).getSerializedName();
 
         return BlockStateUtils.with(state, prop, switch (val) {
             case "outer_left" -> "outer_right";
@@ -210,7 +210,7 @@ public class RotationUtil {
     private static BlockState rotateHalfEnum(BlockState state, Matrix3i transformation, EnumProperty<?> prop) {
         if (!transformation.isVerticalFlip()) return state;
 
-        String val = state.get(prop).asString();
+        String val = state.getValue(prop).getSerializedName();
 
         return BlockStateUtils.with(state, prop, switch (val) {
             case "bottom" -> "top";
@@ -222,7 +222,7 @@ public class RotationUtil {
     private static BlockState rotateTypeEnum(BlockState state, Matrix3i transformation, EnumProperty<?> prop) {
         // chests
         if (transformation.isHorizontalFlip()) {
-            String val = state.get(prop).asString();
+            String val = state.getValue(prop).getSerializedName();
 
             String newVal = switch (val) {
                 case "left" -> "right";
@@ -237,7 +237,7 @@ public class RotationUtil {
 
         // slabs
         if (transformation.isVerticalFlip()) {
-            String val = state.get(prop).asString();
+            String val = state.getValue(prop).getSerializedName();
 
             String newVal = switch (val) {
                 case "bottom" -> "top";
@@ -254,7 +254,7 @@ public class RotationUtil {
     }
 
     private static BlockState rotateAxisEnum(BlockState state, Matrix3i transformation, EnumProperty<?> prop) {
-        Direction dir = switch (state.get(prop).asString()) {
+        Direction dir = switch (state.getValue(prop).getSerializedName()) {
             case "x" -> Direction.EAST;
             case "y" -> Direction.UP;
             case "z" -> Direction.NORTH;
@@ -263,18 +263,18 @@ public class RotationUtil {
 
         if (dir == null) return state;
 
-        Vec3i vec = dir.getVector();
+        Vec3i vec = dir.getUnitVec3i();
         vec = transformation.transform(vec);
 
-        dir = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
+        dir = Direction.getNearest(vec.getX(), vec.getY(), vec.getZ(), null);
 
         if (dir == null) return state;
 
-        return BlockStateUtils.with(state, prop, dir.getAxis().asString());
+        return BlockStateUtils.with(state, prop, dir.getAxis().getSerializedName());
     }
 
     public static Vector3f getVector(int rotation, int precision) {
-        Vector3f vec = Direction.NORTH.getUnitVector();
+        Vector3f vec = Direction.NORTH.step();
         vec.rotateY((float) Math.PI * -2f / precision * rotation);
 
         return vec;
@@ -282,9 +282,9 @@ public class RotationUtil {
 
     public static int getRotation(Vector3f vec, int precision) {
         vec = vec.normalize(new Vector3f());
-        Vector3f north = Direction.NORTH.getUnitVector();
+        Vector3f north = Direction.NORTH.step();
 
-        float angle = vec.angleSigned(north, Direction.UP.getUnitVector());  // angle between [-pi, pi]
+        float angle = vec.angleSigned(north, Direction.UP.step());  // angle between [-pi, pi]
 
         // convert to [0, 2pi]
         float pi2 = 2f * (float) Math.PI;
@@ -296,19 +296,19 @@ public class RotationUtil {
     public static void rotateEntity(Entity entity, Matrix3i transformation) {
         if (transformation.equals(Matrix3i.IDENTITY)) return;
 
-        Vec3d rotationVector = entity.getRotationVector();
+        Vec3 rotationVector = entity.getLookAngle();
         rotationVector = transformation.transform(rotationVector);
 
-        double pitch = Math.asin(rotationVector.getY() / rotationVector.length());
-        double yaw = Math.atan2(-rotationVector.getX(), rotationVector.getZ());
+        double pitch = Math.asin(rotationVector.y() / rotationVector.length());
+        double yaw = Math.atan2(-rotationVector.x(), rotationVector.z());
 
-        entity.setYaw((float) Math.toDegrees(yaw));
-        entity.setPitch((float) Math.toDegrees(pitch));
+        entity.setYRot((float) Math.toDegrees(yaw));
+        entity.setXRot((float) Math.toDegrees(pitch));
 
-        if (entity instanceof AbstractDecorationEntity deco) {
-            Direction facing = deco.getHorizontalFacing();
-            Vec3i vec = transformation.transform(facing.getVector());
-            facing = Direction.fromVector(vec.getX(), vec.getY(), vec.getZ(), null);
+        if (entity instanceof HangingEntity deco) {
+            Direction facing = deco.getDirection();
+            Vec3i vec = transformation.transform(facing.getUnitVec3i());
+            facing = Direction.getNearest(vec.getX(), vec.getY(), vec.getZ(), null);
 
             if (facing != null) {
                 DecorationEntityAccess.setFacing(deco, facing);

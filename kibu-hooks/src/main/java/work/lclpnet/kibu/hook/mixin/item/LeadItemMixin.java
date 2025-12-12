@@ -1,13 +1,13 @@
 package work.lclpnet.kibu.hook.mixin.item;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Leashable;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.LeadItem;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Leashable;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.LeadItem;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,14 +21,14 @@ import java.util.List;
 public class LeadItemMixin {
 
     @Inject(
-            method = "attachHeldMobsToBlock",
+            method = "bindPlayerMobs",
             at = @At(
                     value = "INVOKE",
                     target = "Ljava/util/List;iterator()Ljava/util/Iterator;"
             ),
             cancellable = true
     )
-    private static void kibu$attachToBlock(PlayerEntity player, World world, BlockPos pos, CallbackInfoReturnable<ActionResult> cir,
+    private static void kibu$attachToBlock(Player player, Level world, BlockPos pos, CallbackInfoReturnable<InteractionResult> cir,
                                            @Local List<Leashable> list) {
 
         if (list.isEmpty()) return;
@@ -42,7 +42,7 @@ public class LeadItemMixin {
         }
 
         if (LeashEntitiesToBlockCallback.HOOK.invoker().onLeashToBlock(player, pos, entities)) {
-            cir.setReturnValue(ActionResult.PASS);
+            cir.setReturnValue(InteractionResult.PASS);
         }
     }
 }

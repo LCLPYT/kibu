@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.entity.leash;
 
-import net.minecraft.entity.decoration.LeashKnotEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
+import net.minecraft.world.entity.player.Player;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -22,5 +22,5 @@ public interface LeashKnotTakeCallback {
         return cancel;
     });
 
-    boolean onTakeHold(PlayerEntity player, LeashKnotEntity leashKnot);
+    boolean onTakeHold(Player player, LeashFenceKnotEntity leashKnot);
 }

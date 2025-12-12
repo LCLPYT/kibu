@@ -1,12 +1,12 @@
 package work.lclpnet.kibu.util;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,19 +22,19 @@ public class StructureWriter {
 
     private static final Logger logger = LoggerFactory.getLogger(StructureWriter.class);
 
-    public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos) {
+    public static void placeStructure(BlockStructure structure, ServerLevel world, Vec3i pos) {
         placeStructure(structure, world, pos, Matrix3i.IDENTITY);
     }
 
-    public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos, CardinalRotation rotation) {
+    public static void placeStructure(BlockStructure structure, ServerLevel world, Vec3i pos, CardinalRotation rotation) {
         placeStructure(structure, world, pos, rotation.asMatrix3());
     }
 
-    public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos, @NotNull Matrix3i transformation) {
+    public static void placeStructure(BlockStructure structure, ServerLevel world, Vec3i pos, @NotNull Matrix3i transformation) {
         placeStructure(structure, world, pos, transformation, EnumSet.noneOf(Option.class));
     }
 
-    public static void placeStructure(BlockStructure structure, ServerWorld world, Vec3i pos,
+    public static void placeStructure(BlockStructure structure, ServerLevel world, Vec3i pos,
                                       @NotNull Matrix3i transformation, EnumSet<Option> options) {
         var origin = structure.getOrigin();
 
@@ -42,18 +42,18 @@ public class StructureWriter {
         final int px = pos.getX(), py = pos.getY(), pz = pos.getZ();
 
         var adapter = FabricBlockStateAdapter.getInstance();
-        BlockState air = Blocks.AIR.getDefaultState();
+        BlockState air = Blocks.AIR.defaultBlockState();
 
         final boolean skipBlockEntities = options.contains(Option.SKIP_BLOCK_ENTITIES);
         final boolean skipAir = options.contains(Option.SKIP_AIR);
 
         int flags = 0;
-        if (!options.contains(Option.SKIP_PLAYER_SYNC)) flags |= Block.NOTIFY_LISTENERS;
-        if (!options.contains(Option.SKIP_NEIGHBOUR_UPDATE)) flags |= Block.NOTIFY_NEIGHBORS;
-        if (options.contains(Option.FORCE_STATE)) flags |= Block.FORCE_STATE;
-        if (options.contains(Option.SKIP_DROPS)) flags |= Block.SKIP_DROPS;
+        if (!options.contains(Option.SKIP_PLAYER_SYNC)) flags |= Block.UPDATE_CLIENTS;
+        if (!options.contains(Option.SKIP_NEIGHBOUR_UPDATE)) flags |= Block.UPDATE_NEIGHBORS;
+        if (options.contains(Option.FORCE_STATE)) flags |= Block.UPDATE_KNOWN_SHAPE;
+        if (options.contains(Option.SKIP_DROPS)) flags |= Block.UPDATE_SUPPRESS_DROPS;
 
-        BlockPos.Mutable printPos = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos printPos = new BlockPos.MutableBlockPos();
 
         for (var kibuPos : structure.getBlockPositions()) {
             var kibuState = structure.getBlockState(kibuPos);
@@ -72,7 +72,7 @@ public class StructureWriter {
 
             state = RotationUtil.rotate(state, transformation);
 
-            world.setBlockState(printPos, state, flags);
+            world.setBlock(printPos, state, flags);
 
             if (skipBlockEntities) continue;
 
@@ -95,15 +95,15 @@ public class StructureWriter {
         }
     }
 
-    public static void spawnEntities(BlockStructure structure, ServerWorld world, Vec3i pos, @NotNull Matrix3i transformation) {
+    public static void spawnEntities(BlockStructure structure, ServerLevel world, Vec3i pos, @NotNull Matrix3i transformation) {
         var origin = structure.getOrigin();
-        Vec3d offset = new Vec3d(origin.getX(), origin.getY(), origin.getZ());
+        Vec3 offset = new Vec3(origin.getX(), origin.getY(), origin.getZ());
 
         var adapter = FabricBlockStateAdapter.getInstance();
 
         for (var kibuEntity : structure.getEntities()) {
             adapter.revert(kibuEntity).ifPresentOrElse(entity -> {
-                Vec3d entityPos = rotateEntityPosition(pos, transformation, entity, offset);
+                Vec3 entityPos = rotateEntityPosition(pos, transformation, entity, offset);
 
                 try {
                     if (!entity.spawn(world, entityPos, transformation)) {
@@ -116,9 +116,9 @@ public class StructureWriter {
         }
     }
 
-    private static Vec3d rotateEntityPosition(Vec3i pos, @NotNull Matrix3i transformation, FabricKibuEntity entity, Vec3d pivot) {
+    private static Vec3 rotateEntityPosition(Vec3i pos, @NotNull Matrix3i transformation, FabricKibuEntity entity, Vec3 pivot) {
         BlockPos tilePos = entity.getTilePos();
-        Vec3d entityPos;
+        Vec3 entityPos;
 
         if (tilePos != null) {
             entityPos = transformation.transform(

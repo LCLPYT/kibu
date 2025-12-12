@@ -2,11 +2,11 @@ package work.lclpnet.kibu.schematic;
 
 import com.google.common.collect.Streams;
 import net.minecraft.SharedConstants;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.mc.KibuBlockPos;
@@ -45,7 +45,7 @@ public class FabricStructureWrapper implements FabricStructureView {
     }
 
     public static int getDataVersion() {
-        return SharedConstants.getGameVersion().dataVersion().id();
+        return SharedConstants.getCurrentVersion().dataVersion().version();
     }
 
     @NotNull
@@ -78,7 +78,7 @@ public class FabricStructureWrapper implements FabricStructureView {
 
     @Override
     public FluidState getFluidState(BlockPos pos) {
-        return Fluids.EMPTY.getDefaultState();  // no fluids; consumers have to handle this differently
+        return Fluids.EMPTY.defaultFluidState();  // no fluids; consumers have to handle this differently
     }
 
     @Override
@@ -87,7 +87,7 @@ public class FabricStructureWrapper implements FabricStructureView {
     }
 
     @Override
-    public int getBottomY() {
+    public int getMinY() {
         return structure.getOrigin().getY();
     }
 

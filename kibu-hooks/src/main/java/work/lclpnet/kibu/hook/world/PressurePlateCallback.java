@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.world;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -18,5 +18,5 @@ public interface PressurePlateCallback {
         return cancelled;
     });
 
-    boolean onPress(World world, BlockPos pos, Entity entity);
+    boolean onPress(Level world, BlockPos pos, Entity entity);
 }

@@ -1,27 +1,27 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.ZombieVillagerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.ZombieVillager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.hook.entity.EntityConvertCallback;
 
-@Mixin(ZombieVillagerEntity.class)
+@Mixin(ZombieVillager.class)
 public class ZombieVillagerEntityMixin {
 
     @Inject(
             method = "finishConversion",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/mob/ZombieVillagerEntity;convertTo(Lnet/minecraft/entity/EntityType;Lnet/minecraft/entity/conversion/EntityConversionContext;Lnet/minecraft/entity/conversion/EntityConversionContext$Finalizer;)Lnet/minecraft/entity/mob/MobEntity;"
+                    target = "Lnet/minecraft/world/entity/monster/ZombieVillager;convertTo(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/ConversionParams;Lnet/minecraft/world/entity/ConversionParams$AfterConversion;)Lnet/minecraft/world/entity/Mob;"
             ),
             cancellable = true
     )
-    public void kibu$onConvert(ServerWorld world, CallbackInfo ci) {
-        ZombieVillagerEntity self = (ZombieVillagerEntity) (Object) this;
+    public void kibu$onConvert(ServerLevel world, CallbackInfo ci) {
+        ZombieVillager self = (ZombieVillager) (Object) this;
 
         if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityType.VILLAGER)) {
             ci.cancel();

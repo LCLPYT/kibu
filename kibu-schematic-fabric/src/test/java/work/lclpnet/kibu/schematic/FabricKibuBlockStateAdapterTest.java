@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.schematic;
 
-import net.minecraft.Bootstrap;
 import net.minecraft.SharedConstants;
-import net.minecraft.block.Blocks;
+import net.minecraft.server.Bootstrap;
+import net.minecraft.world.level.block.Blocks;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import work.lclpnet.kibu.mc.KibuBlockState;
@@ -14,8 +14,8 @@ class FabricKibuBlockStateAdapterTest {
 
     @BeforeAll
     public static void setup() {
-        SharedConstants.createGameVersion();
-        Bootstrap.initialize();
+        SharedConstants.tryDetectVersion();
+        Bootstrap.bootStrap();
     }
 
     @Test
@@ -24,12 +24,12 @@ class FabricKibuBlockStateAdapterTest {
 
         KibuBlockState state = adapter.getBlockState("minecraft:dirt");
         assertTrue(state instanceof FabricKibuBlockState);
-        assertEquals(Blocks.DIRT.getDefaultState(), ((FabricKibuBlockState) state).getState());
+        assertEquals(Blocks.DIRT.defaultBlockState(), ((FabricKibuBlockState) state).getState());
     }
 
     @Test
     void testRevert() {
         var adapter = FabricBlockStateAdapter.getInstance();
-        assertEquals(Blocks.DIRT.getDefaultState(), adapter.revert(new FabricKibuBlockState(Blocks.DIRT.getDefaultState())));
+        assertEquals(Blocks.DIRT.defaultBlockState(), adapter.revert(new FabricKibuBlockState(Blocks.DIRT.defaultBlockState())));
     }
 }

@@ -3,9 +3,9 @@ package work.lclpnet.kibu.cmd.util;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
@@ -19,13 +19,13 @@ public class MinecraftCommandRegisterTest {
 
     @Test
     void testServerChangedBuilderRegistrationClient() {
-        testServerChangedRegistrationClient(register -> register.register(CommandManager.literal("test")
+        testServerChangedRegistrationClient(register -> register.register(Commands.literal("test")
                 .executes(ctx -> 1), cmd -> {}));
     }
 
     @Test
     void testServerChangedFactoryRegistrationClient() {
-        testServerChangedRegistrationClient(register -> register.register(registrationCtx -> CommandManager.literal("test")
+        testServerChangedRegistrationClient(register -> register.register(registrationCtx -> Commands.literal("test")
                 .executes(ctx -> 1), cmd -> {}));
     }
 
@@ -39,14 +39,14 @@ public class MinecraftCommandRegisterTest {
         registerAction.accept(register);
         register.init();  // register event listeners
 
-        var dispatcher = new CommandDispatcher<ServerCommandSource>();
+        var dispatcher = new CommandDispatcher<CommandSourceStack>();
         CommandRegistryAccessMock registryAccess = new CommandRegistryAccessMock();
-        var environment = CommandManager.RegistrationEnvironment.INTEGRATED;
+        var environment = Commands.CommandSelection.INTEGRATED;
 
         CommandRegistrationCallback.EVENT.invoker().register(dispatcher, registryAccess, environment);
 
         MinecraftServer server = mock();
-        when(server.getCommandManager()).thenReturn(mock());
+        when(server.getCommands()).thenReturn(mock());
 
         ServerLifecycleEvents.SERVER_STARTING.invoker().onServerStarting(server);
 
@@ -66,7 +66,7 @@ public class MinecraftCommandRegisterTest {
         assertCommandExists(dispatcher);
     }
 
-    private static void assertCommandExists(CommandDispatcher<ServerCommandSource> dispatcher) {
+    private static void assertCommandExists(CommandDispatcher<CommandSourceStack> dispatcher) {
         var ref = dispatcher.getRoot().getChild("test");
         assertNotNull(ref);
     }

@@ -1,11 +1,11 @@
 package work.lclpnet.kibu.hook.mixin.item;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,19 +18,19 @@ import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 public class ItemStackMixin {
 
     @Inject(
-            method = "useOnBlock",
+            method = "useOn",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/item/Item;useOnBlock(Lnet/minecraft/item/ItemUsageContext;)Lnet/minecraft/util/ActionResult;"
+                    target = "Lnet/minecraft/world/item/Item;useOn(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;"
             ),
             cancellable = true
     )
-    public void kibu$interceptUseOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        ActionResult result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(context);
+    public void kibu$interceptUseOnBlock(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
+        InteractionResult result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(context);
 
         if (result == null) return;
 
-        PlayerEntity player = context.getPlayer();
+        Player player = context.getPlayer();
 
         if (player == null) return;
 
@@ -43,15 +43,15 @@ public class ItemStackMixin {
     }
 
     @Inject(
-            method = "useOnEntity",
+            method = "interactLivingEntity",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$interceptUseOnEntity(PlayerEntity user, LivingEntity entity, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$interceptUseOnEntity(Player user, LivingEntity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         ItemStack stack = (ItemStack) (Object) this;
 
         if (ItemUseOnEntityCallback.HOOK.invoker().onUseOnEntity(user, entity, hand, stack)) {
-            cir.setReturnValue(ActionResult.PASS);
+            cir.setReturnValue(InteractionResult.PASS);
         }
     }
 }

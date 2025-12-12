@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -18,5 +18,5 @@ public interface PlayerSneakCallback {
         return cancelled;
     });
 
-    boolean onSneak(ServerPlayerEntity player, boolean sneaking);
+    boolean onSneak(ServerPlayer player, boolean sneaking);
 }

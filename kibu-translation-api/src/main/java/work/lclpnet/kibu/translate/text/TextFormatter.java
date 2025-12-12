@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.translate.text;
 
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Formatter;
@@ -29,25 +29,25 @@ public class TextFormatter {
         final StringBuilder formatBuffer = new StringBuilder();
         final Formatter formatter = new Formatter(formatBuffer);
 
-        Text[] texts = new Text[size];
+        Component[] texts = new Component[size];
 
         for (int i = 0; i < size; i++) {
             String part = parts.get(i);
 
             if (!FormatSplitter.isFormatSpecifier(part)) {
-                texts[i] = Text.literal(part).setStyle(defaultStyle);
+                texts[i] = Component.literal(part).setStyle(defaultStyle);
                 continue;
             }
 
             int argIndex = i / 2;
             if (argIndex >= args.length) {
-                texts[i] = Text.literal(part).setStyle(defaultStyle);
+                texts[i] = Component.literal(part).setStyle(defaultStyle);
                 continue;
             }
 
             Object arg = args[argIndex];
 
-            if (arg instanceof Text next) {
+            if (arg instanceof Component next) {
                 texts[i] = next;
                 continue;
             }
@@ -56,8 +56,8 @@ public class TextFormatter {
                 Object wrapped = wrapper.getWrapped();
 
                 // if the wrapped object is a Text, append it directly
-                if (wrapped instanceof Text next) {
-                    texts[i] = next.copy().fillStyle(wrapper.getStyle());
+                if (wrapped instanceof Component next) {
+                    texts[i] = next.copy().withStyle(wrapper.getStyle());
                     continue;
                 }
 
@@ -66,7 +66,7 @@ public class TextFormatter {
                 String string = formatBuffer.toString();
                 formatBuffer.setLength(0);  // reset buffer for reuse
 
-                MutableText next = Text.literal(string)
+                MutableComponent next = Component.literal(string)
                         .setStyle(wrapper.getStyle());
 
                 texts[i] = next;
@@ -79,13 +79,13 @@ public class TextFormatter {
             String string = formatBuffer.toString();
             formatBuffer.setLength(0);  // reset buffer for reuse
 
-            MutableText next = Text.literal(string).setStyle(defaultStyle);
+            MutableComponent next = Component.literal(string).setStyle(defaultStyle);
             texts[i] = next;
         }
 
         final RootText text = RootText.create();
 
-        for (Text value : texts) {
+        for (Component value : texts) {
             text.append(value);
         }
 

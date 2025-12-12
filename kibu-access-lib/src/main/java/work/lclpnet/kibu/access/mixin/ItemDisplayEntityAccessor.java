@@ -1,12 +1,12 @@
 package work.lclpnet.kibu.access.mixin;
 
-import net.minecraft.entity.decoration.DisplayEntity;
-import net.minecraft.item.ItemDisplayContext;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(DisplayEntity.ItemDisplayEntity.class)
+@Mixin(Display.ItemDisplay.class)
 public interface ItemDisplayEntityAccessor {
 
     @Invoker
@@ -16,8 +16,8 @@ public interface ItemDisplayEntityAccessor {
     ItemStack invokeGetItemStack();
 
     @Invoker
-    void invokeSetItemDisplayContext(ItemDisplayContext itemDisplayContext);
+    void invokeSetItemTransform(ItemDisplayContext itemDisplayContext);
 
     @Invoker
-    ItemDisplayContext invokeGetItemDisplayContext();
+    ItemDisplayContext invokeGetItemTransform();
 }

@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.access.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import work.lclpnet.kibu.access.mixin.FallingBlockEntityAccessor;
 
 public class FallingBlockAccess {
@@ -21,10 +21,10 @@ public class FallingBlockAccess {
     }
 
     public static void setDestroyedOnLanding(FallingBlockEntity entity, boolean destroyedOnLanding) {
-        ((FallingBlockEntityAccessor) entity).setDestroyedOnLanding(destroyedOnLanding);
+        ((FallingBlockEntityAccessor) entity).setCancelDrop(destroyedOnLanding);
     }
 
     public static boolean isDestroyedOnLanding(FallingBlockEntity entity) {
-        return ((FallingBlockEntityAccessor) entity).getDestroyedOnLanding();
+        return ((FallingBlockEntityAccessor) entity).getCancelDrop();
     }
 }

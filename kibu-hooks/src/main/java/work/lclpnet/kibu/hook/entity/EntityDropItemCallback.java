@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.Level;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -20,5 +20,5 @@ public interface EntityDropItemCallback {
         return cancel;
     });
 
-    boolean onDropItem(World world, Entity entity, ItemEntity itemEntity);
+    boolean onDropItem(Level world, Entity entity, ItemEntity itemEntity);
 }

@@ -1,10 +1,10 @@
 package work.lclpnet.kibu.schematic;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
 
-public interface FabricStructureView extends BlockView {
+public interface FabricStructureView extends BlockGetter {
 
     BlockState getBlockState(BlockPos pos);
 

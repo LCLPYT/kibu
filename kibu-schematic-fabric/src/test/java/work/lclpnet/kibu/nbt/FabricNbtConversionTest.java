@@ -1,8 +1,5 @@
 package work.lclpnet.kibu.nbt;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtDouble;
-import net.minecraft.nbt.NbtList;
 import org.junit.jupiter.api.Test;
 import work.lclpnet.kibu.jnbt.*;
 
@@ -20,8 +17,8 @@ class FabricNbtConversionTest {
         tag.putString("hello", "world");
         tag.putInt("c", 5);
 
-        NbtCompound compound = FabricNbtConversion.convert(tag, NbtCompound.class);
-        assertEquals(3, compound.getKeys().size());
+        var compound = FabricNbtConversion.convert(tag, net.minecraft.nbt.CompoundTag.class);
+        assertEquals(3, compound.keySet().size());
         assertTrue(compound.getBoolean("test").orElseThrow());
         assertEquals("world", compound.getString("hello").orElseThrow());
         assertEquals(5, compound.getInt("c").orElseThrow());
@@ -29,7 +26,7 @@ class FabricNbtConversionTest {
 
     @Test
     void convertToTag_compound() {
-        NbtCompound compound = new NbtCompound();
+        var compound = new net.minecraft.nbt.CompoundTag();
         compound.putBoolean("test", true);
         compound.putString("hello", "world");
         compound.putInt("c", 5);
@@ -48,7 +45,7 @@ class FabricNbtConversionTest {
         tag.add(new DoubleTag(0.001d));
         tag.add(new DoubleTag(10.5d));
 
-        NbtList list = FabricNbtConversion.convert(tag, NbtList.class);
+        var list = FabricNbtConversion.convert(tag, net.minecraft.nbt.ListTag.class);
         assertEquals(3, list.size());
         assertEquals(5.1d, list.getDouble(0).orElseThrow());
         assertEquals(0.001d, list.getDouble(1).orElseThrow());
@@ -57,10 +54,10 @@ class FabricNbtConversionTest {
 
     @Test
     void convertToTag_array() {
-        NbtList list = new NbtList();
-        list.add(NbtDouble.of(5.1d));
-        list.add(NbtDouble.of(0.001d));
-        list.add(NbtDouble.of(10.5d));
+        var list = new net.minecraft.nbt.ListTag();
+        list.add(net.minecraft.nbt.DoubleTag.valueOf(5.1d));
+        list.add(net.minecraft.nbt.DoubleTag.valueOf(0.001d));
+        list.add(net.minecraft.nbt.DoubleTag.valueOf(10.5d));
 
         ListTag tag = FabricNbtConversion.convert(list, ListTag.class);
         List<Tag> value = tag.getValue();

@@ -1,10 +1,10 @@
 package work.lclpnet.kibu.util;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.registry.Registries;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,12 +17,12 @@ public class BlockStateUtils {
     @NotNull
     public static String stringify(BlockState state) {
         Block block = state.getBlock();
-        Identifier blockId = Registries.BLOCK.getId(block);
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(block);
 
         var builder = new StringBuilder();
         builder.append(blockId);
 
-        var props = state.getEntries();
+        var props = state.getValues();
         if (!props.isEmpty()) {
             boolean firstProp = true;
 
@@ -65,13 +65,13 @@ public class BlockStateUtils {
             propertiesPart = string.substring(propertiesStart + 1, propertiesEnd);
         }
 
-        var identifier = Identifier.of(blockPart);
-        var block = Registries.BLOCK.get(identifier);
-        var state = block.getDefaultState();
+        var identifier = ResourceLocation.parse(blockPart);
+        var block = BuiltInRegistries.BLOCK.getValue(identifier);
+        var state = block.defaultBlockState();
 
         if (propertiesPart == null) return state;
 
-        var stateManager = block.getStateManager();
+        var stateManager = block.getStateDefinition();
         var properties = propertiesPart.split(",");
 
         for (var property : properties) {
@@ -89,13 +89,13 @@ public class BlockStateUtils {
 
     @SuppressWarnings("unchecked")
     private static <T extends Comparable<T>> String nameValue(Property<T> property, Comparable<?> value) {
-        return property.name((T) value);
+        return property.getName((T) value);
     }
 
     static <T extends Comparable<T>> BlockState with(BlockState state, Property<T> property, String rawValue) {
-        Optional<T> value = property.parse(rawValue);
+        Optional<T> value = property.getValue(rawValue);
         if (value.isEmpty()) return state;
 
-        return state.with(property, value.get());
+        return state.setValue(property, value.get());
     }
 }

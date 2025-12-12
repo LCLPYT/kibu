@@ -2,35 +2,35 @@ package work.lclpnet.kibu.hook.mixin.entity;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.SnifferEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.sniffer.Sniffer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import work.lclpnet.kibu.hook.util.MixinUtils;
 
-@Mixin(SnifferEntity.class)
+@Mixin(Sniffer.class)
 public class SnifferEntityMixin {
 
     @WrapOperation(
             method = "method_64178",  // this is a lambda in dropSeeds(); the name might change in the future
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+                    target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    public boolean kibu$onDropSeeds(ServerWorld world, Entity entity, Operation<Boolean> original) {
+    public boolean kibu$onDropSeeds(ServerLevel world, Entity entity, Operation<Boolean> original) {
         return MixinUtils.wrapEntityItemDrop(world, entity, original, this);
     }
 
     @WrapOperation(
-            method = "breed",
+            method = "spawnChildFromBreeding",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+                    target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    public boolean kibu$onDropItemBreed(ServerWorld world, Entity entity, Operation<Boolean> original) {
+    public boolean kibu$onDropItemBreed(ServerLevel world, Entity entity, Operation<Boolean> original) {
         return MixinUtils.wrapEntityItemDrop(world, entity, original, this);
     }
 }

@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.Projectile;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -17,5 +17,5 @@ public interface ProjectileCanHitCallback {
         return true;
     });
 
-    boolean canHit(ProjectileEntity projectile, Entity entity);
+    boolean canHit(Projectile projectile, Entity entity);
 }

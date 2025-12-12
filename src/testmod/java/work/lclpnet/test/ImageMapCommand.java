@@ -4,16 +4,16 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.MapIdComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.map.MapState;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.saveddata.maps.MapId;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import work.lclpnet.kibu.map.MapColorUtil;
 import work.lclpnet.kibu.map.MapUtil;
 import work.lclpnet.kibu.map.mixin.MapStateAccessor;
@@ -27,23 +27,23 @@ import java.util.concurrent.CompletableFuture;
 
 public class ImageMapCommand {
 
-    public void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("kibu:imagemap")
-                .requires(s -> s.hasPermissionLevel(2))
-                .then(CommandManager.argument("name", StringArgumentType.string())
+    public void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("kibu:imagemap")
+                .requires(s -> s.hasPermission(2))
+                .then(Commands.argument("name", StringArgumentType.string())
                         .executes(this::giveMap)));
     }
 
-    private int giveMap(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private int giveMap(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         String name = StringArgumentType.getString(ctx, "name");
-        ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
 
-        ctx.getSource().sendMessage(Text.literal("Generating image map..."));
+        ctx.getSource().sendSystemMessage(Component.literal("Generating image map..."));
 
         readImage(name)
                 .thenAccept(img -> processImage(player, img))
                 .exceptionally(throwable -> {
-                    ctx.getSource().sendError(Text.literal("Failed to load image: " + throwable.getMessage()));
+                    ctx.getSource().sendFailure(Component.literal("Failed to load image: " + throwable.getMessage()));
                     return null;
                 });
 
@@ -66,11 +66,11 @@ public class ImageMapCommand {
         });
     }
 
-    private void processImage(ServerPlayerEntity player, BufferedImage img) {
-        ServerWorld world = player.getEntityWorld();
+    private void processImage(ServerPlayer player, BufferedImage img) {
+        ServerLevel world = player.level();
 
-        MapIdComponent id = MapUtil.allocateMapId(world, 0, 0, 0, false, false, world.getRegistryKey());
-        MapState mapState = world.getMapState(id);
+        MapId id = MapUtil.allocateMapId(world, 0, 0, 0, false, false, world.dimension());
+        MapItemSavedData mapState = world.getMapData(id);
 
         if (mapState == null) throw new IllegalStateException("Map state not found");
 
@@ -78,11 +78,11 @@ public class ImageMapCommand {
         System.arraycopy(imgData, 0, mapState.colors, 0, Math.min(mapState.colors.length, imgData.length));
 
         ((MapStateAccessor) mapState).setLocked(true);
-        mapState.markDirty();
+        mapState.setDirty();
 
         ItemStack stack = new ItemStack(Items.FILLED_MAP);
-        stack.set(DataComponentTypes.MAP_ID, id);
+        stack.set(DataComponents.MAP_ID, id);
 
-        player.getInventory().setStack(0, stack);
+        player.getInventory().setItem(0, stack);
     }
 }

@@ -1,24 +1,24 @@
 package work.lclpnet.kibu.access.mixin;
 
-import net.minecraft.entity.decoration.DisplayEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Display;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(DisplayEntity.TextDisplayEntity.class)
+@Mixin(Display.TextDisplay.class)
 public interface TextDisplayEntityAccessor {
 
     @Invoker
-    void invokeSetDisplayFlags(byte flags);
+    void invokeSetFlags(byte flags);
 
     @Invoker
-    byte invokeGetDisplayFlags();
+    byte invokeGetFlags();
 
     @Invoker
-    void invokeSetBackground(int background);
+    void invokeSetBackgroundColor(int background);
 
     @Invoker
-    int invokeGetBackground();
+    int invokeGetBackgroundColor();
 
     @Invoker
     void invokeSetTextOpacity(byte textOpacity);
@@ -33,8 +33,8 @@ public interface TextDisplayEntityAccessor {
     int invokeGetLineWidth();
 
     @Invoker
-    void invokeSetText(Text text);
+    void invokeSetText(Component text);
 
     @Invoker
-    Text invokeGetText();
+    Component invokeGetText();
 }

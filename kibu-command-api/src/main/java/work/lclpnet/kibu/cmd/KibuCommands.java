@@ -5,7 +5,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import work.lclpnet.kibu.cmd.impl.DynamicCommandReference;
 import work.lclpnet.kibu.cmd.type.CommandFactory;
 import work.lclpnet.kibu.cmd.type.CommandReference;
@@ -14,7 +14,7 @@ import work.lclpnet.kibu.cmd.util.MinecraftCommandRegister;
 
 public class KibuCommands implements ModInitializer {
 
-    static final DeferredProxyCommandRegister<ServerCommandSource> PROXY = new DeferredProxyCommandRegister<>(false);
+    static final DeferredProxyCommandRegister<CommandSourceStack> PROXY = new DeferredProxyCommandRegister<>(false);
 
     @Override
     public void onInitialize() {
@@ -26,19 +26,19 @@ public class KibuCommands implements ModInitializer {
         register.init();
     }
 
-    public static CommandReference<ServerCommandSource> register(LiteralArgumentBuilder<ServerCommandSource> command) {
+    public static CommandReference<CommandSourceStack> register(LiteralArgumentBuilder<CommandSourceStack> command) {
         var reference = new DynamicCommandReference<>(KibuCommands::unregister);
         PROXY.register(command, reference);
         return reference;
     }
 
-    public static CommandReference<ServerCommandSource> register(CommandFactory<ServerCommandSource> factory) {
+    public static CommandReference<CommandSourceStack> register(CommandFactory<CommandSourceStack> factory) {
         var reference = new DynamicCommandReference<>(KibuCommands::unregister);
         PROXY.register(factory, reference);
         return reference;
     }
 
-    public static boolean unregister(LiteralCommandNode<ServerCommandSource> command) {
+    public static boolean unregister(LiteralCommandNode<CommandSourceStack> command) {
         return PROXY.unregister(command);
     }
 }

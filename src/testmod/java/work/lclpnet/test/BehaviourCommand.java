@@ -5,35 +5,35 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import work.lclpnet.kibu.behaviour.world.ServerWorldBehaviour;
 
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
 
 public class BehaviourCommand {
 
-    public void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+    public void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(command());
     }
 
-    private LiteralArgumentBuilder<ServerCommandSource> command() {
+    private LiteralArgumentBuilder<CommandSourceStack> command() {
         return literal("kibu:behaviour")
-                .requires(s -> s.hasPermissionLevel(2))
+                .requires(s -> s.hasPermission(2))
                 .then(literal("fluid_ticks")
                         .then(argument("enabled", BoolArgumentType.bool())
                                 .executes(this::modifyFluidTicks)));
     }
 
-    private int modifyFluidTicks(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private int modifyFluidTicks(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
-        ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
 
-        ServerWorldBehaviour.setFluidTicksEnabled(player.getEntityWorld(), enabled);
+        ServerWorldBehaviour.setFluidTicksEnabled(player.level(), enabled);
 
-        player.sendMessage(Text.literal("Set behaviour fluid_ticks to \"" + enabled + "\""));
+        player.sendSystemMessage(Component.literal("Set behaviour fluid_ticks to \"" + enabled + "\""));
 
         return 1;
     }

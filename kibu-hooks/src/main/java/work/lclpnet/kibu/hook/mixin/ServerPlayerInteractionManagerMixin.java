@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.mixin;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerInteractionManager;
-import net.minecraft.world.GameMode;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,20 +11,20 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.player.PlayerGameModeChangeCallback;
 
-@Mixin(ServerPlayerInteractionManager.class)
+@Mixin(ServerPlayerGameMode.class)
 public class ServerPlayerInteractionManagerMixin {
 
-    @Shadow @Final protected ServerPlayerEntity player;
+    @Shadow @Final protected ServerPlayer player;
 
     @Inject(
-            method = "changeGameMode",
+            method = "changeGameModeForPlayer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerInteractionManager;setGameMode(Lnet/minecraft/world/GameMode;Lnet/minecraft/world/GameMode;)V",
+                    target = "Lnet/minecraft/server/level/ServerPlayerGameMode;setGameModeForPlayer(Lnet/minecraft/world/level/GameType;Lnet/minecraft/world/level/GameType;)V",
                     shift = At.Shift.AFTER
             )
     )
-    public void kibu$changedGameMode(GameMode gameMode, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$changedGameMode(GameType gameMode, CallbackInfoReturnable<Boolean> cir) {
         PlayerGameModeChangeCallback.HOOK.invoker().onChangeGameMode(player, gameMode);
     }
 }

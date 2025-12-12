@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.entity.leash;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -25,5 +25,5 @@ public interface LeashEntitiesToBlockCallback {
         return cancel;
     });
 
-    boolean onLeashToBlock(PlayerEntity player, BlockPos pos, Collection<Entity> entities);
+    boolean onLeashToBlock(Player player, BlockPos pos, Collection<Entity> entities);
 }

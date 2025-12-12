@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -22,5 +22,5 @@ public interface ItemUseOnEntityCallback {
                 return cancel;
             });
 
-    boolean onUseOnEntity(PlayerEntity player, LivingEntity entity, Hand hand, ItemStack stack);
+    boolean onUseOnEntity(Player player, LivingEntity entity, InteractionHand hand, ItemStack stack);
 }

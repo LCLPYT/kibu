@@ -1,25 +1,25 @@
 package work.lclpnet.kibu.translate.mixin;
 
-import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.translate.hook.LanguageChangedCallback;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(ServerPlayer.class)
 public class ServerPlayerEntityMixin {
 
     @Inject(
-            method = "setClientOptions",
+            method = "updateOptions",
             at = @At("HEAD")
     )
-    public void kibu$fireLanguageEvent(SyncedClientOptions packet, CallbackInfo ci) {
-        ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
+    public void kibu$fireLanguageEvent(ClientInformation packet, CallbackInfo ci) {
+        ServerPlayer self = (ServerPlayer) (Object) this;
 
         // ignore early call during the join process
-        if (self.networkHandler == null) return;
+        if (self.connection == null) return;
 
         LanguageChangedCallback.HOOK.invoker().onChanged(self, packet.language(), LanguageChangedCallback.Reason.PLAYER);
     }

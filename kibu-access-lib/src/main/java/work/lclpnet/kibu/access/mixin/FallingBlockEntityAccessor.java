@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.access.mixin;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
@@ -12,8 +12,8 @@ public interface FallingBlockEntityAccessor {
     void setBlockState(BlockState state);
 
     @Accessor
-    void setDestroyedOnLanding(boolean destroyedOnLanding);
+    void setCancelDrop(boolean destroyedOnLanding);
 
     @Accessor
-    boolean getDestroyedOnLanding();
+    boolean getCancelDrop();
 }

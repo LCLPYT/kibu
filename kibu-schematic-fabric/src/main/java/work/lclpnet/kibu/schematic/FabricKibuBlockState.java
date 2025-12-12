@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.schematic;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import work.lclpnet.kibu.mc.KibuBlockState;
 import work.lclpnet.kibu.util.BlockStateUtils;

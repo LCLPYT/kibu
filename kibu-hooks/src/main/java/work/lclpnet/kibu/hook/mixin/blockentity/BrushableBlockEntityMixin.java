@@ -2,9 +2,9 @@ package work.lclpnet.kibu.hook.mixin.blockentity;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.block.entity.BrushableBlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BrushableBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import work.lclpnet.kibu.hook.util.MixinUtils;
@@ -13,13 +13,13 @@ import work.lclpnet.kibu.hook.util.MixinUtils;
 public class BrushableBlockEntityMixin {
 
     @WrapOperation(
-            method = "spawnItem",
+            method = "dropContent",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+                    target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    public boolean kibu$onDropItem(ServerWorld world, Entity entity, Operation<Boolean> original) {
+    public boolean kibu$onDropItem(ServerLevel world, Entity entity, Operation<Boolean> original) {
         return MixinUtils.wrapBlockEntityItemDrop(world, entity, original, this);
     }
 }

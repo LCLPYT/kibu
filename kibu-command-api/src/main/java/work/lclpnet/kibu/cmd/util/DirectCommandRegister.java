@@ -3,8 +3,8 @@ package work.lclpnet.kibu.cmd.util;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.Commands;
 import work.lclpnet.kibu.cmd.type.CommandConsumer;
 import work.lclpnet.kibu.cmd.type.CommandFactory;
 import work.lclpnet.kibu.cmd.type.CommandRegister;
@@ -15,11 +15,11 @@ import java.util.Objects;
 public class DirectCommandRegister<S> implements CommandRegister<S>, CommandRegistrationContext {
 
     private final CommandDispatcher<S> dispatcher;
-    private final CommandRegistryAccess registryAccess;
-    private final CommandManager.RegistrationEnvironment environment;
+    private final CommandBuildContext registryAccess;
+    private final Commands.CommandSelection environment;
 
-    public DirectCommandRegister(CommandDispatcher<S> dispatcher, CommandRegistryAccess registryAccess,
-                                 CommandManager.RegistrationEnvironment environment) {
+    public DirectCommandRegister(CommandDispatcher<S> dispatcher, CommandBuildContext registryAccess,
+                                 Commands.CommandSelection environment) {
         this.dispatcher = Objects.requireNonNull(dispatcher);
         this.registryAccess = Objects.requireNonNull(registryAccess);
         this.environment = Objects.requireNonNull(environment);
@@ -46,12 +46,12 @@ public class DirectCommandRegister<S> implements CommandRegister<S>, CommandRegi
     }
 
     @Override
-    public CommandRegistryAccess registryAccess() {
+    public CommandBuildContext registryAccess() {
         return registryAccess;
     }
 
     @Override
-    public CommandManager.RegistrationEnvironment environment() {
+    public Commands.CommandSelection environment() {
         return environment;
     }
 }

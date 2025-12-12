@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.access.network.packet;
 
-import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
-import net.minecraft.scoreboard.AbstractTeam;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.access.mixin.SerializableTeamAccessor;
 import work.lclpnet.kibu.access.mixin.TeamS2CPacketAccessor;
@@ -15,53 +15,53 @@ public class TeamS2CPacketAccess {
 
     private TeamS2CPacketAccess() {}
 
-    public static TeamS2CPacket modifyTeam(TeamS2CPacket packet, UnaryOperator<TeamS2CPacket.SerializableTeam> team) {
-        return withTeam(packet, packet.getTeam().map(team).orElse(null));
+    public static ClientboundSetPlayerTeamPacket modifyTeam(ClientboundSetPlayerTeamPacket packet, UnaryOperator<ClientboundSetPlayerTeamPacket.Parameters> team) {
+        return withTeam(packet, packet.getParameters().map(team).orElse(null));
     }
 
     // return value is currently the identity, this maybe has to return another instance in the future
-    public static TeamS2CPacket withTeam(TeamS2CPacket packet, @Nullable TeamS2CPacket.SerializableTeam team) {
-        ((TeamS2CPacketAccessor) packet).setTeam(Optional.ofNullable(team));
+    public static ClientboundSetPlayerTeamPacket withTeam(ClientboundSetPlayerTeamPacket packet, @Nullable ClientboundSetPlayerTeamPacket.Parameters team) {
+        ((TeamS2CPacketAccessor) packet).setParameters(Optional.ofNullable(team));
         return packet;
     }
 
-    public static TeamS2CPacket.SerializableTeam withDisplayName(TeamS2CPacket.SerializableTeam team, Text displayName) {
+    public static ClientboundSetPlayerTeamPacket.Parameters withDisplayName(ClientboundSetPlayerTeamPacket.Parameters team, Component displayName) {
         ((SerializableTeamAccessor) team).setDisplayName(displayName);
         return team;
     }
 
-    public static TeamS2CPacket.SerializableTeam withPrefix(TeamS2CPacket.SerializableTeam team, Text prefix) {
-        ((SerializableTeamAccessor) team).setPrefix(prefix);
+    public static ClientboundSetPlayerTeamPacket.Parameters withPrefix(ClientboundSetPlayerTeamPacket.Parameters team, Component prefix) {
+        ((SerializableTeamAccessor) team).setPlayerPrefix(prefix);
         return team;
     }
 
-    public static TeamS2CPacket.SerializableTeam withSuffix(TeamS2CPacket.SerializableTeam team, Text suffix) {
-        ((SerializableTeamAccessor) team).setSuffix(suffix);
+    public static ClientboundSetPlayerTeamPacket.Parameters withSuffix(ClientboundSetPlayerTeamPacket.Parameters team, Component suffix) {
+        ((SerializableTeamAccessor) team).setPlayerSuffix(suffix);
         return team;
     }
 
-    public static TeamS2CPacket.SerializableTeam withNameTagVisibilityRule(TeamS2CPacket.SerializableTeam team, AbstractTeam.VisibilityRule rule) {
-        ((SerializableTeamAccessor) team).setNameTagVisibilityRule(rule);
+    public static ClientboundSetPlayerTeamPacket.Parameters withNameTagVisibilityRule(ClientboundSetPlayerTeamPacket.Parameters team, Team.Visibility rule) {
+        ((SerializableTeamAccessor) team).setNametagVisibility(rule);
         return team;
     }
 
-    public static TeamS2CPacket.SerializableTeam withCollisionRule(TeamS2CPacket.SerializableTeam team, AbstractTeam.CollisionRule rule) {
+    public static ClientboundSetPlayerTeamPacket.Parameters withCollisionRule(ClientboundSetPlayerTeamPacket.Parameters team, Team.CollisionRule rule) {
         ((SerializableTeamAccessor) team).setCollisionRule(rule);
         return team;
     }
 
-    public static TeamS2CPacket.SerializableTeam withColor(TeamS2CPacket.SerializableTeam team, Formatting color) {
+    public static ClientboundSetPlayerTeamPacket.Parameters withColor(ClientboundSetPlayerTeamPacket.Parameters team, ChatFormatting color) {
         ((SerializableTeamAccessor) team).setColor(color);
         return team;
     }
 
-    public static TeamS2CPacket.SerializableTeam withFriendlyFlags(TeamS2CPacket.SerializableTeam team, int friendlyFlags) {
-        ((SerializableTeamAccessor) team).setFriendlyFlags(friendlyFlags);
+    public static ClientboundSetPlayerTeamPacket.Parameters withFriendlyFlags(ClientboundSetPlayerTeamPacket.Parameters team, int friendlyFlags) {
+        ((SerializableTeamAccessor) team).setOptions(friendlyFlags);
         return team;
     }
 
-    public static TeamS2CPacket.SerializableTeam withFriendlyFire(TeamS2CPacket.SerializableTeam team, boolean friendlyFire) {
-        int flags = team.getFriendlyFlagsBitwise();
+    public static ClientboundSetPlayerTeamPacket.Parameters withFriendlyFire(ClientboundSetPlayerTeamPacket.Parameters team, boolean friendlyFire) {
+        int flags = team.getOptions();
 
         if (friendlyFire) {
             flags |= 0b1;
@@ -72,8 +72,8 @@ public class TeamS2CPacketAccess {
         return withFriendlyFlags(team, flags);
     }
 
-    public static TeamS2CPacket.SerializableTeam withShowFriendlyInvisibles(TeamS2CPacket.SerializableTeam team, boolean showFriendlyInvisibles) {
-        int flags = team.getFriendlyFlagsBitwise();
+    public static ClientboundSetPlayerTeamPacket.Parameters withShowFriendlyInvisibles(ClientboundSetPlayerTeamPacket.Parameters team, boolean showFriendlyInvisibles) {
+        int flags = team.getOptions();
 
         if (showFriendlyInvisibles) {
             flags |= 0b10;

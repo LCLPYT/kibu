@@ -1,16 +1,16 @@
 package work.lclpnet.kibu.inv.prompt;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.AnvilScreenHandler;
-import net.minecraft.screen.ScreenHandlerFactory;
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.StringHelper;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.MenuConstructor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
@@ -24,17 +24,17 @@ public class TextPrompt {
 
     private TextPrompt() {}
 
-    public static CompletableFuture<Optional<String>> open(ServerPlayerEntity player, Text title, String initial, Predicate<String> validator) {
+    public static CompletableFuture<Optional<String>> open(ServerPlayer player, Component title, String initial, Predicate<String> validator) {
         var future = new CompletableFuture<Optional<String>>();
 
-        ScreenHandlerFactory factory = (syncId, inv, p) -> {
+        MenuConstructor factory = (syncId, inv, p) -> {
             var handler = new TextInputHandler(syncId, inv, future, validator);
             handler.setInitial(initial);
 
             return handler;
         };
 
-        player.openHandledScreen(new SimpleNamedScreenHandlerFactory(factory, title));
+        player.openMenu(new SimpleMenuProvider(factory, title));
 
         return future;
     }
@@ -43,7 +43,7 @@ public class TextPrompt {
         void onClick(PlayerInventoryHooks.ClickEvent event);
     }
 
-    private static class TextInputHandler extends AnvilScreenHandler implements Handler {
+    private static class TextInputHandler extends AnvilMenu implements Handler {
 
         private final ItemStack EMPTY_INEQUALITY = new ItemStack(Items.POISONOUS_POTATO);  // ¯\_(ツ)_/¯
         private final CompletableFuture<Optional<String>> future;
@@ -51,7 +51,7 @@ public class TextPrompt {
         private @Nullable String value = null;
         private boolean changed = false;
 
-        protected TextInputHandler(int syncId, PlayerInventory inventory,
+        protected TextInputHandler(int syncId, Inventory inventory,
                                    CompletableFuture<Optional<String>> future,
                                    Predicate<String> validator) {
             super(syncId, inventory);
@@ -60,7 +60,7 @@ public class TextPrompt {
         }
 
         @Override
-        public void sendContentUpdates() {
+        public void broadcastChanges() {
             if (changed) {
                 changed = false;
 
@@ -68,46 +68,46 @@ public class TextPrompt {
                 ItemStack invalidateStack;
 
                 if (value != null) {
-                    output.setStack(0, textStack(value));
+                    resultSlots.setItem(0, textStack(value));
                     invalidateStack = ItemStack.EMPTY;
                 } else {
-                    output.setStack(0, ItemStack.EMPTY);
+                    resultSlots.setItem(0, ItemStack.EMPTY);
                     invalidateStack = EMPTY_INEQUALITY;
                 }
 
                 // set no level cost
-                setProperty(0, 0);
+                setData(0, 0);
 
                 // invalidate tracked data
-                ((ScreenHandlerAccessor) this).getTrackedPropertyValues().set(0, 1);
-                setReceivedStack(2, invalidateStack);
+                ((ScreenHandlerAccessor) this).getRemoteDataSlots().set(0, 1);
+                setRemoteSlot(2, invalidateStack);
             }
 
-            super.sendContentUpdates();
+            super.broadcastChanges();
         }
 
         @Override
-        public boolean setNewItemName(String newItemName) {
+        public boolean setItemName(String newItemName) {
             value = validate(newItemName);
             changed = true;
 
-            return super.setNewItemName(newItemName);
+            return super.setItemName(newItemName);
         }
 
         public void setInitial(String value) {
             ItemStack stack = textStack(value);
 
-            input.setStack(0, stack);
+            inputSlots.setItem(0, stack);
 
             if (validate(value) != null) {
-                output.setStack(0, stack);
+                resultSlots.setItem(0, stack);
             }
 
             this.value = validate(value);
         }
 
         public @Nullable String validate(String str) {
-            String sanitized = StringHelper.stripInvalidChars(str);
+            String sanitized = StringUtil.filterText(str);
 
             if (sanitized.length() > 50 || !validator.test(sanitized)) {
                 return null;
@@ -118,7 +118,7 @@ public class TextPrompt {
 
         private @NotNull ItemStack textStack(String value) {
             ItemStack stack = new ItemStack(Items.PAPER);
-            stack.set(DataComponentTypes.ITEM_NAME, Text.literal(value));
+            stack.set(DataComponents.ITEM_NAME, Component.literal(value));
             return stack;
         }
 
@@ -128,14 +128,14 @@ public class TextPrompt {
 
             future.complete(Optional.of(value));
 
-            if (player.currentScreenHandler == this) {
-                event.player().closeHandledScreen();
+            if (player.containerMenu == this) {
+                event.player().closeContainer();
             }
         }
 
         @Override
-        public void onClosed(PlayerEntity player) {
-            super.onClosed(player);
+        public void removed(Player player) {
+            super.removed(player);
 
             future.complete(Optional.empty());
         }

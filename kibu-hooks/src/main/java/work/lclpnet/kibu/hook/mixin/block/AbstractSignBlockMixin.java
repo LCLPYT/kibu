@@ -1,34 +1,34 @@
 package work.lclpnet.kibu.hook.mixin.block;
 
-import net.minecraft.block.AbstractSignBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SignBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
-@Mixin(AbstractSignBlock.class)
+@Mixin(SignBlock.class)
 public class AbstractSignBlockMixin {
 
     @Inject(
-            method = "onUseWithItem",
+            method = "useItemOn",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/item/SignChangingItem;canUseOnSignText(Lnet/minecraft/block/entity/SignText;Lnet/minecraft/entity/player/PlayerEntity;)Z"
+                    target = "Lnet/minecraft/world/item/SignApplicator;canApplyToSign(Lnet/minecraft/world/level/block/entity/SignText;Lnet/minecraft/world/entity/player/Player;)Z"
             ),
             cancellable = true
     )
-    public void kibu$interceptOnUse(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
-        var ctx = new ItemUsageContext(player, hand, hit);
+    public void kibu$interceptOnUse(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
+        var ctx = new UseOnContext(player, hand, hit);
         var result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(ctx);
 
         if (result != null) {
@@ -37,16 +37,16 @@ public class AbstractSignBlockMixin {
     }
 
     @Inject(
-            method = "onUse",
+            method = "useWithoutItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/AbstractSignBlock;openEditScreen(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/block/entity/SignBlockEntity;Z)V"
+                    target = "Lnet/minecraft/world/level/block/SignBlock;openTextEdit(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/block/entity/SignBlockEntity;Z)V"
             ),
             cancellable = true
     )
-    public void kibu$onEditSign(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onEditSign(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
         if (BlockModificationHooks.EDIT_SIGN.invoker().onModify(world, pos, player)) {
-            cir.setReturnValue(ActionResult.PASS);
+            cir.setReturnValue(InteractionResult.PASS);
         }
     }
 }

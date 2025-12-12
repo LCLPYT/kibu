@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.network;
 
-import net.minecraft.network.packet.Packet;
-import net.minecraft.server.network.ServerCommonNetworkHandler;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.network.ServerCommonPacketListenerImpl;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 import work.lclpnet.kibu.hook.util.PendingResult;
@@ -55,5 +55,5 @@ public interface ServerSendPacketCallback {
         return PendingResult.pass();
     });
 
-    PendingResult<Packet<?>> overridePacket(Packet<?> packet, ServerCommonNetworkHandler handler);
+    PendingResult<Packet<?>> overridePacket(Packet<?> packet, ServerCommonPacketListenerImpl handler);
 }

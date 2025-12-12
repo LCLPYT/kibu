@@ -1,15 +1,14 @@
 package work.lclpnet.kibu.schematic;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.NbtReadView;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import work.lclpnet.kibu.jnbt.CompoundTag;
@@ -25,13 +24,13 @@ public class FabricKibuBlockEntity implements KibuBlockEntity {
 
     private final BlockEntityType<?> type;
     private final BlockPos pos;
-    private final NbtCompound nbt;
+    private final net.minecraft.nbt.CompoundTag nbt;
 
     public FabricKibuBlockEntity(BlockEntity blockEntity) {
-        this(blockEntity.getType(), blockEntity.getPos(), blockEntity.createNbt(Objects.requireNonNull(blockEntity.getWorld()).getRegistryManager()));
+        this(blockEntity.getType(), blockEntity.getBlockPos(), blockEntity.saveWithoutMetadata(Objects.requireNonNull(blockEntity.getLevel()).registryAccess()));
     }
 
-    public FabricKibuBlockEntity(BlockEntityType<?> type, BlockPos pos, NbtCompound nbt) {
+    public FabricKibuBlockEntity(BlockEntityType<?> type, BlockPos pos, net.minecraft.nbt.CompoundTag nbt) {
         this.type = type;
         this.pos = pos;
         this.nbt = nbt;
@@ -39,7 +38,7 @@ public class FabricKibuBlockEntity implements KibuBlockEntity {
 
     @Override
     public String getId() {
-        Identifier id = BlockEntityType.getId(type);
+        ResourceLocation id = BlockEntityType.getKey(type);
 
         if (id == null) throw new IllegalStateException("Block entity type not registered");
 
@@ -56,32 +55,32 @@ public class FabricKibuBlockEntity implements KibuBlockEntity {
         return FabricNbtConversion.convert(nbt, CompoundTag.class);
     }
 
-    public boolean spawn(ServerWorld world, BlockPos pos) {
+    public boolean spawn(ServerLevel world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        if (!type.supports(state)) return false;
+        if (!type.isValid(state)) return false;
 
         var optBlockEntity = world.getBlockEntity(pos, type);
 
         if (optBlockEntity.isPresent()) {
-            readBlockEntityNbt(optBlockEntity.get(), world.getRegistryManager());
+            readBlockEntityNbt(optBlockEntity.get(), world.registryAccess());
             return true;
         }
 
-        BlockEntity blockEntity = type.instantiate(pos, state);
+        BlockEntity blockEntity = type.create(pos, state);
 
         if (blockEntity == null) return false;
 
-        readBlockEntityNbt(blockEntity, world.getRegistryManager());
-        blockEntity.setWorld(world);
+        readBlockEntityNbt(blockEntity, world.registryAccess());
+        blockEntity.setLevel(world);
 
-        world.addBlockEntity(blockEntity);
+        world.setBlockEntity(blockEntity);
 
         return true;
     }
 
-    private void readBlockEntityNbt(BlockEntity blockEntity, RegistryWrapper.WrapperLookup registries) {
-        try (var logging = new ErrorReporter.Logging(blockEntity.getReporterContext(), FabricKibuBlockEntity.logger)) {
-            blockEntity.read(NbtReadView.create(logging, registries, nbt));
+    private void readBlockEntityNbt(BlockEntity blockEntity, HolderLookup.Provider registries) {
+        try (var logging = new ProblemReporter.ScopedCollector(blockEntity.problemPath(), FabricKibuBlockEntity.logger)) {
+            blockEntity.loadWithComponents(TagValueInput.create(logging, registries, nbt));
         } catch (Throwable t) {
             FabricKibuBlockEntity.logger.error("Failed to read nbt data for block entity {} at {}", type, pos, t);
         }

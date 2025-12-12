@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.entity.leash;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -24,5 +24,5 @@ public interface LeashEntitiesToEntityCallback {
         return cancel;
     });
 
-    boolean onLeashToEntity(PlayerEntity player, Entity leashHolder, Collection<Entity> entities);
+    boolean onLeashToEntity(Player player, Entity leashHolder, Collection<Entity> entities);
 }

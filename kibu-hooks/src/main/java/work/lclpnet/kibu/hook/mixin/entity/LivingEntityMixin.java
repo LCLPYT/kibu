@@ -3,15 +3,15 @@ package work.lclpnet.kibu.hook.mixin.entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -43,25 +43,25 @@ public class LivingEntityMixin {
     }
 
     @WrapOperation(
-            method = "onKilledBy",
+            method = "createWitherRose",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+                    target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    public boolean kibu$onDropItem(World world, Entity entity, Operation<Boolean> original) {
+    public boolean kibu$onDropItem(Level world, Entity entity, Operation<Boolean> original) {
         return MixinUtils.wrapEntityItemDrop(world, entity, original, this);
     }
 
     @Inject(
-            method = "applyDamage",
+            method = "actuallyHurt",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/LivingEntity;applyArmorToDamage(Lnet/minecraft/entity/damage/DamageSource;F)F"
+                    target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"
             ),
             cancellable = true
     )
-    public void kibu$onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfo ci) {
+    public void kibu$onDamage(ServerLevel world, DamageSource source, float amount, CallbackInfo ci) {
         @SuppressWarnings("DataFlowIssue")
         LivingEntity entity = (LivingEntity) (Object) this;
 
@@ -71,14 +71,14 @@ public class LivingEntityMixin {
     }
 
     @Inject(
-            method = "addStatusEffect(Lnet/minecraft/entity/effect/StatusEffectInstance;Lnet/minecraft/entity/Entity;)Z",
+            method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z",
             at = @At(
                     value = "INVOKE",
                     target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;"
             ),
             cancellable = true
     )
-    public void kibu$onAddStatusEffect(StatusEffectInstance effect, Entity source, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onAddStatusEffect(MobEffectInstance effect, Entity source, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity self = (LivingEntity) (Object) this;
 
         if (EntityStatusEffectCallback.HOOK.invoker().onAddEffect(self, effect, source)) {
@@ -110,23 +110,23 @@ public class LivingEntityMixin {
 
         LivingEntity self = (LivingEntity) (Object) this;
 
-        if (self instanceof ServerPlayerEntity player) {
+        if (self instanceof ServerPlayer player) {
             PlayerMountHooks.DISMOUNTED.invoker().doAfter(player, vehicle);
         }
     }
 
     @Inject(
-            method = "dropItem",
+            method = "drop",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+                    target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             ),
             cancellable = true
     )
     public void kibu$onDropItem(ItemStack stack, boolean dropAtSelf, boolean retainOwnership, CallbackInfoReturnable<ItemEntity> cir, @Local ItemEntity item) {
         LivingEntity self = (LivingEntity) (Object) this;
 
-        if (self instanceof ServerPlayerEntity player && PlayerInventoryHooks.DROP_ITEM_ENTITY.invoker().onDropItemEntity(player, item)) {
+        if (self instanceof ServerPlayer player && PlayerInventoryHooks.DROP_ITEM_ENTITY.invoker().onDropItemEntity(player, item)) {
             cir.setReturnValue(null);
         }
     }

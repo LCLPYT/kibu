@@ -1,18 +1,18 @@
 package work.lclpnet.kibu.hook.util;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Box;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.AABB;
 
 public class OnGroundDetector {
 
-    public static boolean isOnGroundServer(ServerPlayerEntity player) {
+    public static boolean isOnGroundServer(ServerPlayer player) {
         return isOnGroundServer(player, 0.02);
     }
 
-    public static boolean isOnGroundServer(ServerPlayerEntity player, double tol) {
+    public static boolean isOnGroundServer(ServerPlayer player, double tol) {
         double y = player.getY();
-        Box box = player.getBoundingBox().withMinY(y - tol).withMaxY(y + 1e-5);
+        AABB box = player.getBoundingBox().setMinY(y - tol).setMaxY(y + 1e-5);
 
-        return player.getEntityWorld().getBlockCollisions(player, box).iterator().hasNext();
+        return player.level().getBlockCollisions(player, box).iterator().hasNext();
     }
 }

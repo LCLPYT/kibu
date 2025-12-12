@@ -1,15 +1,15 @@
 package work.lclpnet.kibu.hook.player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.screen.sync.ItemStackHash;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.HashedStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
@@ -158,33 +158,33 @@ public class PlayerInventoryHooks {
 
     public interface SlotChange {
 
-        void onChangeSlot(ServerPlayerEntity player, int slot);
+        void onChangeSlot(ServerPlayer player, int slot);
     }
 
     public interface DropItem {
 
-        boolean onDropItem(PlayerEntity player, int slot, boolean inInventory);
+        boolean onDropItem(Player player, int slot, boolean inInventory);
     }
 
     public interface DroppedItem {
 
-        void onDroppedItem(PlayerEntity player, int slot);
+        void onDroppedItem(Player player, int slot);
     }
 
     public interface DropItemEntity {
-        boolean onDropItemEntity(ServerPlayerEntity player, ItemEntity itemEntity);
+        boolean onDropItemEntity(ServerPlayer player, ItemEntity itemEntity);
     }
 
     public interface DroppedItemEntity {
-        void onDroppedItemEntity(ServerPlayerEntity player, ItemEntity itemEntity);
+        void onDroppedItemEntity(ServerPlayer player, ItemEntity itemEntity);
     }
 
     public interface SwapHands {
-        boolean onSwapHands(ServerPlayerEntity player, int slot);
+        boolean onSwapHands(ServerPlayer player, int slot);
     }
 
     public interface SwappedHands {
-        void onSwappedHands(ServerPlayerEntity player, int slot);
+        void onSwappedHands(ServerPlayer player, int slot);
     }
 
     public interface InventoryModify {
@@ -203,19 +203,19 @@ public class PlayerInventoryHooks {
         void onModified(CreativeClickEvent event);
     }
 
-    public record ClickEvent(ServerPlayerEntity player, int slot, int button, ItemStackHash cursor,
-                             SlotActionType action, Int2ObjectMap<ItemStackHash> modified) {
+    public record ClickEvent(ServerPlayer player, int slot, int button, HashedStack cursor,
+                             ClickType action, Int2ObjectMap<HashedStack> modified) {
         public boolean isDropAction() {
-            return action == SlotActionType.THROW || (action == SlotActionType.PICKUP && slot == -999);
+            return action == ClickType.THROW || (action == ClickType.PICKUP && slot == -999);
         }
 
         @Nullable
         public Slot handlerSlot() {
-            if (player.currentScreenHandler == null || slot == -1 || slot == -999 || slot >= player.currentScreenHandler.slots.size()) {
+            if (player.containerMenu == null || slot == -1 || slot == -999 || slot >= player.containerMenu.slots.size()) {
                 return null;
             }
 
-            return player.currentScreenHandler.getSlot(slot);
+            return player.containerMenu.getSlot(slot);
         }
 
         @Nullable
@@ -224,14 +224,14 @@ public class PlayerInventoryHooks {
 
             if (slot == null) return null;
 
-            return slot.getStack();
+            return slot.getItem();
         }
 
         @Nullable
-        public Inventory inventory() {
-            PlayerInventory inv = player.getInventory();
+        public Container inventory() {
+            Inventory inv = player.getInventory();
 
-            if (player.currentScreenHandler == null) {
+            if (player.containerMenu == null) {
                 return inv;
             }
 
@@ -240,24 +240,24 @@ public class PlayerInventoryHooks {
                 return null;
             }
 
-            return slot.inventory;
+            return slot.container;
         }
 
         @Nullable
-        public Inventory targetInventory() {
-            if (action != SlotActionType.QUICK_MOVE) return null;
+        public Container targetInventory() {
+            if (action != ClickType.QUICK_MOVE) return null;
 
-            Inventory src = inventory();
+            Container src = inventory();
             if (src == null) return null;
 
             boolean srcChange = false;
 
             for (int i : modified().keySet()) {
-                Slot slot = player.currentScreenHandler.getSlot(i);
+                Slot slot = player.containerMenu.getSlot(i);
                 if (slot == null) continue;
 
-                if (!src.equals(slot.inventory)) {
-                    return slot.inventory;
+                if (!src.equals(slot.container)) {
+                    return slot.container;
                 }
 
                 // skip the source inventory once
@@ -266,7 +266,7 @@ public class PlayerInventoryHooks {
                     continue;
                 }
 
-                return slot.inventory;
+                return slot.container;
             }
 
             return null;
@@ -279,7 +279,7 @@ public class PlayerInventoryHooks {
         }
     }
 
-    public record CreativeClickEvent(ServerPlayerEntity player, int slot, ItemStack stack) {
+    public record CreativeClickEvent(ServerPlayer player, int slot, ItemStack stack) {
 
         @Override
         public String toString() {
@@ -289,10 +289,10 @@ public class PlayerInventoryHooks {
     }
 
     public interface ItemPickup {
-        boolean onPickup(PlayerEntity player, ItemEntity itemEntity);
+        boolean onPickup(Player player, ItemEntity itemEntity);
     }
 
     public interface ItemPickedUp {
-        void onPickedUp(PlayerEntity player, ItemEntity itemEntity);
+        void onPickedUp(Player player, ItemEntity itemEntity);
     }
 }

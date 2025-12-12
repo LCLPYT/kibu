@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.mixin;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,23 +12,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
 
-@Mixin(PlayerInventory.class)
+@Mixin(Inventory.class)
 public class PlayerInventoryMixin {
 
-    @Shadow @Final public PlayerEntity player;
+    @Shadow @Final public Player player;
 
-    @Shadow private int selectedSlot;
+    @Shadow private int selected;
 
     @Inject(
-            method = "dropSelectedItem",
+            method = "removeFromSelected",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/player/PlayerInventory;removeStack(II)Lnet/minecraft/item/ItemStack;"
+                    target = "Lnet/minecraft/world/entity/player/Inventory;removeItem(II)Lnet/minecraft/world/item/ItemStack;"
             ),
             cancellable = true
     )
     public void kibu$onDropSelectedItem(boolean entireStack, CallbackInfoReturnable<ItemStack> cir) {
-        boolean cancel = PlayerInventoryHooks.DROP_ITEM.invoker().onDropItem(player, selectedSlot, false);
+        boolean cancel = PlayerInventoryHooks.DROP_ITEM.invoker().onDropItem(player, selected, false);
 
         if (cancel) {
             cir.setReturnValue(ItemStack.EMPTY);
@@ -37,14 +37,14 @@ public class PlayerInventoryMixin {
     }
 
     @Inject(
-            method = "dropSelectedItem",
+            method = "removeFromSelected",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/player/PlayerInventory;removeStack(II)Lnet/minecraft/item/ItemStack;",
+                    target = "Lnet/minecraft/world/entity/player/Inventory;removeItem(II)Lnet/minecraft/world/item/ItemStack;",
                     shift = At.Shift.AFTER
             )
     )
     public void kibu$onDroppedSelectedItem(boolean entireStack, CallbackInfoReturnable<ItemStack> cir) {
-        PlayerInventoryHooks.DROPPED_ITEM.invoker().onDroppedItem(player, selectedSlot);
+        PlayerInventoryHooks.DROPPED_ITEM.invoker().onDroppedItem(player, selected);
     }
 }

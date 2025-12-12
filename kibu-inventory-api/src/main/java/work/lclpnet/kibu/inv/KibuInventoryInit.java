@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.inv;
 
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 import work.lclpnet.kibu.inv.prompt.OptionPrompt;
 import work.lclpnet.kibu.inv.prompt.TextPrompt;
@@ -16,9 +16,9 @@ public class KibuInventoryInit implements ModInitializer {
     }
 
     private static boolean onModify(PlayerInventoryHooks.ClickEvent event) {
-        ServerPlayerEntity player = event.player();
+        ServerPlayer player = event.player();
 
-        if (event.player().currentScreenHandler instanceof TextPrompt.Handler handler) {
+        if (event.player().containerMenu instanceof TextPrompt.Handler handler) {
             handler.onClick(event);
             return true;
         }
@@ -28,8 +28,8 @@ public class KibuInventoryInit implements ModInitializer {
             return true;
         }
 
-        Inventory source = event.inventory();
-        Inventory target = event.targetInventory();
+        Container source = event.inventory();
+        Container target = event.targetInventory();
 
         if (source instanceof RestrictedInventory inv) {
             return !inv.canEdit(player);

@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.world;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -19,5 +19,5 @@ public interface ItemScatterCallback {
         return cancel;
     });
 
-    boolean onScatter(World world, double x, double y, double z, ItemStack stack);
+    boolean onScatter(Level world, double x, double y, double z, ItemStack stack);
 }

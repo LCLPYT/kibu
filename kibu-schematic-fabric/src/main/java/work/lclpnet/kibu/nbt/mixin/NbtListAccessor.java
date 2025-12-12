@@ -1,12 +1,12 @@
 package work.lclpnet.kibu.nbt.mixin;
 
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.ListTag;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(NbtList.class)
+@Mixin(ListTag.class)
 public interface NbtListAccessor {
 
     @Invoker
-    byte invokeGetValueType();
+    byte invokeIdentifyRawElementType();
 }

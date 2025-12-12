@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -22,6 +22,6 @@ public class PlayerMountHooks {
     });
 
     public interface AfterMount {
-        void doAfter(ServerPlayerEntity player, Entity vehicle);
+        void doAfter(ServerPlayer player, Entity vehicle);
     }
 }

@@ -1,10 +1,10 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.HungerManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.hook.entity.EntityDamageCallback;
 import work.lclpnet.kibu.hook.type.PlayerAware;
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public class PlayerEntityMixin {
 
-    @Shadow protected HungerManager hungerManager;
+    @Shadow protected FoodData foodData;
 
     @Inject(
             method = "<init>*",
@@ -24,18 +24,18 @@ public class PlayerEntityMixin {
     )
     public void kibu$onInit(CallbackInfo ci) {
         //noinspection DataFlowIssue
-        ((PlayerAware) hungerManager).kibu$setPlayer((PlayerEntity) (Object) this);
+        ((PlayerAware) foodData).kibu$setPlayer((Player) (Object) this);
     }
 
     @Inject(
-            method = "applyDamage",
+            method = "actuallyHurt",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/player/PlayerEntity;applyArmorToDamage(Lnet/minecraft/entity/damage/DamageSource;F)F"
+                    target = "Lnet/minecraft/world/entity/player/Player;getDamageAfterArmorAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"
             ),
             cancellable = true
     )
-    public void kibu$onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfo ci) {
+    public void kibu$onDamage(ServerLevel world, DamageSource source, float amount, CallbackInfo ci) {
         @SuppressWarnings("DataFlowIssue")
         LivingEntity entity = (LivingEntity) (Object) this;
 

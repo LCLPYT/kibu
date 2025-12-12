@@ -2,13 +2,13 @@ package work.lclpnet.kibu.cmd.type;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 
 public interface CommandRegistrar {
 
-    CommandReference<ServerCommandSource> registerCommand(LiteralArgumentBuilder<ServerCommandSource> command);
+    CommandReference<CommandSourceStack> registerCommand(LiteralArgumentBuilder<CommandSourceStack> command);
 
-    CommandReference<ServerCommandSource> registerCommand(CommandFactory<ServerCommandSource> factory);
+    CommandReference<CommandSourceStack> registerCommand(CommandFactory<CommandSourceStack> factory);
 
-    void unregisterCommand(LiteralCommandNode<ServerCommandSource> command);
+    void unregisterCommand(LiteralCommandNode<CommandSourceStack> command);
 }

@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.PlayerInput;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Input;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -14,5 +14,5 @@ public interface PlayerInputCallback {
         }
     });
 
-    void onInput(ServerPlayerEntity player, PlayerInput input);
+    void onInput(ServerPlayer player, Input input);
 }

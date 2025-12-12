@@ -1,10 +1,13 @@
 package work.lclpnet.kibu.translate.text;
 
-import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import org.junit.jupiter.api.Test;
 
-import static net.minecraft.util.Formatting.*;
+import static net.minecraft.ChatFormatting.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static work.lclpnet.kibu.translate.text.FormatWrapper.styled;
 
@@ -34,7 +37,7 @@ public class TextFormatterTest {
     void formatText_prefix_textArg() {
         var service = new TextFormatter();
 
-        RootText text = service.formatText("%s bar", Text.literal("Hello").formatted(Formatting.BLUE)).formatted(YELLOW);
+        RootText text = service.formatText("%s bar", Component.literal("Hello").withStyle(BLUE)).formatted(YELLOW);
         assertEquals("Hello bar", text.getString());
         assertEquals(2, text.getSiblings().size());
         assertEquals("#5555FFHello#FFFF55 bar", debugString(text));
@@ -82,7 +85,7 @@ public class TextFormatterTest {
         var service = new TextFormatter();
 
         // put in a text that has formatting and override it with the FormatWrapper style
-        FormatWrapper wrapper = styled(Text.literal("test").formatted(YELLOW, BOLD), GREEN);
+        FormatWrapper wrapper = styled(Component.literal("test").withStyle(YELLOW, BOLD), GREEN);
 
         RootText text = service.formatText("Test %s hello", wrapper);
 
@@ -90,22 +93,22 @@ public class TextFormatterTest {
         assertEquals("#FFFFFFTest #55FF55§ltest#FFFFFF hello", debugString(text));
     }
 
-    private String debugString(Text text) {
+    private String debugString(Component text) {
         StringBuilder builder = new StringBuilder();
 
         final String string;
-        TextContent content = text.getContent();
+        ComponentContents content = text.getContents();
 
-        if (content instanceof PlainTextContent literal) {
-            string = literal.string();
+        if (content instanceof PlainTextContents literal) {
+            string = literal.text();
         } else {
             string = content.toString();
         }
 
-        if (!string.isEmpty() && text.getContent() != PlainTextContent.EMPTY) {
+        if (!string.isEmpty() && text.getContents() != PlainTextContents.EMPTY) {
             Style style = text.getStyle();
             TextColor color = style.getColor();
-            builder.append(color == null ? "#FFFFFF" : color.getHexCode());
+            builder.append(color == null ? "#FFFFFF" : color.formatValue());
             if (style.isBold()) builder.append("§l");
             if (style.isItalic()) builder.append("§o");
             if (style.isObfuscated()) builder.append("§k");

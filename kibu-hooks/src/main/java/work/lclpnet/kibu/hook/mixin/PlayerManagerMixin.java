@@ -1,17 +1,17 @@
 package work.lclpnet.kibu.hook.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.network.ClientConnection;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerConfigEntry;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ConnectedClientData;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.NameToIdCache;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.server.players.NameAndId;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.server.players.UserNameToIdResolver;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,91 +25,91 @@ import work.lclpnet.kibu.hook.player.PlayerSpawnLocationCallback;
 
 import java.util.Set;
 
-@Mixin(PlayerManager.class)
+@Mixin(PlayerList.class)
 public abstract class PlayerManagerMixin {
 
     @Shadow @Final private MinecraftServer server;
 
-    @Shadow public abstract void broadcast(Text message, boolean overlay);
+    @Shadow public abstract void broadcastSystemMessage(Component message, boolean overlay);
 
     @Redirect(
-            method = "onPlayerConnect",
+            method = "placeNewPlayer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"
+                    target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"
             )
     )
-    public void kibu$sendJoinMessage(PlayerManager instance, Text message, boolean overlay) {
+    public void kibu$sendJoinMessage(PlayerList instance, Component message, boolean overlay) {
         // ignore default join message
     }
 
     @Inject(
-            method = "onPlayerConnect",
+            method = "placeNewPlayer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"
+                    target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"
             )
     )
-    public void kibu$sendCustomJoinMessage(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
-        PlayerConfigEntry configEntry = player.getPlayerConfigEntry();
-        NameToIdCache nameToIdCache = this.server.getApiServices().nameToIdCache();
+    public void kibu$sendCustomJoinMessage(Connection connection, ServerPlayer player, CommonListenerCookie clientData, CallbackInfo ci) {
+        NameAndId configEntry = player.nameAndId();
+        UserNameToIdResolver nameToIdCache = this.server.services().nameToIdCache();
 
         if (nameToIdCache == null) return;
 
-        PlayerConfigEntry byUuid = nameToIdCache.getByUuid(configEntry.id()).orElse(null);
+        NameAndId byUuid = nameToIdCache.get(configEntry.id()).orElse(null);
         String s = byUuid == null ? configEntry.name() : byUuid.name();
 
-        final MutableText originalText;
+        final MutableComponent originalText;
         if (player.getGameProfile().name().equalsIgnoreCase(s)) {
-            originalText = Text.translatable("multiplayer.player.joined", player.getDisplayName());
+            originalText = Component.translatable("multiplayer.player.joined", player.getDisplayName());
         } else {
-            originalText = Text.translatable("multiplayer.player.joined.renamed", player.getDisplayName(), s);
+            originalText = Component.translatable("multiplayer.player.joined.renamed", player.getDisplayName(), s);
         }
 
-        Text text = PlayerConnectionHooks.JOIN_MESSAGE.invoker().onJoin(player, originalText.formatted(Formatting.YELLOW));
+        Component text = PlayerConnectionHooks.JOIN_MESSAGE.invoker().onJoin(player, originalText.withStyle(ChatFormatting.YELLOW));
         if (text != null) {
-            this.broadcast(text, false);
-            player.sendMessage(text, false);
+            this.broadcastSystemMessage(text, false);
+            player.displayClientMessage(text, false);
         }
     }
 
     @Inject(
-            method = "onPlayerConnect",
+            method = "placeNewPlayer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;onSpawn()V",
+                    target = "Lnet/minecraft/server/level/ServerPlayer;initInventoryMenu()V",
                     shift = At.Shift.AFTER
             )
     )
-    public void kibu$afterConnected(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
+    public void kibu$afterConnected(Connection connection, ServerPlayer player, CommonListenerCookie clientData, CallbackInfo ci) {
         PlayerConnectionHooks.JOIN.invoker().act(player);
 
-        var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.getEntityWorld(),
-                player.getEntityPos(), player.getYaw(), player.getPitch());
+        var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.level(),
+                player.position(), player.getYRot(), player.getXRot());
 
         PlayerSpawnLocationCallback.HOOK.invoker().onSpawn(data);
 
         if (data.isDirty()) {
-            Vec3d pos = data.getPosition();
-            player.teleport(data.getWorld(), pos.getX(), pos.getY(), pos.getZ(), Set.of(), data.getYaw(), data.getPitch(), true);
+            Vec3 pos = data.getPosition();
+            player.teleportTo(data.getWorld(), pos.x(), pos.y(), pos.z(), Set.of(), data.getYaw(), data.getPitch(), true);
         }
     }
 
     @Inject(
-            method = "respawnPlayer",
+            method = "respawn",
             at = @At("RETURN")
     )
-    public void kibu$afterRespawn(ServerPlayerEntity oldPlayer, boolean alive, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayerEntity> cir) {
-        ServerPlayerEntity player = cir.getReturnValue();
+    public void kibu$afterRespawn(ServerPlayer oldPlayer, boolean alive, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayer> cir) {
+        ServerPlayer player = cir.getReturnValue();
 
-        var data = new PlayerSpawnLocationCallback.LocationData(player, false, player.getEntityWorld(),
-                player.getEntityPos(), player.getYaw(), player.getPitch());
+        var data = new PlayerSpawnLocationCallback.LocationData(player, false, player.level(),
+                player.position(), player.getYRot(), player.getXRot());
 
         PlayerSpawnLocationCallback.HOOK.invoker().onSpawn(data);
 
         if (data.isDirty()) {
-            Vec3d pos = data.getPosition();
-            player.teleport(data.getWorld(), pos.getX(), pos.getY(), pos.getZ(), Set.of(), data.getYaw(), data.getPitch(), true);
+            Vec3 pos = data.getPosition();
+            player.teleportTo(data.getWorld(), pos.x(), pos.y(), pos.z(), Set.of(), data.getYaw(), data.getPitch(), true);
         }
     }
 }

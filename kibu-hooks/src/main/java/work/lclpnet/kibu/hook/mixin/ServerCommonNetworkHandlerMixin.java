@@ -3,11 +3,11 @@ package work.lclpnet.kibu.hook.mixin;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import io.netty.channel.ChannelFutureListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.common.CustomClickActionC2SPacket;
-import net.minecraft.server.network.ServerCommonNetworkHandler;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.ServerboundCustomClickActionPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerCommonPacketListenerImpl;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,18 +15,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.hook.network.CustomClickActionCallback;
 import work.lclpnet.kibu.hook.network.ServerSendPacketCallback;
 
-@Mixin(ServerCommonNetworkHandler.class)
+@Mixin(ServerCommonPacketListenerImpl.class)
 public class ServerCommonNetworkHandlerMixin {
 
     @Inject(
-            method = "send",
+            method = "send(Lnet/minecraft/network/protocol/Packet;Lio/netty/channel/ChannelFutureListener;)V",
             at = @At("HEAD"),
             cancellable = true
     )
     public void kibu$send(Packet<?> packet, ChannelFutureListener channelFutureListener, CallbackInfo ci,
                           @Local(argsOnly = true) LocalRef<Packet<?>> capture) {
 
-        ServerCommonNetworkHandler self = (ServerCommonNetworkHandler) (Object) this;
+        ServerCommonPacketListenerImpl self = (ServerCommonPacketListenerImpl) (Object) this;
 
         var res = ServerSendPacketCallback.HOOK.invoker().overridePacket(packet, self);
 
@@ -42,12 +42,12 @@ public class ServerCommonNetworkHandlerMixin {
     }
 
     @Inject(
-            method = "onCustomClickAction",
+            method = "handleCustomClickAction",
             at = @At("TAIL")
     )
-    public void ap2$onCustomClickAction(CustomClickActionC2SPacket packet, CallbackInfo ci) {
-        if ((Object) this instanceof ServerPlayNetworkHandler handler) {
-            ServerPlayerEntity player = handler.player;
+    public void ap2$onCustomClickAction(ServerboundCustomClickActionPacket packet, CallbackInfo ci) {
+        if ((Object) this instanceof ServerGamePacketListenerImpl handler) {
+            ServerPlayer player = handler.player;
 
             if (player == null) return;
 

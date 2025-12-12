@@ -1,15 +1,15 @@
 package work.lclpnet.kibu.access.entity;
 
-import net.minecraft.entity.passive.TropicalFishEntity;
-import net.minecraft.util.DyeColor;
+import net.minecraft.world.entity.animal.TropicalFish;
+import net.minecraft.world.item.DyeColor;
 import work.lclpnet.kibu.access.mixin.TropicalFishEntityAccessor;
 
 public class TropicalFishEntityAccess {
 
     private TropicalFishEntityAccess() {}
 
-    public static void setVariant(TropicalFishEntity tropicalFish, TropicalFishEntity.Pattern pattern, DyeColor baseColor, DyeColor patternColor) {
-        int id = TropicalFishEntityAccessor.invokeGetVariantId(pattern, baseColor, patternColor);
-        ((TropicalFishEntityAccessor) tropicalFish).invokeSetTropicalFishVariant(id);
+    public static void setVariant(TropicalFish tropicalFish, TropicalFish.Pattern pattern, DyeColor baseColor, DyeColor patternColor) {
+        int id = TropicalFishEntityAccessor.invokePackVariant(pattern, baseColor, patternColor);
+        ((TropicalFishEntityAccessor) tropicalFish).invokeSetPackedVariant(id);
     }
 }

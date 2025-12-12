@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 import work.lclpnet.kibu.hook.util.PositionRotation;
@@ -19,5 +19,5 @@ public interface PlayerMoveCallback {
         return cancelled;
     });
 
-    boolean onMove(ServerPlayerEntity player, PositionRotation from, PositionRotation to);
+    boolean onMove(ServerPlayer player, PositionRotation from, PositionRotation to);
 }

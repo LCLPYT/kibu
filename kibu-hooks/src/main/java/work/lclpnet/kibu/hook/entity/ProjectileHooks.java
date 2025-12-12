@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.phys.BlockHitResult;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -29,10 +29,10 @@ public class ProjectileHooks {
             });
 
     public interface HitBlock {
-        void onHitBlock(ProjectileEntity projectile, BlockHitResult hit);
+        void onHitBlock(Projectile projectile, BlockHitResult hit);
     }
 
     public interface AffectBlock {
-        boolean onAffect(ProjectileEntity projectile, BlockHitResult hit);
+        boolean onAffect(Projectile projectile, BlockHitResult hit);
     }
 }

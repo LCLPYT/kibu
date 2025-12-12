@@ -1,12 +1,12 @@
 package work.lclpnet.kibu.hook.mixin.block;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.block.PressurePlateBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,19 +18,19 @@ import work.lclpnet.kibu.hook.world.PressurePlateCallback;
 public class PressurePlateBlockMixin {
 
     @Inject(
-            method = "getRedstoneOutput(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)I",
+            method = "getSignalStrength(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/PressurePlateBlock;getEntityCount(Lnet/minecraft/world/World;Lnet/minecraft/util/math/Box;Ljava/lang/Class;)I"
+                    target = "Lnet/minecraft/world/level/block/PressurePlateBlock;getEntityCount(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/AABB;Ljava/lang/Class;)I"
             ),
             cancellable = true
     )
-    public void kibu$onGetRedstoneOutput(World world, BlockPos pos, CallbackInfoReturnable<Integer> cir,
+    public void kibu$onGetRedstoneOutput(Level world, BlockPos pos, CallbackInfoReturnable<Integer> cir,
                                          @Local Class<? extends Entity> entityClass) {
-        Box box = AbstractPressurePlateBlockAccessor.getBox().offset(pos);
+        AABB box = AbstractPressurePlateBlockAccessor.getBox().move(pos);
 
-        var entities = world.getEntitiesByClass(entityClass, box, EntityPredicates.EXCEPT_SPECTATOR
-                .and((entity) -> !entity.canAvoidTraps()));
+        var entities = world.getEntitiesOfClass(entityClass, box, EntitySelector.NO_SPECTATORS
+                .and((entity) -> !entity.isIgnoringBlockTriggers()));
 
         boolean success = false;
         boolean modified = false;

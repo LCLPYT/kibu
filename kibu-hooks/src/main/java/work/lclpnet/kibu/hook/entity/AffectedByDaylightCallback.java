@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.world.entity.Mob;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -18,5 +18,5 @@ public interface AffectedByDaylightCallback {
         return ignore;
     });
 
-    boolean shouldIgnoreDaylight(MobEntity entity);
+    boolean shouldIgnoreDaylight(Mob entity);
 }

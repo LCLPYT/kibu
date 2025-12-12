@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
@@ -24,5 +24,5 @@ public interface EntityStatusEffectCallback {
         return cancel;
     });
 
-    boolean onAddEffect(LivingEntity entity, StatusEffectInstance effect, @Nullable Entity source);
+    boolean onAddEffect(LivingEntity entity, MobEffectInstance effect, @Nullable Entity source);
 }

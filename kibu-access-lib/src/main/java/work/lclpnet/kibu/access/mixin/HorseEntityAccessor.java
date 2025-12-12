@@ -1,14 +1,14 @@
 package work.lclpnet.kibu.access.mixin;
 
-import net.minecraft.entity.passive.HorseColor;
-import net.minecraft.entity.passive.HorseEntity;
-import net.minecraft.entity.passive.HorseMarking;
+import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.entity.animal.horse.Markings;
+import net.minecraft.world.entity.animal.horse.Variant;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(HorseEntity.class)
+@Mixin(Horse.class)
 public interface HorseEntityAccessor {
 
     @Invoker
-    void invokeSetHorseVariant(HorseColor color, HorseMarking marking);
+    void invokeSetVariantAndMarkings(Variant color, Markings marking);
 }

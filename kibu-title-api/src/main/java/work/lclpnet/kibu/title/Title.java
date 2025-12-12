@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.title;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 public interface Title {
 
@@ -17,13 +17,13 @@ public interface Title {
      * Sends a title to the player.
      * @param title The text to display as title.
      */
-    void title(Text title);
+    void title(Component title);
 
     /**
      * Sends a subtitle to the player.
      * @param subtitle The text to display as subtitle.
      */
-    void subtitle(Text subtitle);
+    void subtitle(Component subtitle);
 
     /**
      * Clears the current title and subtitle for the player.
@@ -55,7 +55,7 @@ public interface Title {
      * @param stay Stay time in ticks
      * @param out Fade-out time in ticks
      */
-    default void title(Text title, Text subtitle, int in, int stay, int out) {
+    default void title(Component title, Component subtitle, int in, int stay, int out) {
         times(in, stay, out);
         title(title);
         subtitle(subtitle);
@@ -66,12 +66,12 @@ public interface Title {
      * @param title The title text
      * @param subtitle The subtitle text
      */
-    default void title(Text title, Text subtitle) {
+    default void title(Component title, Component subtitle) {
         title(title);
         subtitle(subtitle);
     }
 
-    static Title get(ServerPlayerEntity player) {
+    static Title get(ServerPlayer player) {
         return ((TitleAccess) player).kibu$getTitle();
     }
 }

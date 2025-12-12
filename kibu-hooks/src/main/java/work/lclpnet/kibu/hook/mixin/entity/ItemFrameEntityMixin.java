@@ -1,13 +1,13 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.decoration.ItemFrameEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,21 +16,21 @@ import work.lclpnet.kibu.hook.entity.ItemFramePutItemCallback;
 import work.lclpnet.kibu.hook.entity.ItemFrameRemoveItemCallback;
 import work.lclpnet.kibu.hook.entity.ItemFrameRotateCallback;
 
-@Mixin(ItemFrameEntity.class)
+@Mixin(ItemFrame.class)
 public class ItemFrameEntityMixin {
 
     @Inject(
-            method = "damage",
+            method = "hurtServer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/decoration/ItemFrameEntity;dropHeldStack(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/Entity;Z)V"
+                    target = "Lnet/minecraft/world/entity/decoration/ItemFrame;dropItem(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Z)V"
             ),
             cancellable = true
     )
-    public void kibu$beforeDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        ItemFrameEntity self = (ItemFrameEntity) (Object) this;
+    public void kibu$beforeDamage(ServerLevel world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        ItemFrame self = (ItemFrame) (Object) this;
 
-        if (ItemFrameRemoveItemCallback.HOOK.invoker().onRemoveItem(self, source.getAttacker())) {
+        if (ItemFrameRemoveItemCallback.HOOK.invoker().onRemoveItem(self, source.getEntity())) {
             cir.setReturnValue(false);
         }
     }
@@ -39,15 +39,15 @@ public class ItemFrameEntityMixin {
             method = "interact",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/decoration/ItemFrameEntity;setHeldItemStack(Lnet/minecraft/item/ItemStack;)V"
+                    target = "Lnet/minecraft/world/entity/decoration/ItemFrame;setItem(Lnet/minecraft/world/item/ItemStack;)V"
             ),
             cancellable = true
     )
-    public void kibu$onPutIntoFrame(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir, @Local ItemStack stack) {
-        ItemFrameEntity self = (ItemFrameEntity) (Object) this;
+    public void kibu$onPutIntoFrame(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir, @Local ItemStack stack) {
+        ItemFrame self = (ItemFrame) (Object) this;
 
         if (ItemFramePutItemCallback.HOOK.invoker().onPutIntoFrame(self, stack, player, hand)) {
-            cir.setReturnValue(ActionResult.FAIL);
+            cir.setReturnValue(InteractionResult.FAIL);
         }
     }
 
@@ -55,15 +55,15 @@ public class ItemFrameEntityMixin {
             method = "interact",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/decoration/ItemFrameEntity;playSound(Lnet/minecraft/sound/SoundEvent;FF)V"
+                    target = "Lnet/minecraft/world/entity/decoration/ItemFrame;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"
             ),
             cancellable = true
     )
-    public void kibu$onRotateFrame(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        ItemFrameEntity self = (ItemFrameEntity) (Object) this;
+    public void kibu$onRotateFrame(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        ItemFrame self = (ItemFrame) (Object) this;
 
         if (ItemFrameRotateCallback.HOOK.invoker().onRotateFrame(self, player, hand)) {
-            cir.setReturnValue(ActionResult.FAIL);
+            cir.setReturnValue(InteractionResult.FAIL);
         }
     }
 }

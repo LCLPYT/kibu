@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -20,5 +20,5 @@ public interface ProjectilePickupCallback {
                 return cancel;
             });
 
-    boolean onPickup(PlayerEntity player, PersistentProjectileEntity projectile);
+    boolean onPickup(Player player, AbstractArrow projectile);
 }

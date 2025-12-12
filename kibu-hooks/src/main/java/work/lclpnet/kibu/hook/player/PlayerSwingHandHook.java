@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -16,5 +16,5 @@ public interface PlayerSwingHandHook {
         }
     });
 
-    void onSwingHand(ServerPlayerEntity player, Hand hand);
+    void onSwingHand(ServerPlayer player, InteractionHand hand);
 }

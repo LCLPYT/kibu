@@ -2,12 +2,12 @@ package work.lclpnet.kibu.inv.prompt;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.entity.ContainerUser;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ContainerUser;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 import work.lclpnet.kibu.inv.type.RestrictedInventory;
@@ -19,17 +19,17 @@ import java.util.function.Function;
 
 public class OptionPrompt {
 
-    public static <T> CompletableFuture<Optional<T>> open(ServerPlayerEntity player, Text title, Collection<T> options, Function<T, ItemStack> iconFactory) {
+    public static <T> CompletableFuture<Optional<T>> open(ServerPlayer player, Component title, Collection<T> options, Function<T, ItemStack> iconFactory) {
         var future = new CompletableFuture<Optional<T>>();
 
         RestrictedInventory inventory = createInventory(title, options, iconFactory, future);
 
-        player.openHandledScreen(inventory);
+        player.openMenu(inventory);
 
         return future;
     }
 
-    public static <T> RestrictedInventory createInventory(Text title, Collection<T> options, Function<T, ItemStack> iconFactory, CompletableFuture<Optional<T>> future) {
+    public static <T> RestrictedInventory createInventory(Component title, Collection<T> options, Function<T, ItemStack> iconFactory, CompletableFuture<Optional<T>> future) {
         int rows = Math.max(1, Math.min(6, (int) Math.ceil(options.size() / 9d)));
 
         var inv = new ChooserInventory<>(rows, title, options, future);
@@ -42,7 +42,7 @@ public class OptionPrompt {
 
             ItemStack icon = iconFactory.apply(item);
 
-            inv.setStack(i++, icon);
+            inv.setItem(i++, icon);
         }
 
         return inv;
@@ -56,7 +56,7 @@ public class OptionPrompt {
         private final Int2ObjectMap<T> items;
         private final CompletableFuture<Optional<T>> future;
 
-        private ChooserInventory(int rows, Text title, Collection<T> items, CompletableFuture<Optional<T>> future) {
+        private ChooserInventory(int rows, Component title, Collection<T> items, CompletableFuture<Optional<T>> future) {
             super(rows, title);
 
             this.future = future;
@@ -82,24 +82,24 @@ public class OptionPrompt {
 
             if (slot == null) return;
 
-            int slotIndex = slot.getIndex();
+            int slotIndex = slot.getContainerSlot();
 
             T option = get(slotIndex);
 
             if (option == null) return;
 
-            ServerPlayerEntity player = event.player();
+            ServerPlayer player = event.player();
 
             future.complete(Optional.of(option));
 
-            if (player.currentScreenHandler instanceof GenericContainerScreenHandler handler && handler.getInventory() == this) {
-                player.closeHandledScreen();
+            if (player.containerMenu instanceof ChestMenu handler && handler.getContainer() == this) {
+                player.closeContainer();
             }
         }
 
         @Override
-        public void onClose(ContainerUser user) {
-            super.onClose(user);
+        public void stopOpen(ContainerUser user) {
+            super.stopOpen(user);
 
             future.complete(Optional.empty());
         }

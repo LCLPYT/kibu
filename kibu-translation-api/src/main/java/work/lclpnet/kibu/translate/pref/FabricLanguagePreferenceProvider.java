@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.translate.pref;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Optional;
 
@@ -18,7 +18,7 @@ public class FabricLanguagePreferenceProvider implements LanguagePreferenceProvi
     }
 
     @Override
-    public Optional<String> getLanguagePreference(ServerPlayerEntity player) {
+    public Optional<String> getLanguagePreference(ServerPlayer player) {
         for (LanguagePreferenceProvider provider : providers) {
             var preference = provider.getLanguagePreference(player);
 

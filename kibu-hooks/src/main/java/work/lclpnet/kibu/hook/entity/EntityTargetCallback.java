@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
@@ -20,5 +20,5 @@ public interface EntityTargetCallback {
         return cancel;
     });
 
-    boolean onChangeTarget(MobEntity entity, @Nullable LivingEntity target);
+    boolean onChangeTarget(Mob entity, @Nullable LivingEntity target);
 }

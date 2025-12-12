@@ -1,15 +1,15 @@
 package work.lclpnet.kibu.schematic;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.mc.*;
 import work.lclpnet.kibu.nbt.FabricNbtConversion;
@@ -69,11 +69,11 @@ public class FabricBlockStateAdapter implements BlockStateAdapter {
     }
 
     public Optional<FabricKibuBlockEntity> revert(KibuBlockEntity blockEntity) {
-        Identifier id = Identifier.tryParse(blockEntity.getId());
+        ResourceLocation id = ResourceLocation.tryParse(blockEntity.getId());
 
-        return Registries.BLOCK_ENTITY_TYPE.getOptionalValue(id).map(type -> {
+        return BuiltInRegistries.BLOCK_ENTITY_TYPE.getOptional(id).map(type -> {
             BlockPos pos = revert(blockEntity.getPosition());
-            NbtCompound nbt = FabricNbtConversion.convert(blockEntity.createNbt(), NbtCompound.class);
+            CompoundTag nbt = FabricNbtConversion.convert(blockEntity.createNbt(), CompoundTag.class);
 
             return new FabricKibuBlockEntity(type, pos, nbt);
         });
@@ -84,9 +84,9 @@ public class FabricBlockStateAdapter implements BlockStateAdapter {
     }
 
     public Optional<FabricKibuEntity> revert(KibuEntity entity) {
-        return EntityType.get(entity.getId()).map(type -> {
-            Vec3d pos = new Vec3d(entity.getX(), entity.getY(), entity.getZ());
-            NbtCompound nbt = FabricNbtConversion.convert(entity.getExtraNbt(), NbtCompound.class);
+        return EntityType.byString(entity.getId()).map(type -> {
+            Vec3 pos = new Vec3(entity.getX(), entity.getY(), entity.getZ());
+            CompoundTag nbt = FabricNbtConversion.convert(entity.getExtraNbt(), CompoundTag.class);
 
             return new FabricKibuEntity(type, pos, nbt);
         });

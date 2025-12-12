@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.util.math;
 
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.Vec3i;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

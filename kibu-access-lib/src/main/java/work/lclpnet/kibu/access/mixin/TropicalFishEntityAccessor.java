@@ -1,18 +1,18 @@
 package work.lclpnet.kibu.access.mixin;
 
-import net.minecraft.entity.passive.TropicalFishEntity;
-import net.minecraft.util.DyeColor;
+import net.minecraft.world.entity.animal.TropicalFish;
+import net.minecraft.world.item.DyeColor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(TropicalFishEntity.class)
+@Mixin(TropicalFish.class)
 public interface TropicalFishEntityAccessor {
 
     @Invoker
-    static int invokeGetVariantId(TropicalFishEntity.Pattern pattern, DyeColor baseColor, DyeColor patternColor) {
+    static int invokePackVariant(TropicalFish.Pattern pattern, DyeColor baseColor, DyeColor patternColor) {
         throw new AssertionError();
     }
 
     @Invoker
-    void invokeSetTropicalFishVariant(int variant);
+    void invokeSetPackedVariant(int variant);
 }

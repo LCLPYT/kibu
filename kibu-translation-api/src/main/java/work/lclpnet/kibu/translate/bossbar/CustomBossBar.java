@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.translate.bossbar;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 public interface CustomBossBar {
 
-    void removePlayer(ServerPlayerEntity player);
+    void removePlayer(ServerPlayer player);
 }

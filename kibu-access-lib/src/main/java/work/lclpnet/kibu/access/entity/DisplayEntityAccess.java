@@ -1,12 +1,12 @@
 package work.lclpnet.kibu.access.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.decoration.Brightness;
-import net.minecraft.entity.decoration.DisplayEntity;
-import net.minecraft.item.ItemDisplayContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.AffineTransformation;
+import com.mojang.math.Transformation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Brightness;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import work.lclpnet.kibu.access.mixin.BlockDisplayEntityAccessor;
@@ -20,190 +20,190 @@ public class DisplayEntityAccess {
     private DisplayEntityAccess() {}
 
     // BlockDisplayEntity
-    public static void setBlockState(DisplayEntity.BlockDisplayEntity entity, BlockState state) {
+    public static void setBlockState(Display.BlockDisplay entity, BlockState state) {
         entity.setBlockState(state);
     }
 
-    public static BlockState getBlockState(DisplayEntity.BlockDisplayEntity entity) {
+    public static BlockState getBlockState(Display.BlockDisplay entity) {
         return ((BlockDisplayEntityAccessor) entity).invokeGetBlockState();
     }
 
     // ItemDisplayEntity
-    public static void setItemStack(DisplayEntity.ItemDisplayEntity entity, ItemStack stack) {
+    public static void setItemStack(Display.ItemDisplay entity, ItemStack stack) {
         entity.setItemStack(stack);
     }
 
-    public static ItemStack getItemStack(DisplayEntity.ItemDisplayEntity entity) {
+    public static ItemStack getItemStack(Display.ItemDisplay entity) {
         return ((ItemDisplayEntityAccessor) entity).invokeGetItemStack();
     }
 
-    public static void setTransformationMode(DisplayEntity.ItemDisplayEntity entity, ItemDisplayContext mode) {
-        entity.setItemDisplayContext(mode);
+    public static void setTransformationMode(Display.ItemDisplay entity, ItemDisplayContext mode) {
+        entity.setItemTransform(mode);
     }
 
-    public static ItemDisplayContext getTransformationMode(DisplayEntity.ItemDisplayEntity entity) {
-        return ((ItemDisplayEntityAccessor) entity).invokeGetItemDisplayContext();
+    public static ItemDisplayContext getTransformationMode(Display.ItemDisplay entity) {
+        return ((ItemDisplayEntityAccessor) entity).invokeGetItemTransform();
     }
 
     // TextDisplayEntity
-    public static void setText(DisplayEntity.TextDisplayEntity entity, Text text) {
+    public static void setText(Display.TextDisplay entity, Component text) {
         entity.setText(text);
     }
 
-    public static Text getText(DisplayEntity.TextDisplayEntity entity) {
+    public static Component getText(Display.TextDisplay entity) {
         return ((TextDisplayEntityAccessor) entity).invokeGetText();
     }
 
-    public static void setLineWidth(DisplayEntity.TextDisplayEntity entity, int lineWidth) {
+    public static void setLineWidth(Display.TextDisplay entity, int lineWidth) {
         entity.setLineWidth(lineWidth);
     }
 
-    public static int getLineWidth(DisplayEntity.TextDisplayEntity entity) {
+    public static int getLineWidth(Display.TextDisplay entity) {
         return ((TextDisplayEntityAccessor) entity).invokeGetLineWidth();
     }
 
-    public static void setTextOpacity(DisplayEntity.TextDisplayEntity entity, byte textOpacity) {
+    public static void setTextOpacity(Display.TextDisplay entity, byte textOpacity) {
         entity.setTextOpacity(textOpacity);
     }
 
-    public static byte getTextOpacity(DisplayEntity.TextDisplayEntity entity) {
+    public static byte getTextOpacity(Display.TextDisplay entity) {
         return ((TextDisplayEntityAccessor) entity).invokeGetTextOpacity();
     }
 
-    public static void setBackground(DisplayEntity.TextDisplayEntity entity, int background) {
-        entity.setBackground(background);
+    public static void setBackground(Display.TextDisplay entity, int background) {
+        entity.setBackgroundColor(background);
     }
 
-    public static int getBackground(DisplayEntity.TextDisplayEntity entity) {
-        return ((TextDisplayEntityAccessor) entity).invokeGetBackground();
+    public static int getBackground(Display.TextDisplay entity) {
+        return ((TextDisplayEntityAccessor) entity).invokeGetBackgroundColor();
     }
 
-    public static void setDisplayFlags(DisplayEntity.TextDisplayEntity entity, byte displayFlags) {
-        entity.setDisplayFlags(displayFlags);
+    public static void setDisplayFlags(Display.TextDisplay entity, byte displayFlags) {
+        entity.setFlags(displayFlags);
     }
 
-    public static byte getDisplayFlags(DisplayEntity.TextDisplayEntity entity) {
-        return ((TextDisplayEntityAccessor) entity).invokeGetDisplayFlags();
+    public static byte getDisplayFlags(Display.TextDisplay entity) {
+        return ((TextDisplayEntityAccessor) entity).invokeGetFlags();
     }
 
     // common DisplayEntity
-    public static void setTransformation(DisplayEntity entity, AffineTransformation transformation) {
+    public static void setTransformation(Display entity, Transformation transformation) {
         entity.setTransformation(transformation);
     }
 
-    public static AffineTransformation getTransformation(DisplayEntity entity) {
-        return DisplayEntityAccessor.invokeGetTransformation(entity.getDataTracker());
+    public static Transformation getTransformation(Display entity) {
+        return DisplayEntityAccessor.invokeCreateTransformation(entity.getEntityData());
     }
 
-    public static void setInterpolationDuration(DisplayEntity entity, int interpolationDuration) {
-        entity.setInterpolationDuration(interpolationDuration);
+    public static void setInterpolationDuration(Display entity, int interpolationDuration) {
+        entity.setTransformationInterpolationDuration(interpolationDuration);
     }
 
-    public static int getInterpolationDuration(DisplayEntity entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetInterpolationDuration();
+    public static int getInterpolationDuration(Display entity) {
+        return ((DisplayEntityAccessor) entity).invokeGetTransformationInterpolationDuration();
     }
 
-    public static void setStartInterpolation(DisplayEntity entity, int startDuration) {
-        entity.setStartInterpolation(startDuration);
+    public static void setStartInterpolation(Display entity, int startDuration) {
+        entity.setTransformationInterpolationDelay(startDuration);
     }
 
-    public static int getStartInterpolation(DisplayEntity entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetStartInterpolation();
+    public static int getStartInterpolation(Display entity) {
+        return ((DisplayEntityAccessor) entity).invokeGetTransformationInterpolationDelay();
     }
 
-    public static void setBillboardMode(DisplayEntity entity, DisplayEntity.BillboardMode billboardMode) {
-        entity.setBillboardMode(billboardMode);
+    public static void setBillboardMode(Display entity, Display.BillboardConstraints billboardMode) {
+        entity.setBillboardConstraints(billboardMode);
     }
 
-    public static DisplayEntity.BillboardMode getBillboardMode(DisplayEntity entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetBillboardMode();
+    public static Display.BillboardConstraints getBillboardMode(Display entity) {
+        return ((DisplayEntityAccessor) entity).invokeGetBillboardConstraints();
     }
 
-    public static void setBrightness(DisplayEntity entity, Brightness brightness) {
-        entity.setBrightness(brightness);
+    public static void setBrightness(Display entity, Brightness brightness) {
+        entity.setBrightnessOverride(brightness);
     }
 
-    public static int getBrightness(DisplayEntity entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetBrightness();
+    public static int getBrightness(Display entity) {
+        return ((DisplayEntityAccessor) entity).invokeGetPackedBrightnessOverride();
     }
 
-    public static void setViewRange(DisplayEntity entity, float viewRange) {
+    public static void setViewRange(Display entity, float viewRange) {
         entity.setViewRange(viewRange);
     }
 
-    public static float getViewRange(DisplayEntity entity) {
+    public static float getViewRange(Display entity) {
         return ((DisplayEntityAccessor) entity).invokeGetViewRange();
     }
 
-    public static void setShadowRadius(DisplayEntity entity, float shadowRadius) {
+    public static void setShadowRadius(Display entity, float shadowRadius) {
         entity.setShadowRadius(shadowRadius);
     }
 
-    public static float getShadowRadius(DisplayEntity entity) {
+    public static float getShadowRadius(Display entity) {
         return ((DisplayEntityAccessor) entity).invokeGetShadowRadius();
     }
 
-    public static void setShadowStrength(DisplayEntity entity, float shadowStrength) {
+    public static void setShadowStrength(Display entity, float shadowStrength) {
         entity.setShadowStrength(shadowStrength);
     }
 
-    public static float getShadowStrength(DisplayEntity entity) {
+    public static float getShadowStrength(Display entity) {
         return ((DisplayEntityAccessor) entity).invokeGetShadowStrength();
     }
 
-    public static void setDisplayWidth(DisplayEntity entity, float displayWidth) {
-        entity.setDisplayWidth(displayWidth);
+    public static void setDisplayWidth(Display entity, float displayWidth) {
+        entity.setWidth(displayWidth);
     }
 
-    public static float getDisplayWidth(DisplayEntity entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetDisplayWidth();
+    public static float getDisplayWidth(Display entity) {
+        return ((DisplayEntityAccessor) entity).invokeGetWidth();
     }
 
-    public static void setDisplayHeight(DisplayEntity entity, float displayHeight) {
-        entity.setDisplayHeight(displayHeight);
+    public static void setDisplayHeight(Display entity, float displayHeight) {
+        entity.setHeight(displayHeight);
     }
 
-    public static float getDisplayHeight(DisplayEntity entity) {
-        return ((DisplayEntityAccessor) entity).invokeGetDisplayHeight();
+    public static float getDisplayHeight(Display entity) {
+        return ((DisplayEntityAccessor) entity).invokeGetHeight();
     }
 
-    public static void setGlowColorOverride(DisplayEntity entity, int glowColorOverride) {
+    public static void setGlowColorOverride(Display entity, int glowColorOverride) {
         entity.setGlowColorOverride(glowColorOverride);
     }
 
-    public static int getGlowColorOverride(DisplayEntity entity) {
+    public static int getGlowColorOverride(Display entity) {
         return ((DisplayEntityAccessor) entity).invokeGetGlowColorOverride();
     }
 
-    public static void setTranslation(DisplayEntity entity, Vector3f translation) {
+    public static void setTranslation(Display entity, Vector3f translation) {
         ((KibuDisplayEntity) entity).kibu$setTranslation(translation);
     }
 
-    public static Vector3f getTranslation(DisplayEntity entity) {
+    public static Vector3f getTranslation(Display entity) {
         return ((KibuDisplayEntity) entity).kibu$getTranslation();
     }
 
-    public static void setLeftRotation(DisplayEntity entity, Quaternionf leftRotation) {
+    public static void setLeftRotation(Display entity, Quaternionf leftRotation) {
         ((KibuDisplayEntity) entity).kibu$setLeftRotation(leftRotation);
     }
 
-    public static Quaternionf getLeftRotation(DisplayEntity entity) {
+    public static Quaternionf getLeftRotation(Display entity) {
         return ((KibuDisplayEntity) entity).kibu$getLeftRotation();
     }
 
-    public static void setScale(DisplayEntity entity, Vector3f scale) {
+    public static void setScale(Display entity, Vector3f scale) {
         ((KibuDisplayEntity) entity).kibu$setScale(scale);
     }
 
-    public static Vector3f getScale(DisplayEntity entity) {
+    public static Vector3f getScale(Display entity) {
         return ((KibuDisplayEntity) entity).kibu$getScale();
     }
 
-    public static void setRightRotation(DisplayEntity entity, Quaternionf rightRotation) {
+    public static void setRightRotation(Display entity, Quaternionf rightRotation) {
         ((KibuDisplayEntity) entity).kibu$setRightRotation(rightRotation);
     }
 
-    public static Quaternionf getRightRotation(DisplayEntity entity) {
+    public static Quaternionf getRightRotation(Display entity) {
         return ((KibuDisplayEntity) entity).kibu$getRightRotation();
     }
 }

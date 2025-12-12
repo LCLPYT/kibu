@@ -4,44 +4,44 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
 import work.lclpnet.kibu.access.network.packet.TeamS2CPacketAccess;
 
 public class TeamCommand {
 
     private boolean showInvisible = false;
 
-    public void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+    public void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(command());
     }
 
-    private LiteralArgumentBuilder<ServerCommandSource> command() {
-        return CommandManager.literal("kibu:team")
-                .requires(s -> s.hasPermissionLevel(2))
+    private LiteralArgumentBuilder<CommandSourceStack> command() {
+        return Commands.literal("kibu:team")
+                .requires(s -> s.hasPermission(2))
                 .executes(this::act);
     }
 
-    private int act(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
+    private int act(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
 
-        Scoreboard scoreboard = player.getEntityWorld().getScoreboard();
-        Team team = scoreboard.getTeam("kibu_test");
+        Scoreboard scoreboard = player.level().getScoreboard();
+        PlayerTeam team = scoreboard.getPlayerTeam("kibu_test");
 
         if (team == null) {
-            team = scoreboard.addTeam("kibu_test");
+            team = scoreboard.addPlayerTeam("kibu_test");
         }
 
         showInvisible = !showInvisible;
 
-        var packet = TeamS2CPacketAccess.modifyTeam(TeamS2CPacket.updateTeam(team, false), serializable ->
+        var packet = TeamS2CPacketAccess.modifyTeam(ClientboundSetPlayerTeamPacket.createAddOrModifyPacket(team, false), serializable ->
                 TeamS2CPacketAccess.withShowFriendlyInvisibles(serializable, showInvisible));
 
-        player.networkHandler.sendPacket(packet);
+        player.connection.send(packet);
 
         return 1;
     }

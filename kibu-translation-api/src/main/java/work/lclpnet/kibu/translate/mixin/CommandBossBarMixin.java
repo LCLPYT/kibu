@@ -1,11 +1,11 @@
 package work.lclpnet.kibu.translate.mixin;
 
-import net.minecraft.entity.boss.CommandBossBar;
+import net.minecraft.server.bossevents.CustomBossEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import work.lclpnet.kibu.translate.type.TransientCommandBossBar;
 
-@Mixin(CommandBossBar.class)
+@Mixin(CustomBossEvent.class)
 public class CommandBossBarMixin implements TransientCommandBossBar {
 
     @Unique

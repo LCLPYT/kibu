@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.translate.text;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public interface TextTranslatable {
 
-    Text translateTo(String language);
+    Component translateTo(String language);
 }

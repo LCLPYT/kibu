@@ -1,10 +1,10 @@
 package work.lclpnet.kibu.translate.bossbar;
 
-import net.minecraft.entity.boss.CommandBossBar;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.bossevents.CustomBossEvent;
 
 public interface BossBarProvider {
 
-    CommandBossBar createBossBar(Identifier id, Text text);
+    CustomBossEvent createBossBar(ResourceLocation id, Component text);
 }

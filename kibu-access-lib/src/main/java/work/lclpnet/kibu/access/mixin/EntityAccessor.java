@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.access.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.data.TrackedData;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -10,44 +10,44 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface EntityAccessor {
 
     @Invoker
-    void invokeScheduleVelocityUpdate();
+    void invokeMarkHurt();
 
-    @Accessor("FLAGS")
-    static TrackedData<Byte> getFlagsTrackedData() {
+    @Accessor("DATA_SHARED_FLAGS_ID")
+    static EntityDataAccessor<Byte> getFlagsTrackedData() {
         throw new AssertionError();
     }
 
-    @Accessor("ON_FIRE_FLAG_INDEX")
+    @Accessor("FLAG_ONFIRE")
     static int getOnFireFlagIndex() {
         throw new AssertionError();
     }
 
-    @Accessor("SNEAKING_FLAG_INDEX")
+    @Accessor("FLAG_SHIFT_KEY_DOWN")
     static int getSneakingFlagIndex() {
         throw new AssertionError();
     }
 
-    @Accessor("SPRINTING_FLAG_INDEX")
+    @Accessor("FLAG_SPRINTING")
     static int getSprintingFlagIndex() {
         throw new AssertionError();
     }
 
-    @Accessor("SWIMMING_FLAG_INDEX")
+    @Accessor("FLAG_SWIMMING")
     static int getSwimmingFlagIndex() {
         throw new AssertionError();
     }
 
-    @Accessor("INVISIBLE_FLAG_INDEX")
+    @Accessor("FLAG_INVISIBLE")
     static int getInvisibleFlagIndex() {
         throw new AssertionError();
     }
 
-    @Accessor("GLOWING_FLAG_INDEX")
+    @Accessor("FLAG_GLOWING")
     static int getGlowingFlagIndex() {
         throw new AssertionError();
     }
 
-    @Accessor("GLIDING_FLAG_INDEX")
+    @Accessor("FLAG_FALL_FLYING")
     static int getGlidingFlagIndex() {
         throw new AssertionError();
     }

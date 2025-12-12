@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.recipe.RecipeDisplayEntry;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -29,5 +29,5 @@ public interface PlayerRecipeNotificationCallback {
      * @param displayEntry The recipe display entry.
      * @return True, if the recipe should be hidden, false for default behaviour.
      */
-    boolean onDisplay(ServerPlayerEntity player, RecipeEntry<?> recipeEntry, RecipeDisplayEntry displayEntry);
+    boolean onDisplay(ServerPlayer player, RecipeHolder<?> recipeEntry, RecipeDisplayEntry displayEntry);
 }

@@ -1,24 +1,24 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.entity.NonLivingDamageCallback;
 
-@Mixin(ExplosiveProjectileEntity.class)
+@Mixin(AbstractHurtingProjectile.class)
 public class ExplosiveProjectileEntityMixin {
 
     @Inject(
-            method = "damage",
+            method = "hurtServer",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$beforeDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        ExplosiveProjectileEntity self = (ExplosiveProjectileEntity) (Object) this;
+    public void kibu$beforeDamage(ServerLevel world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        AbstractHurtingProjectile self = (AbstractHurtingProjectile) (Object) this;
 
         if (NonLivingDamageCallback.HOOK.invoker().onDamage(self, source, amount)) {
             cir.setReturnValue(false);

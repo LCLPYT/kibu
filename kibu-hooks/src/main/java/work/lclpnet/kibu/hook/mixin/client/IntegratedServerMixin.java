@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.mixin.client;
 
-import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.client.server.IntegratedServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,10 +13,10 @@ public class IntegratedServerMixin {
 	@Inject(
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/integrated/IntegratedServer;loadWorld()V",
+					target = "Lnet/minecraft/client/server/IntegratedServer;loadLevel()V",
 					shift = At.Shift.AFTER
 			),
-			method = "setupServer"
+			method = "initServer"
 	)
 	private void kibu$afterWorldLoad(CallbackInfoReturnable<Boolean> cir) {
 		IntegratedServer self = (IntegratedServer) (Object) this;

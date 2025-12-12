@@ -1,15 +1,15 @@
 package work.lclpnet.kibu.hook.mixin.access;
 
-import net.minecraft.block.AbstractPressurePlateBlock;
-import net.minecraft.util.math.Box;
+import net.minecraft.world.level.block.BasePressurePlateBlock;
+import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(AbstractPressurePlateBlock.class)
+@Mixin(BasePressurePlateBlock.class)
 public interface AbstractPressurePlateBlockAccessor {
 
-    @Accessor("BOX")
-    static Box getBox() {
+    @Accessor("TOUCH_AABB")
+    static AABB getBox() {
         throw new AssertionError();
     }
 }

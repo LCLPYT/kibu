@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.util.math;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
@@ -24,7 +24,7 @@ public class Matrix3i {
         elements[0] = elements[4] = elements[8] = 1;
     }
 
-    public void transform(int x, int y, int z, BlockPos.Mutable target) {
+    public void transform(int x, int y, int z, BlockPos.MutableBlockPos target) {
         target.set(
                 elements[0] * x + elements[1] * y + elements[2] * z,
                 elements[3] * x + elements[4] * y + elements[5] * z,
@@ -33,7 +33,7 @@ public class Matrix3i {
     }
 
     public BlockPos transform(int x, int y, int z) {
-        BlockPos.Mutable vec = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos vec = new BlockPos.MutableBlockPos();
 
         transform(x, y, z, vec);
 
@@ -44,8 +44,8 @@ public class Matrix3i {
         return transform(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public Vec3d transform(double x, double y, double z) {
-        return new Vec3d(
+    public Vec3 transform(double x, double y, double z) {
+        return new Vec3(
                 elements[0] * x + elements[1] * y + elements[2] * z,
                 elements[3] * x + elements[4] * y + elements[5] * z,
                 elements[6] * x + elements[7] * y + elements[8] * z
@@ -68,8 +68,8 @@ public class Matrix3i {
         transform(src.x, src.y, src.z, target);
     }
 
-    public Vec3d transform(Vec3d pos) {
-        return transform(pos.getX(), pos.getY(), pos.getZ());
+    public Vec3 transform(Vec3 pos) {
+        return transform(pos.x(), pos.y(), pos.z());
     }
 
     public Matrix3i multiply(Matrix3i other) {

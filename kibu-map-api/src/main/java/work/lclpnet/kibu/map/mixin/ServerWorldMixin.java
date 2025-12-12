@@ -1,26 +1,26 @@
 package work.lclpnet.kibu.map.mixin;
 
-import net.minecraft.component.type.MapIdComponent;
-import net.minecraft.item.map.MapState;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.saveddata.maps.MapId;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.map.hook.MapStateCallback;
 
-@Mixin(ServerWorld.class)
+@Mixin(ServerLevel.class)
 public class ServerWorldMixin {
 
     @Inject(
-            method = "getMapState",
+            method = "getMapData",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onGetMapState(MapIdComponent id, CallbackInfoReturnable<MapState> cir) {
-        ServerWorld world = (ServerWorld) (Object) this;
+    public void kibu$onGetMapState(MapId id, CallbackInfoReturnable<MapItemSavedData> cir) {
+        ServerLevel world = (ServerLevel) (Object) this;
 
-        MapState override = MapStateCallback.HOOK.invoker().getMapState(world, id);
+        MapItemSavedData override = MapStateCallback.HOOK.invoker().getMapState(world, id);
 
         if (override != null) {
             cir.setReturnValue(override);

@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.translate.text;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import work.lclpnet.kibu.translate.util.LocaleUtil;
 
 import java.util.Locale;
@@ -16,11 +16,11 @@ public class LocalizedFormat implements TextTranslatable {
     }
 
     @Override
-    public Text translateTo(String language) {
+    public Component translateTo(String language) {
         Locale locale = LocaleUtil.getLocale(language);
         String str = String.format(locale, format, args);
 
-        return Text.literal(str);
+        return Component.literal(str);
     }
 
     /**

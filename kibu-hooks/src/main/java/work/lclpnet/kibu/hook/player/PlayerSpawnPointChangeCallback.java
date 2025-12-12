@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -18,5 +18,5 @@ public interface PlayerSpawnPointChangeCallback {
         return cancelled;
     });
 
-    boolean onChange(PlayerEntity player, World world, BlockPos pos);
+    boolean onChange(Player player, Level world, BlockPos pos);
 }

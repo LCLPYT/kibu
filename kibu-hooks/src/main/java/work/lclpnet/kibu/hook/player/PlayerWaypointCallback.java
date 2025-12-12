@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.waypoint.ServerWaypoint;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.waypoints.WaypointTransmitter;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -19,5 +19,5 @@ public interface PlayerWaypointCallback {
         return cancel;
     });
 
-    boolean onRefreshTracking(ServerPlayerEntity player, ServerWaypoint waypoint);
+    boolean onRefreshTracking(ServerPlayer player, WaypointTransmitter waypoint);
 }

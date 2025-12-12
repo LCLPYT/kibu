@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -18,5 +18,5 @@ public interface WitherShootCallback {
         return cancel;
     });
 
-    boolean onShootAt(WitherEntity wither, double targetX, double targetY, double targetZ);
+    boolean onShootAt(WitherBoss wither, double targetX, double targetY, double targetZ);
 }

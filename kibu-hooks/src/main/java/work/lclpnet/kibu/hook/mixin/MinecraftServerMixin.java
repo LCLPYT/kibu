@@ -13,9 +13,9 @@ public abstract class MinecraftServerMixin {
     @Inject(
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/ServerNetworkIo;stop()V"
+                    target = "Lnet/minecraft/server/network/ServerConnectionListener;stop()V"
             ),
-            method = "shutdown"
+            method = "stopServer"
     )
     private void kibu$beforeGetNetworkIo(CallbackInfo ci) {
         MinecraftServer self = (MinecraftServer) (Object) this;

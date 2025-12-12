@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.decoration.ItemFrameEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.player.Player;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -21,5 +21,5 @@ public interface ItemFrameRotateCallback {
                 return cancel;
             });
 
-    boolean onRotateFrame(ItemFrameEntity itemFrame, PlayerEntity player, Hand hand);
+    boolean onRotateFrame(ItemFrame itemFrame, Player player, InteractionHand hand);
 }

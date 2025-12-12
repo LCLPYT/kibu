@@ -2,13 +2,13 @@ package work.lclpnet.kibu.hook.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.math.Position;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.Position;
+import net.minecraft.world.phys.Vec3;
 
 public class PositionRotation implements Position {
 
     public static final Codec<PositionRotation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Vec3d.CODEC.fieldOf("pos").forGetter(it -> new Vec3d(it.x, it.y, it.z)),
+            Vec3.CODEC.fieldOf("pos").forGetter(it -> new Vec3(it.x, it.y, it.z)),
             Codec.FLOAT.fieldOf("yaw").forGetter(it -> it.yaw),
             Codec.FLOAT.fieldOf("pitch").forGetter(it -> it.pitch)
     ).apply(instance, (pos, yaw, pitch) -> new PositionRotation(pos.x, pos.y, pos.z, yaw, pitch)));
@@ -27,17 +27,17 @@ public class PositionRotation implements Position {
     private PositionRotation() {}
 
     @Override
-    public double getX() {
+    public double x() {
         return x;
     }
 
     @Override
-    public double getY() {
+    public double y() {
         return y;
     }
 
     @Override
-    public double getZ() {
+    public double z() {
         return z;
     }
 

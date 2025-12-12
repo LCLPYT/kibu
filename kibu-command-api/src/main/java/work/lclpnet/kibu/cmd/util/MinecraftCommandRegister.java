@@ -6,23 +6,23 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
 import work.lclpnet.kibu.cmd.type.CommandConsumer;
 import work.lclpnet.kibu.cmd.type.CommandFactory;
 import work.lclpnet.kibu.cmd.type.CommandRegister;
 import work.lclpnet.kibu.cmd.type.Initializable;
 
-public class MinecraftCommandRegister implements CommandRegister<ServerCommandSource>, Initializable {
+public class MinecraftCommandRegister implements CommandRegister<CommandSourceStack>, Initializable {
 
     private final Object mutex = new Object();
-    private final DeferredProxyCommandRegister<ServerCommandSource> deferredRegister;
+    private final DeferredProxyCommandRegister<CommandSourceStack> deferredRegister;
     private MinecraftServer server = null;
-    private CommandDispatcher<ServerCommandSource> dispatcher = null;
-    private CommandRegistryAccess registryAccess = null;
-    private CommandManager.RegistrationEnvironment environment = null;
+    private CommandDispatcher<CommandSourceStack> dispatcher = null;
+    private CommandBuildContext registryAccess = null;
+    private Commands.CommandSelection environment = null;
     private boolean ready = false;
 
     public MinecraftCommandRegister(boolean isClient) {
@@ -73,7 +73,7 @@ public class MinecraftCommandRegister implements CommandRegister<ServerCommandSo
     }
 
     @Override
-    public boolean register(LiteralArgumentBuilder<ServerCommandSource> command, CommandConsumer<ServerCommandSource> consumer) {
+    public boolean register(LiteralArgumentBuilder<CommandSourceStack> command, CommandConsumer<CommandSourceStack> consumer) {
         if (deferredRegister.register(command, consumer)) {
             syncCommandTree();
             return true;
@@ -83,7 +83,7 @@ public class MinecraftCommandRegister implements CommandRegister<ServerCommandSo
     }
 
     @Override
-    public boolean register(CommandFactory<ServerCommandSource> factory, CommandConsumer<ServerCommandSource> consumer) {
+    public boolean register(CommandFactory<CommandSourceStack> factory, CommandConsumer<CommandSourceStack> consumer) {
         if (deferredRegister.register(factory, consumer)) {
             syncCommandTree();
             return true;
@@ -93,7 +93,7 @@ public class MinecraftCommandRegister implements CommandRegister<ServerCommandSo
     }
 
     @Override
-    public boolean unregister(LiteralCommandNode<ServerCommandSource> command) {
+    public boolean unregister(LiteralCommandNode<CommandSourceStack> command) {
         if (deferredRegister.unregister(command)) {
             syncCommandTree();
             return true;
@@ -111,8 +111,8 @@ public class MinecraftCommandRegister implements CommandRegister<ServerCommandSo
 
         if (server == null) return;
 
-        var commandManager = server.getCommandManager();
+        var commandManager = server.getCommands();
 
-        PlayerLookup.all(server).forEach(commandManager::sendCommandTree);
+        PlayerLookup.all(server).forEach(commandManager::sendCommands);
     }
 }

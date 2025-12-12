@@ -1,50 +1,50 @@
 package work.lclpnet.kibu.inv.type;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.MenuType;
 import org.jetbrains.annotations.Nullable;
 
-public class KibuInventory extends SimpleInventory implements NamedScreenHandlerFactory {
+public class KibuInventory extends SimpleContainer implements MenuProvider {
 
     private final int rows;
-    private final Text title;
+    private final Component title;
 
-    public KibuInventory(int rows, Text title) {
+    public KibuInventory(int rows, Component title) {
         super(9 * validateRowCount(rows));
         this.rows = rows;
         this.title = title;
     }
 
-    public void open(ServerPlayerEntity player) {
-        player.openHandledScreen(this);
+    public void open(ServerPlayer player) {
+        player.openMenu(this);
     }
 
     @Override
-    public Text getDisplayName() {
+    public Component getDisplayName() {
         return title;
     }
 
     @Nullable
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        ScreenHandlerType<GenericContainerScreenHandler> type = switch (rows) {
-            case 1 -> ScreenHandlerType.GENERIC_9X1;
-            case 2 -> ScreenHandlerType.GENERIC_9X2;
-            case 3 -> ScreenHandlerType.GENERIC_9X3;
-            case 4 -> ScreenHandlerType.GENERIC_9X4;
-            case 5 -> ScreenHandlerType.GENERIC_9X5;
-            case 6 -> ScreenHandlerType.GENERIC_9X6;
+    public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
+        MenuType<ChestMenu> type = switch (rows) {
+            case 1 -> MenuType.GENERIC_9x1;
+            case 2 -> MenuType.GENERIC_9x2;
+            case 3 -> MenuType.GENERIC_9x3;
+            case 4 -> MenuType.GENERIC_9x4;
+            case 5 -> MenuType.GENERIC_9x5;
+            case 6 -> MenuType.GENERIC_9x6;
             default -> throw new IllegalArgumentException("Invalid row count");
         };
 
-        return new GenericContainerScreenHandler(type, syncId, playerInventory, this, rows);
+        return new ChestMenu(type, syncId, playerInventory, this, rows);
     }
 
     private static int validateRowCount(int rows) {

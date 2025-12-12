@@ -1,20 +1,20 @@
 package work.lclpnet.kibu.access.mixin;
 
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.decoration.DisplayEntity;
-import net.minecraft.util.math.AffineTransformation;
+import com.mojang.math.Transformation;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Display;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(DisplayEntity.class)
+@Mixin(Display.class)
 public interface DisplayEntityAccessor {
 
     @Invoker
     int invokeGetGlowColorOverride();
     @Invoker
-    float invokeGetDisplayHeight();
+    float invokeGetHeight();
     @Invoker
-    float invokeGetDisplayWidth();
+    float invokeGetWidth();
     @Invoker
     float invokeGetShadowStrength();
     @Invoker
@@ -22,16 +22,16 @@ public interface DisplayEntityAccessor {
     @Invoker
     float invokeGetViewRange();
     @Invoker
-    int invokeGetBrightness();
+    int invokeGetPackedBrightnessOverride();
     @Invoker
-    DisplayEntity.BillboardMode invokeGetBillboardMode();
+    Display.BillboardConstraints invokeGetBillboardConstraints();
     @Invoker
-    int invokeGetStartInterpolation();
+    int invokeGetTransformationInterpolationDelay();
     @Invoker
-    int invokeGetInterpolationDuration();
+    int invokeGetTransformationInterpolationDuration();
 
     @Invoker
-    static AffineTransformation invokeGetTransformation(@SuppressWarnings("unused") DataTracker dataTracker) {
+    static Transformation invokeCreateTransformation(@SuppressWarnings("unused") SynchedEntityData dataTracker) {
         throw new AssertionError();
     }
 }

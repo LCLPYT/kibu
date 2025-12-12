@@ -1,17 +1,16 @@
 package work.lclpnet.kibu.schematic.vanilla;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.storage.NbtReadView;
-import net.minecraft.structure.StructureTemplate;
-import net.minecraft.structure.StructureTemplateManager;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import net.minecraft.world.level.storage.TagValueInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import work.lclpnet.kibu.jnbt.CompoundTag;
@@ -34,17 +33,17 @@ class Deserializer implements SchematicDeserializer {
     private static final Logger logger = LoggerFactory.getLogger(Deserializer.class);
 
     private final StructureTemplateManager manager;
-    private final RegistryWrapper.WrapperLookup registries;
+    private final HolderLookup.Provider registries;
 
-    Deserializer(StructureTemplateManager manager, RegistryWrapper.WrapperLookup registries) {
+    Deserializer(StructureTemplateManager manager, HolderLookup.Provider registries) {
         this.manager = manager;
         this.registries = registries;
     }
 
     @Override
     public BlockStructure deserialize(CompoundTag tag, BlockStateAdapter _adapter, BlockStructureFactory factory) {
-        NbtCompound nbt = FabricNbtConversion.convert(tag, NbtCompound.class);
-        StructureTemplate template = manager.createTemplate(nbt);
+        net.minecraft.nbt.CompoundTag nbt = FabricNbtConversion.convert(tag, net.minecraft.nbt.CompoundTag.class);
+        StructureTemplate template = manager.readStructure(nbt);
 
         Vec3i size = template.getSize();
         var origin = new KibuBlockPos(0, 0, 0);
@@ -53,17 +52,17 @@ class Deserializer implements SchematicDeserializer {
         BlockStructure struct = factory.create(size.getX(), size.getY(), size.getZ(), origin, dataVersion);
 
         var accessor = (StructureTemplateAccessor) template;
-        var blockInfoLists = accessor.getBlockInfoLists();
+        var blockInfoLists = accessor.getPalettes();
 
         var adapter = FabricBlockStateAdapter.getInstance();
 
         if (!blockInfoLists.isEmpty()) {
             // blockInfoLists can contain multiple palettes (e.g. ship wreck structure files)
             // this deserializer only chooses the first one
-            addBlocks(struct, blockInfoLists.getFirst().getAll(), adapter);
+            addBlocks(struct, blockInfoLists.getFirst().blocks(), adapter);
         }
 
-        addEntities(struct, accessor.getEntities());
+        addEntities(struct, accessor.getEntityInfoList());
 
         return struct;
     }
@@ -78,7 +77,7 @@ class Deserializer implements SchematicDeserializer {
 
             struct.setBlockState(kibuPos, kibuState);
 
-            NbtCompound nbt = block.nbt();
+            net.minecraft.nbt.CompoundTag nbt = block.nbt();
 
             if (nbt == null) continue;
 
@@ -86,12 +85,12 @@ class Deserializer implements SchematicDeserializer {
         }
     }
 
-    private void addBlockEntity(BlockStructure struct, KibuBlockPos kibuPos, BlockPos pos, BlockState state, NbtCompound nbt) {
+    private void addBlockEntity(BlockStructure struct, KibuBlockPos kibuPos, BlockPos pos, BlockState state, net.minecraft.nbt.CompoundTag nbt) {
         if (!state.hasBlockEntity()) return;
 
         String id = nbt.getString("id").orElse("");
 
-        var type = Registries.BLOCK_ENTITY_TYPE.getOptionalValue(Identifier.of(id))
+        var type = BuiltInRegistries.BLOCK_ENTITY_TYPE.getOptional(ResourceLocation.parse(id))
                 .orElse(null);
 
         if (type == null) return;
@@ -103,7 +102,7 @@ class Deserializer implements SchematicDeserializer {
 
     private void addEntities(BlockStructure struct, List<StructureTemplate.StructureEntityInfo> entities) {
         for (StructureTemplate.StructureEntityInfo entity : entities) {
-            NbtCompound nbt = entity.nbt;
+            net.minecraft.nbt.CompoundTag nbt = entity.nbt;
 
             if (nbt.contains("TileX") && nbt.contains("TileY") && nbt.contains("TileZ")) {
                 nbt.putInt("TileX", entity.blockPos.getX());
@@ -113,10 +112,10 @@ class Deserializer implements SchematicDeserializer {
 
             EntityType<?> type;
 
-            try (var logging = new ErrorReporter.Logging(logger)) {
-                var view = NbtReadView.create(logging, registries, nbt);
+            try (var logging = new ProblemReporter.ScopedCollector(logger)) {
+                var view = TagValueInput.create(logging, registries, nbt);
 
-                type = EntityType.fromData(view).orElse(null);
+                type = EntityType.by(view).orElse(null);
             }
 
             if (type == null) continue;

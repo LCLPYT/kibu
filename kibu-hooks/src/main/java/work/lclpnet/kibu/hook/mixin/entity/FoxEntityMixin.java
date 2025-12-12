@@ -2,35 +2,35 @@ package work.lclpnet.kibu.hook.mixin.entity;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.FoxEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.Fox;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import work.lclpnet.kibu.hook.util.MixinUtils;
 
-@Mixin(FoxEntity.class)
+@Mixin(Fox.class)
 public class FoxEntityMixin {
 
     @WrapOperation(
-            method = "spit",
+            method = "spitOutItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+                    target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    public boolean kibu$onDropItemSpit(World world, Entity entity, Operation<Boolean> original) {
+    public boolean kibu$onDropItemSpit(Level world, Entity entity, Operation<Boolean> original) {
         return MixinUtils.wrapEntityItemDrop(world, entity, original, this);
     }
 
     @WrapOperation(
-            method = "dropItem",
+            method = "dropItemStack",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+                    target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    public boolean kibu$onDropItem(World world, Entity entity, Operation<Boolean> original) {
+    public boolean kibu$onDropItem(Level world, Entity entity, Operation<Boolean> original) {
         return MixinUtils.wrapEntityItemDrop(world, entity, original, this);
     }
 }

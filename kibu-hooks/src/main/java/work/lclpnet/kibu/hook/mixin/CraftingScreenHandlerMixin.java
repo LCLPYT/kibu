@@ -1,21 +1,21 @@
 package work.lclpnet.kibu.hook.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.screen.CraftingScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import work.lclpnet.kibu.hook.player.CraftingRecipeCallback;
 
-@Mixin(CraftingScreenHandler.class)
+@Mixin(CraftingMenu.class)
 public class CraftingScreenHandlerMixin {
 
     @ModifyVariable(
-            method = "updateResult",
+            method = "slotChangedCraftingGrid",
             at = @At(
                     value = "LOAD",
                     ordinal = 0
@@ -23,9 +23,9 @@ public class CraftingScreenHandlerMixin {
             index = 8
     )
     private static ItemStack kibu$modifyCraftingResult(ItemStack result,
-                                                  @Local(argsOnly = true) RecipeInputInventory inventory,
-                                                  @Local CraftingRecipeInput input,
-                                                  @Local ServerPlayerEntity player) {
+                                                  @Local(argsOnly = true) CraftingContainer inventory,
+                                                  @Local CraftingInput input,
+                                                  @Local ServerPlayer player) {
 
         var pending = CraftingRecipeCallback.HOOK.invoker().modifyRecipe(player, input, result);
 
@@ -34,7 +34,7 @@ public class CraftingScreenHandlerMixin {
         }
 
         return pending.get()
-                .filter(stack -> stack.isItemEnabled(player.getEntityWorld().getEnabledFeatures()))
+                .filter(stack -> stack.isItemEnabled(player.level().enabledFeatures()))
                 .orElse(ItemStack.EMPTY);
     }
 }

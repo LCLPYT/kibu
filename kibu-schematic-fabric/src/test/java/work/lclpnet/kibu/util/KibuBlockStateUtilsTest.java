@@ -1,10 +1,10 @@
 package work.lclpnet.kibu.util;
 
-import net.minecraft.Bootstrap;
 import net.minecraft.SharedConstants;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.LeavesBlock;
+import net.minecraft.server.Bootstrap;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -19,23 +19,23 @@ class KibuBlockStateUtilsTest {
 
     @BeforeAll
     public static void setup() {
-        SharedConstants.createGameVersion();
-        Bootstrap.initialize();
+        SharedConstants.tryDetectVersion();
+        Bootstrap.bootStrap();
     }
 
     @Test
     void stringify() {
-        BlockState state = Blocks.DIAMOND_BLOCK.getDefaultState();
+        BlockState state = Blocks.DIAMOND_BLOCK.defaultBlockState();
 
         assertEquals("minecraft:diamond_block", BlockStateUtils.stringify(state));
     }
 
     @Test
     void stringify_properties() {
-        BlockState state = Blocks.OAK_LEAVES.getDefaultState()
-                .with(LeavesBlock.PERSISTENT, true)
-                .with(LeavesBlock.WATERLOGGED, false)
-                .with(LeavesBlock.DISTANCE, 5);
+        BlockState state = Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true)
+                .setValue(LeavesBlock.WATERLOGGED, false)
+                .setValue(LeavesBlock.DISTANCE, 5);
 
         String string = BlockStateUtils.stringify(state);
         int start = string.indexOf('[');
@@ -54,15 +54,15 @@ class KibuBlockStateUtilsTest {
     void parse() {
         BlockState parsed = BlockStateUtils.parse("minecraft:diamond_block");
 
-        assertEquals(Blocks.DIAMOND_BLOCK.getDefaultState(), parsed);
+        assertEquals(Blocks.DIAMOND_BLOCK.defaultBlockState(), parsed);
     }
 
     @Test
     void parse_properties() {
         BlockState parsed = BlockStateUtils.parse("minecraft:oak_leaves[persistent=true,distance=5]");
 
-        assertEquals(Blocks.OAK_LEAVES.getDefaultState()
-                .with(LeavesBlock.PERSISTENT, true)
-                .with(LeavesBlock.DISTANCE, 5), parsed);
+        assertEquals(Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true)
+                .setValue(LeavesBlock.DISTANCE, 5), parsed);
     }
 }

@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -12,5 +12,5 @@ public interface PlayerSprintCallback {
         }
     });
 
-    void onSprint(ServerPlayerEntity player, boolean sprinting);
+    void onSprint(ServerPlayer player, boolean sprinting);
 }

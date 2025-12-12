@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -14,5 +14,5 @@ public interface PlayerDeathCallback {
                 }
             });
 
-    void onDeath(ServerPlayerEntity player, DamageSource source);
+    void onDeath(ServerPlayer player, DamageSource source);
 }

@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.type;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public interface BlockPosAware {
 

@@ -3,17 +3,17 @@ package work.lclpnet.kibu.hook.mixin.entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.block.Portal;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Leashable;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.s2c.play.EntityAttachS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Leashable;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Portal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -51,14 +51,14 @@ public class EntityMixin {
     }
 
     @Inject(
-            method = "setSneaking",
+            method = "setShiftKeyDown",
             at = @At("HEAD"),
             cancellable = true
     )
     public void kibu$onSneak(boolean sneaking, CallbackInfo ci) {
         Entity self = (Entity) (Object) this;
 
-        if (!(self instanceof ServerPlayerEntity serverPlayer)) return;
+        if (!(self instanceof ServerPlayer serverPlayer)) return;
 
         if (PlayerSneakCallback.HOOK.invoker().onSneak(serverPlayer, sneaking)) {
             ci.cancel();
@@ -72,27 +72,27 @@ public class EntityMixin {
     public void kibu$onSprint(boolean sneaking, CallbackInfo ci) {
         Entity self = (Entity) (Object) this;
 
-        if (!(self instanceof ServerPlayerEntity serverPlayer)) return;
+        if (!(self instanceof ServerPlayer serverPlayer)) return;
 
         PlayerSprintCallback.HOOK.invoker().onSprint(serverPlayer, sneaking);
     }
 
     @WrapOperation(
-            method = "dropStack(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/entity/ItemEntity;",
+            method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/entity/item/ItemEntity;",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"
+                    target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    public boolean kibu$onDropItem(ServerWorld instance, Entity entity, Operation<Boolean> original) {
+    public boolean kibu$onDropItem(ServerLevel instance, Entity entity, Operation<Boolean> original) {
         return MixinUtils.wrapEntityItemDrop(instance, entity, original, this);
     }
 
     @Inject(
-            method = "startRiding(Lnet/minecraft/entity/Entity;ZZ)Z",
+            method = "startRiding(Lnet/minecraft/world/entity/Entity;ZZ)Z",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/Entity;hasVehicle()Z"
+                    target = "Lnet/minecraft/world/entity/Entity;isPassenger()Z"
             ),
             cancellable = true
     )
@@ -126,21 +126,21 @@ public class EntityMixin {
             method = "interact",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/Leashable;isLeashed()Z"
+                    target = "Lnet/minecraft/world/entity/Leashable;isLeashed()Z"
             ),
             cancellable = true
     )
-    public void kibu$onLeash(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$onLeash(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         Entity self = (Entity) (Object) this;
 
         if (LeashEntityCallback.HOOK.invoker().onLeash(player, self)) {
-            cir.setReturnValue(ActionResult.PASS);
+            cir.setReturnValue(InteractionResult.PASS);
 
             // fix de-sync
-            if (player instanceof ServerPlayerEntity serverPlayer) {
+            if (player instanceof ServerPlayer serverPlayer) {
                 PlayerUtils.syncPlayerItems(player);
                 Entity leashHolder = ((Leashable) self).getLeashHolder();
-                serverPlayer.networkHandler.sendPacket(new EntityAttachS2CPacket(self, leashHolder));
+                serverPlayer.connection.send(new ClientboundSetEntityLinkPacket(self, leashHolder));
             }
         }
     }
@@ -149,28 +149,28 @@ public class EntityMixin {
             method = "interact",
             at = {@At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/Leashable;detachLeash()V",
+                    target = "Lnet/minecraft/world/entity/Leashable;dropLeash()V",
                     ordinal = 0
             ), @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/Leashable;detachLeashWithoutDrop()V"
+                    target = "Lnet/minecraft/world/entity/Leashable;removeLeash()V"
             )},
             cancellable = true
     )
-    public void kibu$beforeUnleashMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$beforeUnleashMob(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         Entity self = (Entity) (Object) this;
 
         if (UnleashEntityCallback.HOOK.invoker().onUnleash(player, self)) {
-            cir.setReturnValue(ActionResult.PASS);
+            cir.setReturnValue(InteractionResult.PASS);
         }
     }
 
     @Inject(
-            method = "detachAllHeldLeashes",
+            method = "dropAllLeashConnections",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onDestroyLeash(PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onDestroyLeash(Player player, CallbackInfoReturnable<Boolean> cir) {
         var self = (Entity) (Object) this;
 
         if (LeashDestroyCallback.HOOK.invoker().onLeashDestroy(player, self)) {
@@ -182,11 +182,11 @@ public class EntityMixin {
             method = "interact",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/Leashable;collectLeashablesAround(Lnet/minecraft/entity/Entity;Ljava/util/function/Predicate;)Ljava/util/List;"
+                    target = "Lnet/minecraft/world/entity/Leashable;leashableInArea(Lnet/minecraft/world/entity/Entity;Ljava/util/function/Predicate;)Ljava/util/List;"
             )
     )
     public List<Leashable> kibu$collectEntitiesToLeash(Entity leashHolder, Predicate<Leashable> leashablePredicate, Operation<List<Leashable>> original,
-                                                       @Local(argsOnly = true) PlayerEntity player) {
+                                                       @Local(argsOnly = true) Player player) {
 
         List<Leashable> list = original.call(leashHolder, leashablePredicate);
         List<Entity> entities = new ArrayList<>(list.size());
@@ -206,14 +206,14 @@ public class EntityMixin {
     }
 
     @Inject(
-            method = "tryUsePortal",
+            method = "setAsInsidePortal",
             at = @At("HEAD"),
             cancellable = true
     )
     public void kibu$beforeUsePortal(Portal portal, BlockPos pos, CallbackInfo ci) {
         Entity self = (Entity) (Object) this;
 
-        if (self.hasPortalCooldown()) return;
+        if (self.isOnPortalCooldown()) return;
 
         if (EntityUsePortalCallback.HOOK.invoker().onUsePortal(self, portal, pos)) {
             ci.cancel();

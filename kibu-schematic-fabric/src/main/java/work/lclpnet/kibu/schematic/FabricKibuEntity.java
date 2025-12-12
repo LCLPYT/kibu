@@ -1,17 +1,16 @@
 package work.lclpnet.kibu.schematic;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtDouble;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.NbtWriteView;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,34 +28,34 @@ public class FabricKibuEntity implements KibuEntity {
     private static final Logger logger = LoggerFactory.getLogger(FabricKibuEntity.class);
 
     private final EntityType<?> type;
-    private final Vec3d pos;
-    private final NbtCompound nbt;
+    private final Vec3 pos;
+    private final net.minecraft.nbt.CompoundTag nbt;
 
     public FabricKibuEntity(Entity entity) {
-        this(entity.getType(), entity.getEntityPos(), createNbt(entity));
+        this(entity.getType(), entity.position(), createNbt(entity));
     }
 
-    public FabricKibuEntity(EntityType<?> type, Vec3d pos, NbtCompound nbt) {
+    public FabricKibuEntity(EntityType<?> type, Vec3 pos, net.minecraft.nbt.CompoundTag nbt) {
         this.type = type;
         this.pos = pos;
         this.nbt = nbt;
     }
 
-    private static NbtCompound createNbt(Entity entity) {
-        var registries = entity.getEntityWorld().getRegistryManager();
+    private static net.minecraft.nbt.CompoundTag createNbt(Entity entity) {
+        var registries = entity.level().registryAccess();
 
-        try (ErrorReporter.Logging logging = new ErrorReporter.Logging(entity.getErrorReporterContext(), logger)) {
-            NbtWriteView view = NbtWriteView.create(logging, registries);
+        try (ProblemReporter.ScopedCollector logging = new ProblemReporter.ScopedCollector(entity.problemPath(), logger)) {
+            TagValueOutput view = TagValueOutput.createWithContext(logging, registries);
 
-            entity.writeData(view);
+            entity.saveWithoutId(view);
 
-            return view.getNbt();
+            return view.buildResult();
         }
     }
 
     @Override
     public String getId() {
-        Identifier id = EntityType.getId(type);
+        ResourceLocation id = EntityType.getKey(type);
 
         if (id == null) throw new IllegalStateException("Entity type not registered");
 
@@ -65,17 +64,17 @@ public class FabricKibuEntity implements KibuEntity {
 
     @Override
     public double getX() {
-        return pos.getX();
+        return pos.x();
     }
 
     @Override
     public double getY() {
-        return pos.getY();
+        return pos.y();
     }
 
     @Override
     public double getZ() {
-        return pos.getZ();
+        return pos.z();
     }
 
     @Override
@@ -104,33 +103,33 @@ public class FabricKibuEntity implements KibuEntity {
         return type;
     }
 
-    public Vec3d getPos() {
+    public Vec3 getPos() {
         return pos;
     }
 
-    public boolean spawn(ServerWorld world, Vec3d pos, Matrix3i transformation) {
+    public boolean spawn(ServerLevel world, Vec3 pos, Matrix3i transformation) {
         nbt.putString("id", getId());
 
-        NbtList posList = new NbtList();
-        posList.add(NbtDouble.of(this.pos.x));
-        posList.add(NbtDouble.of(this.pos.y));
-        posList.add(NbtDouble.of(this.pos.z));
+        ListTag posList = new ListTag();
+        posList.add(DoubleTag.valueOf(this.pos.x));
+        posList.add(DoubleTag.valueOf(this.pos.y));
+        posList.add(DoubleTag.valueOf(this.pos.z));
 
         nbt.put("Pos", posList);
 
-        Entity entity = EntityType.loadEntityWithPassengers(nbt, world, SpawnReason.STRUCTURE, Function.identity());
+        Entity entity = EntityType.loadEntityRecursive(nbt, world, EntitySpawnReason.STRUCTURE, Function.identity());
         if (entity == null) return false;
 
-        Vec3d rootPos = entity.getEntityPos();
+        Vec3 rootPos = entity.position();
 
-        entity.streamSelfAndPassengers().forEach(e -> {
-            Vec3d rel = e.getEntityPos().subtract(rootPos);
-            e.setPosition(pos.add(rel));
-            e.setUuid(UUID.randomUUID());
+        entity.getSelfAndPassengers().forEach(e -> {
+            Vec3 rel = e.position().subtract(rootPos);
+            e.setPos(pos.add(rel));
+            e.setUUID(UUID.randomUUID());
 
             RotationUtil.rotateEntity(e, transformation);
         });
 
-        return world.spawnNewEntityAndPassengers(entity);
+        return world.tryAddFreshEntityWithPassengers(entity);
     }
 }

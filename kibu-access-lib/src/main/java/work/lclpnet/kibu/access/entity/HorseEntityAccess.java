@@ -1,18 +1,18 @@
 package work.lclpnet.kibu.access.entity;
 
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.passive.HorseColor;
-import net.minecraft.entity.passive.HorseEntity;
-import net.minecraft.entity.passive.HorseMarking;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.entity.animal.horse.Markings;
+import net.minecraft.world.entity.animal.horse.Variant;
+import net.minecraft.world.item.ItemStack;
 import work.lclpnet.kibu.access.mixin.HorseEntityAccessor;
 
 public class HorseEntityAccess {
 
     private HorseEntityAccess() {}
 
-    public static void setVariant(HorseEntity horse, HorseColor color, HorseMarking marking) {
-        ((HorseEntityAccessor) horse).invokeSetHorseVariant(color, marking);
+    public static void setVariant(Horse horse, Variant color, Markings marking) {
+        ((HorseEntityAccessor) horse).invokeSetVariantAndMarkings(color, marking);
     }
 
     /**
@@ -22,7 +22,7 @@ public class HorseEntityAccess {
      * @deprecated Use horse.equipBodyArmor(armor) instead
      */
     @Deprecated(forRemoval = true)
-    public static void setArmor(HorseEntity horse, ItemStack armor) {
-        horse.equipStack(EquipmentSlot.BODY, armor);
+    public static void setArmor(Horse horse, ItemStack armor) {
+        horse.setItemSlot(EquipmentSlot.BODY, armor);
     }
 }

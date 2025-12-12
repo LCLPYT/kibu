@@ -3,7 +3,7 @@ package work.lclpnet.kibu.cmd.util;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.server.command.CommandManager;
+import net.minecraft.commands.Commands;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -46,7 +46,7 @@ class DeferredProxyCommandRegisterTest {
         proxy.register(LiteralArgumentBuilder.literal("test"), consumer);
 
         var dispatcher = new CommandDispatcher<String>();
-        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);  // will register deferred
 
         consumer.assertEqualsCommand(dispatcher, "test");
@@ -61,7 +61,7 @@ class DeferredProxyCommandRegisterTest {
         proxy.register(ctx -> LiteralArgumentBuilder.literal("test"), consumer);
 
         var dispatcher = new CommandDispatcher<String>();
-        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);  // will register deferred
 
         consumer.assertEqualsCommand(dispatcher, "test");
@@ -73,7 +73,7 @@ class DeferredProxyCommandRegisterTest {
         var proxy = new DeferredProxyCommandRegister<String>(keepRefs);
 
         var dispatcher = new CommandDispatcher<String>();
-        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         var consumer = new TestConsumer();
@@ -89,7 +89,7 @@ class DeferredProxyCommandRegisterTest {
         var proxy = new DeferredProxyCommandRegister<String>(keepRefs);
 
         var dispatcher = new CommandDispatcher<String>();
-        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         var consumer = new TestConsumer();
@@ -107,12 +107,12 @@ class DeferredProxyCommandRegisterTest {
         proxy.register(LiteralArgumentBuilder.literal("test"), consumer);
 
         var dispatcher = new CommandDispatcher<String>();
-        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         // now change the target
         dispatcher = new CommandDispatcher<>();
-        target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         // verify the consumer was unmodified, because the registered commands were flushed by the first setTarget()
@@ -124,7 +124,7 @@ class DeferredProxyCommandRegisterTest {
         var proxy = new DeferredProxyCommandRegister<String>(false);
 
         var dispatcher = new CommandDispatcher<String>();
-        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         var consumer = new TestConsumer();
@@ -132,7 +132,7 @@ class DeferredProxyCommandRegisterTest {
 
         // now change the target
         dispatcher = new CommandDispatcher<>();
-        target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         // verify the consumer was unmodified, because the registered commands were flushed by the first setTarget()
@@ -147,12 +147,12 @@ class DeferredProxyCommandRegisterTest {
         proxy.register(LiteralArgumentBuilder.literal("test"), consumer);
 
         var dispatcher = new CommandDispatcher<String>();
-        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         // now change the target
         dispatcher = new CommandDispatcher<>();
-        target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         // verify the consumer was updated
@@ -164,7 +164,7 @@ class DeferredProxyCommandRegisterTest {
         var proxy = new DeferredProxyCommandRegister<String>(true);
 
         var dispatcher = new CommandDispatcher<String>();
-        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        var target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         var consumer = new TestConsumer();
@@ -172,7 +172,7 @@ class DeferredProxyCommandRegisterTest {
 
         // now change the target
         dispatcher = new CommandDispatcher<>();
-        target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), CommandManager.RegistrationEnvironment.DEDICATED);
+        target = new DirectCommandRegister<>(dispatcher, new CommandRegistryAccessMock(), Commands.CommandSelection.DEDICATED);
         proxy.setTarget(target);
 
         // verify the consumer was updated

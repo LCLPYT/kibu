@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.network;
 
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -16,5 +16,5 @@ public interface CustomClickActionCallback {
         }
     });
 
-    void onCustomClickAction(ServerPlayerEntity player, Identifier id, Optional<NbtElement> payload);
+    void onCustomClickAction(ServerPlayer player, ResourceLocation id, Optional<Tag> payload);
 }

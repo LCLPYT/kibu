@@ -1,10 +1,10 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -23,5 +23,5 @@ public interface ArmorStandManipulateCallback {
                 return cancel;
             });
 
-    boolean onManipulate(ArmorStandEntity armorStand, PlayerEntity player, EquipmentSlot slot, ItemStack stack, Hand hand);
+    boolean onManipulate(ArmorStand armorStand, Player player, EquipmentSlot slot, ItemStack stack, InteractionHand hand);
 }

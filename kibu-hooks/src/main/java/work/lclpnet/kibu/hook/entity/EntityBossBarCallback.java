@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.ServerBossBar;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -20,5 +20,5 @@ public interface EntityBossBarCallback {
         return cancel;
     });
 
-    boolean onShow(Entity entity, ServerBossBar bossBar, ServerPlayerEntity player);
+    boolean onShow(Entity entity, ServerBossEvent bossBar, ServerPlayer player);
 }

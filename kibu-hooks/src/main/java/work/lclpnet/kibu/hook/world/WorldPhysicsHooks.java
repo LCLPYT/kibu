@@ -1,11 +1,11 @@
 package work.lclpnet.kibu.hook.world;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.explosion.ExplosionImpl;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerExplosion;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
@@ -116,30 +116,30 @@ public class WorldPhysicsHooks {
     });
 
     public interface ExplosionHook {
-        boolean onExplode(ExplosionImpl explosion);
+        boolean onExplode(ServerExplosion explosion);
     }
 
     public interface FadeHook {
-        boolean onFade(World world, BlockPos pos);
+        boolean onFade(Level world, BlockPos pos);
     }
 
     public interface ReplaceDiskEnchantmentHook {
-        boolean onApply(World world, BlockPos pos, @Nullable LivingEntity entity, BlockState state);
+        boolean onApply(Level world, BlockPos pos, @Nullable LivingEntity entity, BlockState state);
     }
 
     public interface SnowFallHook {
-        boolean onSnowFall(World world, BlockPos pos);
+        boolean onSnowFall(Level world, BlockPos pos);
     }
 
     public interface BlockStateChangeHook {
-        boolean onChange(World world, BlockPos pos, BlockState newState);
+        boolean onChange(Level world, BlockPos pos, BlockState newState);
     }
 
     public interface TileDropHook {
-        boolean onTileDrop(World world, BlockPos pos, ItemStack stack);
+        boolean onTileDrop(Level world, BlockPos pos, ItemStack stack);
     }
 
     public interface TileDropXpHook {
-        boolean onTileDropExperience(World world, BlockPos pos, int xp);
+        boolean onTileDropExperience(Level world, BlockPos pos, int xp);
     }
 }

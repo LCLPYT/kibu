@@ -5,9 +5,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientLoginNetworkHandler;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
+import net.minecraft.network.FriendlyByteBuf;
 import org.slf4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
@@ -39,13 +39,13 @@ public class ClientProtocolHandler {
         ClientLoginNetworking.registerGlobalReceiver(protocol.id(), this::onQueryVersion);
     }
 
-    private CompletableFuture<PacketByteBuf> onQueryVersion(MinecraftClient client, ClientLoginNetworkHandler handler, PacketByteBuf buf, Consumer<ChannelFutureListener> callbacksConsumer) {
+    private CompletableFuture<FriendlyByteBuf> onQueryVersion(Minecraft client, ClientHandshakePacketListenerImpl handler, FriendlyByteBuf buf, Consumer<ChannelFutureListener> callbacksConsumer) {
         serverVersion = buf.readVarInt();
         understands = protocol.supported().test(serverVersion);
 
         logger.info("Server uses protocol {}: server_version={}, client_version={}, supported={}", protocol.id(), serverVersion, protocol.version(), protocol.supported().test(serverVersion));
 
-        PacketByteBuf response = PacketByteBufs.create();
+        FriendlyByteBuf response = PacketByteBufs.create();
         response.writeVarInt(protocol.version());
 
         return CompletableFuture.completedFuture(response);

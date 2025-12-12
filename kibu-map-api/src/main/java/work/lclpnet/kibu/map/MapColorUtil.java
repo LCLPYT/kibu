@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.map;
 
-import net.minecraft.block.MapColor;
+import net.minecraft.world.level.material.MapColor;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -18,11 +18,11 @@ public class MapColorUtil {
         Arrays.fill(renderColors, 0);
 
         for (int i = 0; i < colorCount; i++) {
-            MapColor color = MapColor.get(i);
+            MapColor color = MapColor.byId(i);
 
             for (var brightness : brightnesses) {
-                int idx = Byte.toUnsignedInt(color.getRenderColorByte(brightness));
-                int argb = color.getRenderColor(brightness);
+                int idx = Byte.toUnsignedInt(color.getPackedId(brightness));
+                int argb = color.calculateARGBColor(brightness);
 
                 renderColors[idx] = argb;
             }

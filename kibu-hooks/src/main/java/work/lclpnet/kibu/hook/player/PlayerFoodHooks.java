@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -45,7 +45,7 @@ public class PlayerFoodHooks {
          * @param toLevel The new food level.
          * @return True, if the food level change should be cancelled.
          */
-        boolean onChange(PlayerEntity player, float fromLevel, float toLevel);
+        boolean onChange(Player player, float fromLevel, float toLevel);
     }
 
     public interface FoodIntLevel {
@@ -57,6 +57,6 @@ public class PlayerFoodHooks {
          * @param toLevel The new food level.
          * @return True, if the food level change should be cancelled.
          */
-        boolean onChange(PlayerEntity player, int fromLevel, int toLevel);
+        boolean onChange(Player player, int fromLevel, int toLevel);
     }
 }

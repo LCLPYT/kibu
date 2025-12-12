@@ -1,15 +1,15 @@
 package work.lclpnet.kibu.hook.mixin.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DecoratedPotBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DecoratedPotBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,30 +22,30 @@ import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 public class DecoratedPotBlockMixin {
 
     @Inject(
-            method = "onUseWithItem",
+            method = "useItemOn",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/block/entity/DecoratedPotBlockEntity;wobble(Lnet/minecraft/block/entity/DecoratedPotBlockEntity$WobbleType;)V"
+                    target = "Lnet/minecraft/world/level/block/entity/DecoratedPotBlockEntity;wobble(Lnet/minecraft/world/level/block/entity/DecoratedPotBlockEntity$WobbleStyle;)V"
             ),
             cancellable = true
     )
-    public void kibu$beforeWobble(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$beforeWobble(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
         if (BlockModificationHooks.DECORATIVE_POT_STORE.invoker().onModify(world, hit.getBlockPos(), player)) {
-            cir.setReturnValue(ActionResult.PASS);
+            cir.setReturnValue(InteractionResult.PASS);
         }
     }
 
     @Inject(
-            method = "onUse",
+            method = "useWithoutItem",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;playSound(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"
+                    target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"
             ),
             cancellable = true
     )
-    public void kibu$beforeWobbleBack(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir) {
+    public void kibu$beforeWobbleBack(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
         if (BlockModificationHooks.DECORATIVE_POT_STORE.invoker().onModify(world, hit.getBlockPos(), player)) {
-            cir.setReturnValue(ActionResult.PASS);
+            cir.setReturnValue(InteractionResult.PASS);
         }
     }
 
@@ -53,11 +53,11 @@ public class DecoratedPotBlockMixin {
             method = "onProjectileHit",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z"
+                    target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"
             ),
             cancellable = true
     )
-    public void kibu$beforeProjectileDestroy(World world, BlockState state, BlockHitResult hit, ProjectileEntity projectile, CallbackInfo ci) {
+    public void kibu$beforeProjectileDestroy(Level world, BlockState state, BlockHitResult hit, Projectile projectile, CallbackInfo ci) {
         if (ProjectileHooks.BREAK_DECORATED_POT.invoker().onAffect(projectile, hit)) {
             ci.cancel();
         }

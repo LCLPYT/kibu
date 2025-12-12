@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.hook.mixin.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.IceBlock;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.IceBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,7 +18,7 @@ public class IceBlockMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onMelt(BlockState state, World world, BlockPos pos, CallbackInfo ci) {
+    public void kibu$onMelt(BlockState state, Level world, BlockPos pos, CallbackInfo ci) {
         if (WorldPhysicsHooks.MELT.invoker().onFade(world, pos))
             ci.cancel();
     }

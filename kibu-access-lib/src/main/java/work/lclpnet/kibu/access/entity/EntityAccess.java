@@ -1,13 +1,13 @@
 package work.lclpnet.kibu.access.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
 import work.lclpnet.kibu.access.mixin.EntityAccessor;
 
 public class EntityAccess {
 
-    public static final TrackedData<Byte> FLAGS = EntityAccessor.getFlagsTrackedData();
+    public static final EntityDataAccessor<Byte> FLAGS = EntityAccessor.getFlagsTrackedData();
     public static final int ON_FIRE_FLAG_INDEX = EntityAccessor.getOnFireFlagIndex();
     public static final int SNEAKING_FLAG_INDEX = EntityAccessor.getSneakingFlagIndex();
     public static final int SPRINTING_FLAG_INDEX = EntityAccessor.getSprintingFlagIndex();
@@ -19,7 +19,7 @@ public class EntityAccess {
     private EntityAccess() {}
 
     public static void setFlag(Entity entity, int index, boolean value) {
-        DataTracker dataTracker = entity.getDataTracker();
+        SynchedEntityData dataTracker = entity.getEntityData();
 
         byte b = dataTracker.get(FLAGS);
 
@@ -31,7 +31,7 @@ public class EntityAccess {
     }
 
     public static boolean getFlag(Entity entity, int index) {
-        DataTracker dataTracker = entity.getDataTracker();
+        SynchedEntityData dataTracker = entity.getEntityData();
         return (dataTracker.get(FLAGS) & 1 << index) != 0;
     }
 

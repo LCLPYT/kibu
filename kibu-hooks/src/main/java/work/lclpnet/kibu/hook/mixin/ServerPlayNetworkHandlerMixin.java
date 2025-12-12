@@ -1,16 +1,16 @@
 package work.lclpnet.kibu.hook.mixin;
 
-import net.minecraft.entity.EntityPosition;
-import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.network.DisconnectionInfo;
-import net.minecraft.network.packet.c2s.play.*;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.DisconnectionDetails;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.*;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
+import net.minecraft.world.entity.player.Abilities;
+import net.minecraft.world.phys.Vec3;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,10 +25,10 @@ import work.lclpnet.kibu.hook.util.PositionRotation;
 
 import java.util.Set;
 
-@Mixin(ServerPlayNetworkHandler.class)
+@Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerPlayNetworkHandlerMixin {
 
-    @Shadow public ServerPlayerEntity player;
+    @Shadow public ServerPlayer player;
 
     @Shadow
     private static double clampHorizontal(double d) {
@@ -40,7 +40,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
         throw new AssertionError();
     }
 
-    @Shadow public abstract void requestTeleport(double x, double y, double z, float yaw, float pitch);
+    @Shadow public abstract void teleport(double x, double y, double z, float yaw, float pitch);
 
     @Unique
     private double lastX = Double.NaN, lastY = Double.NaN, lastZ = Double.NaN;
@@ -52,49 +52,49 @@ public abstract class ServerPlayNetworkHandlerMixin {
     private double modifiedVelocityY = Double.NaN;
 
     @Redirect(
-            method = "cleanUp",
+            method = "removePlayerFromWorld",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"
+                    target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"
             )
     )
-    public void kibu$sendQuitMessage(PlayerManager instance, Text message, boolean overlay) {
-        Text text = PlayerConnectionHooks.QUIT_MESSAGE.invoker().onQuit(player, message);
+    public void kibu$sendQuitMessage(PlayerList instance, Component message, boolean overlay) {
+        Component text = PlayerConnectionHooks.QUIT_MESSAGE.invoker().onQuit(player, message);
 
         if (text != null) {
-            instance.broadcast(text, overlay);
+            instance.broadcastSystemMessage(text, overlay);
         }
     }
 
     @Inject(
-            method = "onDisconnected",
+            method = "onDisconnect",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerCommonNetworkHandler;onDisconnected(Lnet/minecraft/network/DisconnectionInfo;)V"
+                    target = "Lnet/minecraft/server/network/ServerCommonPacketListenerImpl;onDisconnect(Lnet/minecraft/network/DisconnectionDetails;)V"
             )
     )
-    public void kibu$afterQuit(DisconnectionInfo info, CallbackInfo ci) {
+    public void kibu$afterQuit(DisconnectionDetails info, CallbackInfo ci) {
         PlayerConnectionHooks.QUIT.invoker().act(player);
     }
 
     @Inject(
-            method = "onUpdateSelectedSlot",
+            method = "handleSetCarriedItem",
             at = @At("TAIL")
     )
-    public void kibu$onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packet, CallbackInfo ci) {
-        PlayerInventoryHooks.SLOT_CHANGE.invoker().onChangeSlot(player, packet.getSelectedSlot());
+    public void kibu$onUpdateSelectedSlot(ServerboundSetCarriedItemPacket packet, CallbackInfo ci) {
+        PlayerInventoryHooks.SLOT_CHANGE.invoker().onChangeSlot(player, packet.getSlot());
     }
 
     @Inject(
-            method = "onPlayerAction",
+            method = "handlePlayerAction",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;",
+                    target = "Lnet/minecraft/server/level/ServerPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;",
                     ordinal = 0
             ),
             cancellable = true
     )
-    public void kibu$beforeSwapHands(PlayerActionC2SPacket packet, CallbackInfo ci) {
+    public void kibu$beforeSwapHands(ServerboundPlayerActionPacket packet, CallbackInfo ci) {
         boolean cancel = PlayerInventoryHooks.SWAP_HANDS.invoker().onSwapHands(player, player.getInventory().getSelectedSlot());
         if (cancel) {
             ci.cancel();
@@ -102,98 +102,98 @@ public abstract class ServerPlayNetworkHandlerMixin {
     }
 
     @Inject(
-            method = "onPlayerAction",
+            method = "handlePlayerAction",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;clearActiveItem()V"
+                    target = "Lnet/minecraft/server/level/ServerPlayer;stopUsingItem()V"
             )
     )
-    public void kibu$afterSwapHands(PlayerActionC2SPacket packet, CallbackInfo ci) {
+    public void kibu$afterSwapHands(ServerboundPlayerActionPacket packet, CallbackInfo ci) {
         PlayerInventoryHooks.SWAPPED_HANDS.invoker().onSwappedHands(player, player.getInventory().getSelectedSlot());
     }
 
     @Inject(
-            method = "onClickSlot",
+            method = "handleContainerClick",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/network/packet/c2s/play/ClickSlotC2SPacket;slot()S"
+                    target = "Lnet/minecraft/network/protocol/game/ServerboundContainerClickPacket;slotNum()S"
             ),
             cancellable = true
     )
-    public void kibu$onClickSlot(ClickSlotC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.ClickEvent(player, packet.slot(), packet.button(), packet.cursor(),
-                packet.actionType(), packet.modifiedStacks());
+    public void kibu$onClickSlot(ServerboundContainerClickPacket packet, CallbackInfo ci) {
+        var event = new PlayerInventoryHooks.ClickEvent(player, packet.slotNum(), packet.buttonNum(), packet.carriedItem(),
+                packet.clickType(), packet.changedSlots());
 
         boolean cancel = PlayerInventoryHooks.MODIFY_INVENTORY.invoker().onModify(event);
         if (cancel) {
             ci.cancel();
-            this.player.currentScreenHandler.syncState();
+            this.player.containerMenu.sendAllDataToRemote();
             PlayerUtils.syncPlayerItems(player);
         }
     }
 
     @Inject(
-            method = "onClickSlot",
+            method = "handleContainerClick",
             at = @At("TAIL")
     )
-    public void kibu$onClickedSlot(ClickSlotC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.ClickEvent(player, packet.slot(), packet.button(), packet.cursor(),
-                packet.actionType(), packet.modifiedStacks());
+    public void kibu$onClickedSlot(ServerboundContainerClickPacket packet, CallbackInfo ci) {
+        var event = new PlayerInventoryHooks.ClickEvent(player, packet.slotNum(), packet.buttonNum(), packet.carriedItem(),
+                packet.clickType(), packet.changedSlots());
 
         PlayerInventoryHooks.MODIFIED_INVENTORY.invoker().onModified(event);
     }
 
     @Inject(
-            method = "onCreativeInventoryAction",
+            method = "handleSetCreativeModeSlot",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/screen/PlayerScreenHandler;getSlot(I)Lnet/minecraft/screen/slot/Slot;"
+                    target = "Lnet/minecraft/world/inventory/InventoryMenu;getSlot(I)Lnet/minecraft/world/inventory/Slot;"
             )
     )
-    public void kibu$onCreativeClickSlot(CreativeInventoryActionC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.slot(), packet.stack());
+    public void kibu$onCreativeClickSlot(ServerboundSetCreativeModeSlotPacket packet, CallbackInfo ci) {
+        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.slotNum(), packet.itemStack());
 
         PlayerInventoryHooks.MODIFY_CREATIVE_INVENTORY.invoker().onModify(event);
     }
 
     @Inject(
-            method = "onCreativeInventoryAction",
+            method = "handleSetCreativeModeSlot",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/screen/PlayerScreenHandler;sendContentUpdates()V",
+                    target = "Lnet/minecraft/world/inventory/InventoryMenu;broadcastChanges()V",
                     shift = At.Shift.AFTER
             )
     )
-    public void kibu$onCreativeClickedSlot(CreativeInventoryActionC2SPacket packet, CallbackInfo ci) {
-        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.slot(), packet.stack());
+    public void kibu$onCreativeClickedSlot(ServerboundSetCreativeModeSlotPacket packet, CallbackInfo ci) {
+        var event = new PlayerInventoryHooks.CreativeClickEvent(player, packet.slotNum(), packet.itemStack());
 
         PlayerInventoryHooks.MODIFIED_CREATIVE_INVENTORY.invoker().onModified(event);
     }
 
     @Inject(
-            method = "onPlayerMove",
+            method = "handleMovePlayer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;getBoundingBox()Lnet/minecraft/util/math/Box;"
+                    target = "Lnet/minecraft/server/level/ServerPlayer;getBoundingBox()Lnet/minecraft/world/phys/AABB;"
             ),
             cancellable = true
     )
-    public void kibu$preMove(PlayerMoveC2SPacket packet, CallbackInfo ci) {
+    public void kibu$preMove(ServerboundMovePlayerPacket packet, CallbackInfo ci) {
         if (teleporting) return;
 
         if (Double.isNaN(lastX)) {
             lastX = player.getX();
             lastY = player.getY();
             lastZ = player.getZ();
-            lastYaw = player.getYaw();
-            lastPitch = player.getPitch();
+            lastYaw = player.getYRot();
+            lastPitch = player.getXRot();
         }
 
         double toX = clampHorizontal(packet.getX(lastX));
         double toY = clampVertical(packet.getY(lastY));
         double toZ = clampHorizontal(packet.getZ(lastZ));
-        float toYaw = MathHelper.wrapDegrees(packet.getYaw(lastYaw));
-        float toPitch = MathHelper.wrapDegrees(packet.getPitch(lastPitch));
+        float toYaw = Mth.wrapDegrees(packet.getYRot(lastYaw));
+        float toPitch = Mth.wrapDegrees(packet.getXRot(lastPitch));
 
         // check angle against last recorded position to debounce movement hook
         double distance = Math.pow(toX - lastX, 2) + Math.pow(toY - lastY, 2) + Math.pow(toZ - lastZ, 2);
@@ -204,7 +204,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
         PositionRotation from = new PositionRotation(lastX, lastY, lastZ, lastYaw, lastPitch);
         PositionRotation to = new PositionRotation(toX, toY, toZ, toYaw, toPitch);
 
-        double motionY = player.getVelocity().getY();
+        double motionY = player.getDeltaMovement().y();
 
         hookTeleported = false;
 
@@ -218,14 +218,14 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
         if (cancel) {
             // movement disallowed; reset
-            requestTeleport(from.getX(), from.getY(), from.getZ(), from.getYaw(), from.getPitch());
+            teleport(from.x(), from.y(), from.z(), from.getYaw(), from.getPitch());
 
             ci.cancel();
             return;
         }
 
         // in case a hook modified the y-velocity and the hook was not cancelled
-        double newMotionY = player.getVelocity().getY();
+        double newMotionY = player.getDeltaMovement().y();
 
         if (Math.abs(newMotionY - motionY) > 1e-9d) {
             modifiedVelocityY = newMotionY;
@@ -239,60 +239,60 @@ public abstract class ServerPlayNetworkHandlerMixin {
     }
 
     @Inject(
-            method = "onPlayerMove",
+            method = "handleMovePlayer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;jump()V",
+                    target = "Lnet/minecraft/server/level/ServerPlayer;jumpFromGround()V",
                     shift = At.Shift.AFTER
             )
     )
-    public void kibu$onJump(PlayerMoveC2SPacket packet, CallbackInfo ci) {
+    public void kibu$onJump(ServerboundMovePlayerPacket packet, CallbackInfo ci) {
         if (Double.isNaN(modifiedVelocityY)) return;
 
-        Vec3d velocity = player.getVelocity();
-        player.setVelocity(velocity.getX(), modifiedVelocityY, velocity.getZ());
+        Vec3 velocity = player.getDeltaMovement();
+        player.setDeltaMovement(velocity.x(), modifiedVelocityY, velocity.z());
     }
 
     @Inject(
-            method = "onPlayerMove",
+            method = "handleMovePlayer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;move(Lnet/minecraft/entity/MovementType;Lnet/minecraft/util/math/Vec3d;)V"
+                    target = "Lnet/minecraft/server/level/ServerPlayer;move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V"
             )
     )
-    public void kibu$resetModifiedVelocityY(PlayerMoveC2SPacket packet, CallbackInfo ci) {
+    public void kibu$resetModifiedVelocityY(ServerboundMovePlayerPacket packet, CallbackInfo ci) {
         modifiedVelocityY = Double.NaN;
     }
 
     @Inject(
-            method = "requestTeleport(Lnet/minecraft/entity/EntityPosition;Ljava/util/Set;)V",
+            method = "teleport(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;setPosition(Lnet/minecraft/entity/EntityPosition;Ljava/util/Set;)V"
+                    target = "Lnet/minecraft/server/level/ServerPlayer;teleportSetPosition(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;)V"
             )
     )
-    public void kibu$onRequestTeleport(EntityPosition pos, Set<PositionFlag> flags, CallbackInfo ci) {
+    public void kibu$onRequestTeleport(PositionMoveRotation pos, Set<Relative> flags, CallbackInfo ci) {
         hookTeleported = true;
         teleporting = true;
         lastX = pos.position().x;
         lastY = pos.position().y;
         lastZ = pos.position().z;
-        lastYaw = pos.yaw();
-        lastPitch = pos.pitch();
+        lastYaw = pos.yRot();
+        lastPitch = pos.xRot();
     }
 
     @Inject(
-            method = "onUpdatePlayerAbilities",
+            method = "handlePlayerAbilities",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/network/packet/c2s/play/UpdatePlayerAbilitiesC2SPacket;isFlying()Z"
+                    target = "Lnet/minecraft/network/protocol/game/ServerboundPlayerAbilitiesPacket;isFlying()Z"
             ),
             cancellable = true
     )
-    public void kibu$onToggleFlight(UpdatePlayerAbilitiesC2SPacket packet, CallbackInfo ci) {
-        PlayerAbilities abilities = player.getAbilities();
+    public void kibu$onToggleFlight(ServerboundPlayerAbilitiesPacket packet, CallbackInfo ci) {
+        Abilities abilities = player.getAbilities();
 
-        if (!abilities.allowFlying) return;
+        if (!abilities.mayfly) return;
 
         boolean fly = packet.isFlying();
 
@@ -300,43 +300,43 @@ public abstract class ServerPlayNetworkHandlerMixin {
 
         if (PlayerToggleFlightCallback.HOOK.invoker().onToggleFlight(player, fly)) {
             ci.cancel();
-            player.sendAbilitiesUpdate();
+            player.onUpdateAbilities();
         }
     }
 
     @Inject(
-            method = "onTeleportConfirm",
+            method = "handleAcceptTeleportPacket",
             at = @At(
                     value = "FIELD",
-                    target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;requestedTeleportPos:Lnet/minecraft/util/math/Vec3d;",
+                    target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;awaitingPositionFromClient:Lnet/minecraft/world/phys/Vec3;",
                     opcode = Opcodes.PUTFIELD,
                     shift = At.Shift.AFTER
             )
     )
-    public void kibu$onTeleportConfirm(TeleportConfirmC2SPacket packet, CallbackInfo ci) {
+    public void kibu$onTeleportConfirm(ServerboundAcceptTeleportationPacket packet, CallbackInfo ci) {
         teleporting = false;
         PlayerTeleportedCallback.HOOK.invoker().onTeleported(player);
     }
 
     @Inject(
-            method = "onHandSwing",
+            method = "handleAnimate",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;updateLastActionTime()V"
+                    target = "Lnet/minecraft/server/level/ServerPlayer;resetLastActionTime()V"
             )
     )
-    public void kibu$onHandSwing(HandSwingC2SPacket packet, CallbackInfo ci) {
+    public void kibu$onHandSwing(ServerboundSwingPacket packet, CallbackInfo ci) {
         PlayerSwingHandHook.HOOK.invoker().onSwingHand(player, packet.getHand());
     }
 
     @Inject(
-            method = "onPlayerInput",
+            method = "handlePlayerInput",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;setPlayerInput(Lnet/minecraft/util/PlayerInput;)V"
+                    target = "Lnet/minecraft/server/level/ServerPlayer;setLastClientInput(Lnet/minecraft/world/entity/player/Input;)V"
             )
     )
-    public void kibu$onPlayerInput(PlayerInputC2SPacket packet, CallbackInfo ci) {
+    public void kibu$onPlayerInput(ServerboundPlayerInputPacket packet, CallbackInfo ci) {
         PlayerInputCallback.HOOK.invoker().onInput(player, packet.input());
     }
 }

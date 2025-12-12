@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.hook.mixin.ai;
 
-import net.minecraft.entity.ai.goal.StepAndDestroyBlockGoal;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.RemoveBlockGoal;
+import net.minecraft.world.level.BlockGetter;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,41 +14,41 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
-@Mixin(StepAndDestroyBlockGoal.class)
+@Mixin(RemoveBlockGoal.class)
 public abstract class StepAndDestroyBlockGoalMixin {
 
-    @Shadow private int counter;
+    @Shadow private int ticksSinceReachedGoal;
 
-    @Shadow @Final private MobEntity stepAndDestroyMob;
+    @Shadow @Final private Mob removerMob;
 
     @Shadow
-    protected abstract @Nullable BlockPos tweakToProperPos(BlockPos pos, BlockView world);
+    protected abstract @Nullable BlockPos getPosWithBlock(BlockPos pos, BlockGetter world);
 
     @Inject(
             method = "tick",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;removeBlock(Lnet/minecraft/util/math/BlockPos;Z)Z"
+                    target = "Lnet/minecraft/world/level/Level;removeBlock(Lnet/minecraft/core/BlockPos;Z)Z"
             ),
             cancellable = true
     )
     public void kibu$onDestroyBlock(CallbackInfo ci) {
-        final var world = this.stepAndDestroyMob.getEntityWorld();
-        final var pos = tweakToProperPos(this.stepAndDestroyMob.getBlockPos(), world);
+        final var world = this.removerMob.level();
+        final var pos = getPosWithBlock(this.removerMob.blockPosition(), world);
 
-        if (BlockModificationHooks.TRAMPLE_TURTLE_EGG.invoker().onModify(world, pos, this.stepAndDestroyMob)) {
+        if (BlockModificationHooks.TRAMPLE_TURTLE_EGG.invoker().onModify(world, pos, this.removerMob)) {
             ci.cancel();
-            ++this.counter;
+            ++this.ticksSinceReachedGoal;
         }
     }
 
     @Inject(
-            method = "canStart",
+            method = "canUse",
             at = @At("HEAD"),
             cancellable = true
     )
     public void kibu$interceptCanStart(CallbackInfoReturnable<Boolean> cir) {
-        if (BlockModificationHooks.CAN_MOB_GRIEF.invoker().onModify(this.stepAndDestroyMob.getEntityWorld(), this.stepAndDestroyMob.getBlockPos(), this.stepAndDestroyMob)) {
+        if (BlockModificationHooks.CAN_MOB_GRIEF.invoker().onModify(this.removerMob.level(), this.removerMob.blockPosition(), this.removerMob)) {
             cir.setReturnValue(false);
         }
     }

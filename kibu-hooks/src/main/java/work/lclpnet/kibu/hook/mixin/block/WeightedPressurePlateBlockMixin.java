@@ -1,12 +1,12 @@
 package work.lclpnet.kibu.hook.mixin.block;
 
-import net.minecraft.block.WeightedPressurePlateBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.WeightedPressurePlateBlock;
+import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,18 +19,18 @@ import work.lclpnet.kibu.hook.world.PressurePlateCallback;
 @Mixin(WeightedPressurePlateBlock.class)
 public class WeightedPressurePlateBlockMixin {
 
-    @Shadow @Final private int weight;
+    @Shadow @Final private int maxWeight;
 
     @Inject(
-            method = "getRedstoneOutput(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)I",
+            method = "getSignalStrength(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)I",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onGetWeightedRedstoneOutput(World world, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
-        Box box = AbstractPressurePlateBlockAccessor.getBox().offset(pos);
+    public void kibu$onGetWeightedRedstoneOutput(Level world, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
+        AABB box = AbstractPressurePlateBlockAccessor.getBox().move(pos);
 
-        var entities = world.getEntitiesByClass(Entity.class, box, EntityPredicates.EXCEPT_SPECTATOR
-                .and((entity) -> !entity.canAvoidTraps()));
+        var entities = world.getEntitiesOfClass(Entity.class, box, EntitySelector.NO_SPECTATORS
+                .and((entity) -> !entity.isIgnoringBlockTriggers()));
 
         int i = 0;
         boolean modified = false;
@@ -50,7 +50,7 @@ public class WeightedPressurePlateBlockMixin {
             return;
         }
 
-        float f = (float) Math.min(this.weight, i) / (float) this.weight;
-        cir.setReturnValue(MathHelper.ceil(f * 15.0F));
+        float f = (float) Math.min(this.maxWeight, i) / (float) this.maxWeight;
+        cir.setReturnValue(Mth.ceil(f * 15.0F));
     }
 }

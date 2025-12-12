@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.map;
 
-import net.minecraft.block.MapColor;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.NbtSizeTracker;
+import net.minecraft.world.level.material.MapColor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -25,16 +25,16 @@ class MapColorUtilTest {
     @ParameterizedTest
     @MethodSource("provideColorBrightnessArgs")
     void mapColor(MapColor color, MapColor.Brightness brightness) {
-        int renderColor = color.getRenderColor(brightness);
+        int renderColor = color.calculateARGBColor(brightness);
         byte mappedColor = MapColorUtil.mapColor(renderColor);
-        byte expected = renderColor == 0 ? 0 : color.getRenderColorByte(brightness);
+        byte expected = renderColor == 0 ? 0 : color.getPackedId(brightness);
 
         assertEquals(expected, mappedColor);
     }
 
     private static Stream<Arguments> provideColorBrightnessArgs() {
         return IntStream.range(0, 64)
-                .mapToObj(MapColor::get)
+                .mapToObj(MapColor::byId)
                 .flatMap(color -> Arrays.stream(MapColor.Brightness.values())
                         .map(brightness -> Arguments.of(color, brightness)));
     }
@@ -51,13 +51,13 @@ class MapColorUtilTest {
             img = ImageIO.read(in);
         }
 
-        NbtCompound nbt;
+        CompoundTag nbt;
 
         try (var in = Files.newInputStream(ref)) {
-            nbt = NbtIo.readCompressed(in, NbtSizeTracker.ofUnlimitedBytes());
+            nbt = NbtIo.readCompressed(in, NbtAccounter.unlimitedHeap());
         }
 
-        NbtCompound data = nbt.getCompound("data").orElseThrow();
+        CompoundTag data = nbt.getCompound("data").orElseThrow();
         assertTrue(data.contains("colors"));
 
         byte[] expected = data.getByteArray("colors").orElseThrow();

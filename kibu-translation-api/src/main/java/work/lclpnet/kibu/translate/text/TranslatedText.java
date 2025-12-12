@@ -1,10 +1,10 @@
 package work.lclpnet.kibu.translate.text;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
@@ -14,61 +14,61 @@ import java.util.function.UnaryOperator;
 public class TranslatedText implements TextTranslatable {
 
     private final Function<String, RootText> textFactory;
-    private final Function<ServerPlayerEntity, String> languageGetter;
+    private final Function<ServerPlayer, String> languageGetter;
     private Style style;
     @Nullable
-    private Text prefix = null;
+    private Component prefix = null;
 
     private TranslatedText(Function<String, RootText> textFactory,
-                           Function<ServerPlayerEntity, String> languageGetter, Style style) {
+                           Function<ServerPlayer, String> languageGetter, Style style) {
         this.textFactory = textFactory;
         this.languageGetter = languageGetter;
         this.style = style;
     }
 
     public static TranslatedText create(Function<String, RootText> textFactory,
-                                        Function<ServerPlayerEntity, String> languageGetter) {
+                                        Function<ServerPlayer, String> languageGetter) {
         return create(textFactory, languageGetter, Style.EMPTY);
     }
 
     public static TranslatedText create(Function<String, RootText> textFactory,
-                                        Function<ServerPlayerEntity, String> languageGetter, Style style) {
+                                        Function<ServerPlayer, String> languageGetter, Style style) {
         return new TranslatedText(textFactory, languageGetter, style);
     }
 
-    private String getLanguage(ServerPlayerEntity player) {
+    private String getLanguage(ServerPlayer player) {
         return languageGetter.apply(player);
     }
 
-    public void acceptEach(Iterable<? extends ServerPlayerEntity> players, BiConsumer<ServerPlayerEntity, Text> action) {
-        for (ServerPlayerEntity player : players) {
+    public void acceptEach(Iterable<? extends ServerPlayer> players, BiConsumer<ServerPlayer, Component> action) {
+        for (ServerPlayer player : players) {
             action.accept(player, textFor(player));
         }
     }
 
-    public Text textFor(ServerPlayerEntity player) {
+    public Component textFor(ServerPlayer player) {
         RootText text = translateFor(player);
 
         return prefix != null ? prefix.copy().append(text) : text;
     }
 
-    public void sendTo(ServerPlayerEntity player) {
+    public void sendTo(ServerPlayer player) {
         sendTo(player, false);
     }
 
-    public void sendTo(ServerPlayerEntity player, boolean overlay) {
-        player.sendMessage(textFor(player), overlay);
+    public void sendTo(ServerPlayer player, boolean overlay) {
+        player.displayClientMessage(textFor(player), overlay);
     }
 
-    public void sendTo(Iterable<? extends ServerPlayerEntity> players) {
+    public void sendTo(Iterable<? extends ServerPlayer> players) {
         sendTo(players, false);
     }
 
-    public void sendTo(Iterable<? extends ServerPlayerEntity> players, boolean overlay) {
-        acceptEach(players, (player, text) -> player.sendMessageToClient(text, overlay));
+    public void sendTo(Iterable<? extends ServerPlayer> players, boolean overlay) {
+        acceptEach(players, (player, text) -> player.sendSystemMessage(text, overlay));
     }
 
-    public TranslatedText prefixed(MutableText prefix) {
+    public TranslatedText prefixed(MutableComponent prefix) {
         this.prefix = prefix;
         return this;
     }
@@ -84,7 +84,7 @@ public class TranslatedText implements TextTranslatable {
     /**
      * Updates the style of this text.
      *
-     * @see Text#getStyle()
+     * @see Component#getStyle()
      * @see #setStyle(Style)
      *
      * @param styleUpdater the style updater
@@ -98,12 +98,12 @@ public class TranslatedText implements TextTranslatable {
      * Fills the absent parts of this text's style with definitions from {@code
      * styleOverride}.
      *
-     * @see Style#withParent(Style)
+     * @see Style#applyTo(Style)
      *
      * @param styleOverride the style that provides definitions for absent definitions in this text's style
      */
     public TranslatedText fillStyle(Style styleOverride) {
-        this.setStyle(styleOverride.withParent(this.getStyle()));
+        this.setStyle(styleOverride.applyTo(this.getStyle()));
         return this;
     }
 
@@ -112,8 +112,8 @@ public class TranslatedText implements TextTranslatable {
      *
      * @param formattings an array of formattings
      */
-    public TranslatedText formatted(Formatting... formattings) {
-        this.setStyle(this.getStyle().withFormatting(formattings));
+    public TranslatedText formatted(ChatFormatting... formattings) {
+        this.setStyle(this.getStyle().applyFormats(formattings));
         return this;
     }
 
@@ -122,8 +122,8 @@ public class TranslatedText implements TextTranslatable {
      *
      * @param formatting a formatting
      */
-    public TranslatedText formatted(Formatting formatting) {
-        this.setStyle(this.getStyle().withFormatting(formatting));
+    public TranslatedText formatted(ChatFormatting formatting) {
+        this.setStyle(this.getStyle().applyFormat(formatting));
         return this;
     }
 
@@ -131,12 +131,12 @@ public class TranslatedText implements TextTranslatable {
     public RootText translateTo(String language) {
         RootText text = textFactory.apply(language);
 
-        text.setStyle(style.withParent(text.getStyle()));
+        text.setStyle(style.applyTo(text.getStyle()));
 
         return text;
     }
 
-    public RootText translateFor(ServerPlayerEntity player) {
+    public RootText translateFor(ServerPlayer player) {
         String language = getLanguage(player);
         return translateTo(language);
     }

@@ -1,12 +1,12 @@
 package work.lclpnet.kibu.hook.world;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
@@ -204,23 +204,23 @@ public class BlockModificationHooks {
     });
 
     public interface PlaceBlockHook {
-        boolean onPlace(World world, BlockPos pos, Entity entity, BlockState newState);
+        boolean onPlace(Level world, BlockPos pos, Entity entity, BlockState newState);
     }
 
     public interface BlockModifyHook {
-        boolean onModify(World world, BlockPos pos, Entity entity);
+        boolean onModify(Level world, BlockPos pos, Entity entity);
     }
 
     public interface BlockModifiedHook {
-        void onModified(World world, BlockPos pos, Entity entity);
+        void onModified(Level world, BlockPos pos, Entity entity);
     }
 
     public interface FluidTransferHook {
-        boolean onTransfer(World world, BlockPos pos, Entity entity, Fluid fluid);
+        boolean onTransfer(Level world, BlockPos pos, Entity entity, Fluid fluid);
     }
 
     public interface ItemUseOnBlock {
         @Nullable
-        ActionResult onUse(ItemUsageContext ctx);
+        InteractionResult onUse(UseOnContext ctx);
     }
 }

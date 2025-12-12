@@ -1,41 +1,41 @@
 package work.lclpnet.kibu.access.mixin;
 
-import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
-import net.minecraft.scoreboard.AbstractTeam;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+import net.minecraft.world.scores.Team;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(TeamS2CPacket.SerializableTeam.class)
+@Mixin(ClientboundSetPlayerTeamPacket.Parameters.class)
 public interface SerializableTeamAccessor {
 
     @Accessor
     @Mutable
-    void setDisplayName(Text displayName);
+    void setDisplayName(Component displayName);
 
     @Accessor
     @Mutable
-    void setPrefix(Text prefix);
+    void setPlayerPrefix(Component prefix);
 
     @Accessor
     @Mutable
-    void setSuffix(Text suffix);
+    void setPlayerSuffix(Component suffix);
 
     @Accessor
     @Mutable
-    void setNameTagVisibilityRule(AbstractTeam.VisibilityRule nameTagVisibilityRule);
+    void setNametagVisibility(Team.Visibility nameTagVisibilityRule);
 
     @Accessor
     @Mutable
-    void setCollisionRule(AbstractTeam.CollisionRule collisionRule);
+    void setCollisionRule(Team.CollisionRule collisionRule);
 
     @Accessor
     @Mutable
-    void setColor(Formatting color);
+    void setColor(ChatFormatting color);
 
     @Accessor
     @Mutable
-    void setFriendlyFlags(int friendlyFlags);
+    void setOptions(int friendlyFlags);
 }

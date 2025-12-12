@@ -1,20 +1,20 @@
 package work.lclpnet.kibu.access.entity;
 
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.passive.LlamaEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.DyeColor;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.animal.horse.Llama;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 public class LlamaEntityAccess {
 
     private LlamaEntityAccess() {}
 
-    public static void setCarpetColor(LlamaEntity llama, @Nullable DyeColor color) {
+    public static void setCarpetColor(Llama llama, @Nullable DyeColor color) {
         if (color == null) {
-            llama.equipStack(EquipmentSlot.BODY, ItemStack.EMPTY);
+            llama.setItemSlot(EquipmentSlot.BODY, ItemStack.EMPTY);
             return;
         }
 
@@ -37,6 +37,6 @@ public class LlamaEntityAccess {
             case BLACK -> Items.BLACK_CARPET;
         };
 
-        llama.equipStack(EquipmentSlot.BODY, new ItemStack(item));
+        llama.setItemSlot(EquipmentSlot.BODY, new ItemStack(item));
     }
 }

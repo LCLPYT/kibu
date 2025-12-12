@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.translate.text;
 
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 import java.util.Objects;
 import java.util.function.UnaryOperator;
@@ -21,8 +21,8 @@ public final class FormatWrapper {
         return styled(obj, Style.EMPTY);
     }
 
-    public static FormatWrapper styled(Object obj, Formatting... formatting) {
-        return styled(obj, Style.EMPTY.withFormatting(formatting));
+    public static FormatWrapper styled(Object obj, ChatFormatting... formatting) {
+        return styled(obj, Style.EMPTY.applyFormats(formatting));
     }
 
     public static FormatWrapper styled(Object obj, Style style) {
@@ -45,7 +45,7 @@ public final class FormatWrapper {
     /**
      * Updates the style of this text.
      *
-     * @see Text#getStyle()
+     * @see Component#getStyle()
      * @see #setStyle(Style)
      *
      * @param styleUpdater the style updater
@@ -59,12 +59,12 @@ public final class FormatWrapper {
      * Fills the absent parts of this text's style with definitions from {@code
      * styleOverride}.
      *
-     * @see Style#withParent(Style)
+     * @see Style#applyTo(Style)
      *
      * @param styleOverride the style that provides definitions for absent definitions in this text's style
      */
     public FormatWrapper fillStyle(Style styleOverride) {
-        this.setStyle(styleOverride.withParent(this.getStyle()));
+        this.setStyle(styleOverride.applyTo(this.getStyle()));
         return this;
     }
 
@@ -73,8 +73,8 @@ public final class FormatWrapper {
      *
      * @param formattings an array of formattings
      */
-    public FormatWrapper formatted(Formatting... formattings) {
-        this.setStyle(this.getStyle().withFormatting(formattings));
+    public FormatWrapper formatted(ChatFormatting... formattings) {
+        this.setStyle(this.getStyle().applyFormats(formattings));
         return this;
     }
 
@@ -83,8 +83,8 @@ public final class FormatWrapper {
      *
      * @param formatting a formatting
      */
-    public FormatWrapper formatted(Formatting formatting) {
-        this.setStyle(this.getStyle().withFormatting(formatting));
+    public FormatWrapper formatted(ChatFormatting formatting) {
+        this.setStyle(this.getStyle().applyFormat(formatting));
         return this;
     }
 

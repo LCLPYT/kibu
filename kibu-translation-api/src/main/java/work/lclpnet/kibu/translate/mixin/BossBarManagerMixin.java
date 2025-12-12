@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.translate.mixin;
 
-import net.minecraft.entity.boss.BossBarManager;
-import net.minecraft.entity.boss.CommandBossBar;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.bossevents.CustomBossEvent;
+import net.minecraft.server.bossevents.CustomBossEvents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -13,22 +13,22 @@ import work.lclpnet.kibu.translate.util.TransientBossBars;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Mixin(BossBarManager.class)
+@Mixin(CustomBossEvents.class)
 public class BossBarManagerMixin {
 
     @Shadow
     @Final
-    private Map<Identifier, CommandBossBar> commandBossBars;
+    private Map<ResourceLocation, CustomBossEvent> events;
 
     @ModifyArg(
-            method = "toNbt",
+            method = "save",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/util/Util;transformMapValues(Ljava/util/Map;Ljava/util/function/Function;)Ljava/util/Map;"
+                    target = "Lnet/minecraft/Util;mapValues(Ljava/util/Map;Ljava/util/function/Function;)Ljava/util/Map;"
             )
     )
-    private Map<Identifier, CommandBossBar> kibu$excludeTransient(Map<Identifier, CommandBossBar> bars) {
-        return commandBossBars.entrySet().stream()
+    private Map<ResourceLocation, CustomBossEvent> kibu$excludeTransient(Map<ResourceLocation, CustomBossEvent> bars) {
+        return events.entrySet().stream()
                 .filter(entry -> !TransientBossBars.isTransient(entry.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }

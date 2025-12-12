@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,14 +12,14 @@ import work.lclpnet.kibu.hook.player.PlayerInventoryHooks;
 public class ItemEntityMixin {
 
     @Inject(
-            method = "onPlayerCollision",
+            method = "playerTouch",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/player/PlayerInventory;insertStack(Lnet/minecraft/item/ItemStack;)Z"
+                    target = "Lnet/minecraft/world/entity/player/Inventory;add(Lnet/minecraft/world/item/ItemStack;)Z"
             ),
             cancellable = true
     )
-    public void kibu$onItemPickup(PlayerEntity player, CallbackInfo ci) {
+    public void kibu$onItemPickup(Player player, CallbackInfo ci) {
         @SuppressWarnings("DataFlowIssue")
         ItemEntity self = (ItemEntity) (Object) this;
 
@@ -30,13 +30,13 @@ public class ItemEntityMixin {
     }
 
     @Inject(
-            method = "onPlayerCollision",
+            method = "playerTouch",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/player/PlayerEntity;sendPickup(Lnet/minecraft/entity/Entity;I)V"
+                    target = "Lnet/minecraft/world/entity/player/Player;take(Lnet/minecraft/world/entity/Entity;I)V"
             )
     )
-    public void kibu$onItemPickedUp(PlayerEntity player, CallbackInfo ci) {
+    public void kibu$onItemPickedUp(Player player, CallbackInfo ci) {
         @SuppressWarnings("DataFlowIssue")
         ItemEntity self = (ItemEntity) (Object) this;
 

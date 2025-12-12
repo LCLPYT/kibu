@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.translate.hook;
 
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -12,7 +12,7 @@ public interface LanguageChangedCallback {
         }
     });
 
-    void onChanged(ServerPlayerEntity player, String language, Reason reason);
+    void onChanged(ServerPlayer player, String language, Reason reason);
 
     enum Reason { PLAYER, OTHER }
 }

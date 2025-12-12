@@ -1,9 +1,9 @@
 package work.lclpnet.kibu.hook.entity;
 
-import net.minecraft.entity.decoration.ItemFrameEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -22,5 +22,5 @@ public interface ItemFramePutItemCallback {
                 return cancel;
             });
 
-    boolean onPutIntoFrame(ItemFrameEntity itemFrame, ItemStack stack, PlayerEntity player, Hand hand);
+    boolean onPutIntoFrame(ItemFrame itemFrame, ItemStack stack, Player player, InteractionHand hand);
 }

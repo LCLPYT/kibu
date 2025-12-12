@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.behaviour.mixin;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.tick.OrderedTick;
-import net.minecraft.world.tick.WorldTickScheduler;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.ticks.LevelTicks;
+import net.minecraft.world.ticks.ScheduledTick;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -13,10 +13,10 @@ import work.lclpnet.kibu.behaviour.type.KibuTickScheduler;
 
 import java.util.function.BiConsumer;
 
-@Mixin(WorldTickScheduler.class)
+@Mixin(LevelTicks.class)
 public abstract class WorldTickSchedulerMixin implements KibuTickScheduler {
 
-    @Shadow protected abstract void clear();
+    @Shadow protected abstract void cleanupAfterTick();
 
     @Unique
     private boolean enabled = true;
@@ -40,15 +40,15 @@ public abstract class WorldTickSchedulerMixin implements KibuTickScheduler {
         if (enabled) return;
 
         ci.cancel();
-        this.clear();
+        this.cleanupAfterTick();
     }
 
     @Inject(
-            method = "scheduleTick",
+            method = "schedule",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onSchedule(OrderedTick<Object> orderedTick, CallbackInfo ci) {
+    public void kibu$onSchedule(ScheduledTick<Object> orderedTick, CallbackInfo ci) {
         if (!enabled) {
             ci.cancel();
         }

@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
@@ -12,7 +12,7 @@ public class PlayerConnectionHooks {
 
     public static final Hook<JoinMessage> JOIN_MESSAGE = HookFactory.createArrayBacked(JoinMessage.class, callbacks -> (player, message) -> {
         for (var callback : callbacks) {
-            final Text newMessage = callback.onJoin(player, message);
+            final Component newMessage = callback.onJoin(player, message);
             if (!message.equals(newMessage))
                 return newMessage;
         }
@@ -22,7 +22,7 @@ public class PlayerConnectionHooks {
 
     public static final Hook<QuitMessage> QUIT_MESSAGE = HookFactory.createArrayBacked(QuitMessage.class, callbacks -> (player, message) -> {
         for (var callback : callbacks) {
-            final Text newMessage = callback.onQuit(player, message);
+            final Component newMessage = callback.onQuit(player, message);
             if (!message.equals(newMessage))
                 return newMessage;
         }
@@ -44,15 +44,15 @@ public class PlayerConnectionHooks {
 
     public interface JoinMessage {
         @Nullable
-        Text onJoin(ServerPlayerEntity player, Text message);
+        Component onJoin(ServerPlayer player, Component message);
     }
 
     public interface QuitMessage {
         @Nullable
-        Text onQuit(ServerPlayerEntity player, Text message);
+        Component onQuit(ServerPlayer player, Component message);
     }
 
     public interface ServerPlayerAction {
-        void act(ServerPlayerEntity player);
+        void act(ServerPlayer player);
     }
 }

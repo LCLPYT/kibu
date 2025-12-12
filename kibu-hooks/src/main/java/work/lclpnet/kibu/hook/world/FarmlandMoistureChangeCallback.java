@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.world;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -29,5 +29,5 @@ public interface FarmlandMoistureChangeCallback {
      * @param moisture The moisture level after the change is complete. Will be -1 when the farmland would be converted to dirt.
      * @return True, if the change should be cancelled. False for default behaviour.
      */
-    boolean onMoistureChange(ServerWorld world, BlockPos pos, int moisture);
+    boolean onMoistureChange(ServerLevel world, BlockPos pos, int moisture);
 }

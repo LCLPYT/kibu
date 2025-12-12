@@ -4,16 +4,16 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.block.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.Items;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.player.PlayerDeathCallback;
@@ -39,27 +39,27 @@ public class KibuHooks implements ModInitializer {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             final var state = world.getBlockState(hitResult.getBlockPos());
 
-            if (state.isOf(Blocks.CAKE)) {
+            if (state.is(Blocks.CAKE)) {
                 return onUseCake(player, hand, hitResult);
             }
 
-            if (state.isIn(BlockTags.CANDLE_CAKES)) {
+            if (state.is(BlockTags.CANDLE_CAKES)) {
                 return onUseCandleCake(player, hitResult);
             }
 
-            if (state.isIn(BlockTags.FLOWER_POTS)) {
+            if (state.is(BlockTags.FLOWER_POTS)) {
                 return onUseFlowerPot(player, hand, hitResult);
             }
 
-            if (state.isOf(Blocks.PUMPKIN)) {
+            if (state.is(Blocks.PUMPKIN)) {
                 return onUsePumpkin(player, hand, hitResult);
             }
 
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         });
 
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
-            if (entity instanceof ServerPlayerEntity player) {
+            if (entity instanceof ServerPlayer player) {
                 PlayerDeathCallback.HOOK.invoker().onDeath(player, damageSource);
             }
         });
@@ -76,71 +76,71 @@ public class KibuHooks implements ModInitializer {
             PlayerInventoryHooks.DROPPED_ITEM.invoker().onDroppedItem(event.player(), event.slot());
         });
 
-        PlayerMoveCallback.HOOK.register((player, from, to) -> player.getPlayerInput().jump()
-                && to.getY() > from.getY()
-                && player.isOnGround()
+        PlayerMoveCallback.HOOK.register((player, from, to) -> player.getLastClientInput().jump()
+                && to.y() > from.y()
+                && player.onGround()
                 && OnGroundDetector.isOnGroundServer(player)
                 && PlayerJumpCallback.HOOK.invoker().onJump(player));
     }
 
     @NotNull
-    private static ActionResult onUseCake(PlayerEntity player, Hand hand, BlockHitResult hitResult) {
-        final var itemStack = player.getStackInHand(hand);
+    private static InteractionResult onUseCake(Player player, InteractionHand hand, BlockHitResult hitResult) {
+        final var itemStack = player.getItemInHand(hand);
         final var pos = hitResult.getBlockPos();
-        final var world = player.getEntityWorld();
+        final var world = player.level();
         final var state = world.getBlockState(pos);
 
-        if (itemStack.isIn(ItemTags.CANDLES) && state.get(CakeBlock.BITES) == 0 && Block.getBlockFromItem(itemStack.getItem()) instanceof CandleBlock) {
-            ActionResult result = invokeItemUseBlock(player, hand, hitResult);
+        if (itemStack.is(ItemTags.CANDLES) && state.getValue(CakeBlock.BITES) == 0 && Block.byItem(itemStack.getItem()) instanceof CandleBlock) {
+            InteractionResult result = invokeItemUseBlock(player, hand, hitResult);
             if (result != null) return result;
 
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
         // player tries to eat the cake
-        if (!BlockModificationHooks.EAT_CAKE.invoker().onModify(world, pos, player)) return ActionResult.PASS;
+        if (!BlockModificationHooks.EAT_CAKE.invoker().onModify(world, pos, player)) return InteractionResult.PASS;
 
-        if (player instanceof ServerPlayerEntity serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             PlayerUtils.syncPlayerHealthAndHunger(serverPlayer);
         }
 
-        return ActionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
-    private ActionResult onUseCandleCake(PlayerEntity player, BlockHitResult hitResult) {
+    private InteractionResult onUseCandleCake(Player player, BlockHitResult hitResult) {
         final var pos = hitResult.getBlockPos();
-        final var world = player.getEntityWorld();
+        final var world = player.level();
         final var state = world.getBlockState(pos);
 
-        if (!state.get(CandleCakeBlock.LIT) || !BlockModificationHooks.EXTINGUISH_CANDLE.invoker().onModify(world, pos, player)) {
-            return ActionResult.PASS;
+        if (!state.getValue(CandleCakeBlock.LIT) || !BlockModificationHooks.EXTINGUISH_CANDLE.invoker().onModify(world, pos, player)) {
+            return InteractionResult.PASS;
         }
 
-        return ActionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @NotNull
-    private static ActionResult onUseFlowerPot(PlayerEntity player, Hand hand, BlockHitResult hitResult) {
-        ActionResult result = invokeItemUseBlock(player, hand, hitResult);
+    private static InteractionResult onUseFlowerPot(Player player, InteractionHand hand, BlockHitResult hitResult) {
+        InteractionResult result = invokeItemUseBlock(player, hand, hitResult);
         if (result != null) return result;
 
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     @NotNull
-    private static ActionResult onUsePumpkin(PlayerEntity player, Hand hand, BlockHitResult hitResult) {
-        var stack = player.getStackInHand(hand);
-        if (!stack.isOf(Items.SHEARS)) return ActionResult.PASS;
+    private static InteractionResult onUsePumpkin(Player player, InteractionHand hand, BlockHitResult hitResult) {
+        var stack = player.getItemInHand(hand);
+        if (!stack.is(Items.SHEARS)) return InteractionResult.PASS;
 
-        ActionResult result = invokeItemUseBlock(player, hand, hitResult);
+        InteractionResult result = invokeItemUseBlock(player, hand, hitResult);
         if (result != null) return result;
 
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     @Nullable
-    private static ActionResult invokeItemUseBlock(PlayerEntity player, Hand hand, BlockHitResult hitResult) {
-        var ctx = new ItemUsageContext(player, hand, hitResult);
+    private static InteractionResult invokeItemUseBlock(Player player, InteractionHand hand, BlockHitResult hitResult) {
+        var ctx = new UseOnContext(player, hand, hitResult);
         var result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(ctx);
 
         if (result != null) {
@@ -149,7 +149,7 @@ public class KibuHooks implements ModInitializer {
                 PlayerUtils.syncPlayerItems(player);
             }
 
-            return result == ActionResult.PASS ? ActionResult.FAIL : result;
+            return result == InteractionResult.PASS ? InteractionResult.FAIL : result;
         }
 
         return null;

@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 import work.lclpnet.kibu.hook.util.PendingResult;
@@ -23,5 +23,5 @@ public interface CraftingRecipeCallback {
         return PendingResult.pass();
     });
 
-    PendingResult<ItemStack> modifyRecipe(ServerPlayerEntity player, CraftingRecipeInput input, ItemStack result);
+    PendingResult<ItemStack> modifyRecipe(ServerPlayer player, CraftingInput input, ItemStack result);
 }

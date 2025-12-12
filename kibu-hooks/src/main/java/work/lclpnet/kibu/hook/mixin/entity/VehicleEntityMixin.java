@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.vehicle.VehicleEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.vehicle.VehicleEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,11 +13,11 @@ import work.lclpnet.kibu.hook.entity.NonLivingDamageCallback;
 public class VehicleEntityMixin {
 
     @Inject(
-            method = "damage",
+            method = "hurtServer",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$beforeDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$beforeDamage(ServerLevel world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         VehicleEntity self = (VehicleEntity) (Object) this;
 
         if (NonLivingDamageCallback.HOOK.invoker().onDamage(self, source, amount)) {

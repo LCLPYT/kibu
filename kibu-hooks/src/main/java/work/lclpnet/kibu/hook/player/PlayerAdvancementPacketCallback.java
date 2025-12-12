@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.network.packet.s2c.play.AdvancementUpdateS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket;
+import net.minecraft.server.level.ServerPlayer;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -20,5 +20,5 @@ public interface PlayerAdvancementPacketCallback {
                 return cancel;
             });
 
-    boolean onAdvancementUpdate(ServerPlayerEntity player, AdvancementUpdateS2CPacket packet);
+    boolean onAdvancementUpdate(ServerPlayer player, ClientboundUpdateAdvancementsPacket packet);
 }

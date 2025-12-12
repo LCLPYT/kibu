@@ -1,28 +1,29 @@
 package work.lclpnet.kibu.cmd.util;
 
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.resource.featuretoggle.FeatureSet;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.flag.FeatureFlagSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class CommandRegistryAccessMock implements CommandRegistryAccess {
+public class CommandRegistryAccessMock implements CommandBuildContext {
 
     @Override
-    public Stream<RegistryKey<? extends Registry<?>>> streamAllRegistryKeys() {
+    public @NotNull Stream<ResourceKey<? extends Registry<?>>> listRegistryKeys() {
         return Stream.empty();
     }
 
     @Override
-    public <T> Optional<RegistryWrapper.Impl<T>> getOptional(RegistryKey<? extends Registry<? extends T>> registryRef) {
+    public <T> @NotNull Optional<? extends HolderLookup.RegistryLookup<T>> lookup(ResourceKey<? extends Registry<? extends T>> resourceKey) {
         return Optional.empty();
     }
 
     @Override
-    public FeatureSet getEnabledFeatures() {
-        return FeatureSet.empty();
+    public @NotNull FeatureFlagSet enabledFeatures() {
+        return FeatureFlagSet.of();
     }
 }

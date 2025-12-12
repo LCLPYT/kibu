@@ -1,26 +1,26 @@
 package work.lclpnet.kibu.hook.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.advancement.PlayerAdvancementTracker;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.AdvancementUpdateS2CPacket;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import work.lclpnet.kibu.hook.player.PlayerAdvancementPacketCallback;
 
-@Mixin(PlayerAdvancementTracker.class)
+@Mixin(PlayerAdvancements.class)
 public abstract class PlayerAdvancementHandlerMixin {
 
     @WrapWithCondition(
-            method = "sendUpdate",
+            method = "flushDirty",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V"
+                    target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"
             )
     )
-    public boolean kibu$onSendUpdate(ServerPlayNetworkHandler instance, Packet<?> packet) {
-        if (!(packet instanceof AdvancementUpdateS2CPacket advancementPacket)) return true;
+    public boolean kibu$onSendUpdate(ServerGamePacketListenerImpl instance, Packet<?> packet) {
+        if (!(packet instanceof ClientboundUpdateAdvancementsPacket advancementPacket)) return true;
 
         return !PlayerAdvancementPacketCallback.HOOK.invoker().onAdvancementUpdate(instance.player, advancementPacket);
     }

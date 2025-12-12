@@ -1,19 +1,19 @@
 package work.lclpnet.kibu.schematic.vanilla;
 
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.structure.StructureTemplateManager;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import work.lclpnet.kibu.schematic.api.*;
 import work.lclpnet.kibu.schematic.type.KibuServerView;
 
 public class VanillaStructureFormat implements SchematicFormat {
 
     private final StructureTemplateManager manager;
-    private final RegistryWrapper.WrapperLookup registries;
+    private final HolderLookup.Provider registries;
     private volatile SchematicDeserializer deserializer = null;
     private volatile SchematicReader reader = null;
 
-    public VanillaStructureFormat(StructureTemplateManager manager, RegistryWrapper.WrapperLookup registries) {
+    public VanillaStructureFormat(StructureTemplateManager manager, HolderLookup.Provider registries) {
         this.manager = manager;
         this.registries = registries;
     }

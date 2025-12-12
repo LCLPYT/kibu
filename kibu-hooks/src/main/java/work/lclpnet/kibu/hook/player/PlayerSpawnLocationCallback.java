@@ -1,8 +1,8 @@
 package work.lclpnet.kibu.hook.player;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -20,14 +20,14 @@ public interface PlayerSpawnLocationCallback {
     void onSpawn(LocationData data);
 
     class LocationData {
-        private final ServerPlayerEntity player;
+        private final ServerPlayer player;
         private final boolean join;
-        private ServerWorld world;
-        private Vec3d position;
+        private ServerLevel world;
+        private Vec3 position;
         private float yaw, pitch;
         private boolean dirty = false;
 
-        public LocationData(ServerPlayerEntity player, boolean join, ServerWorld world, Vec3d position, float yaw, float pitch) {
+        public LocationData(ServerPlayer player, boolean join, ServerLevel world, Vec3 position, float yaw, float pitch) {
             this.player = player;
             this.join = join;
             this.world = world;
@@ -36,25 +36,25 @@ public interface PlayerSpawnLocationCallback {
             this.pitch = pitch;
         }
 
-        public ServerPlayerEntity getPlayer() {
+        public ServerPlayer getPlayer() {
             return player;
         }
 
-        public ServerWorld getWorld() {
+        public ServerLevel getWorld() {
             return world;
         }
 
-        public Vec3d getPosition() {
+        public Vec3 getPosition() {
             return position;
         }
 
-        public void setWorld(ServerWorld world) {
+        public void setWorld(ServerLevel world) {
             Objects.requireNonNull(world);
             this.world = world;
             this.dirty = true;
         }
 
-        public void setPosition(Vec3d position) {
+        public void setPosition(Vec3 position) {
             Objects.requireNonNull(position);
             this.position = position;
             this.dirty = true;

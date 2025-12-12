@@ -1,15 +1,15 @@
 package work.lclpnet.kibu.hook.mixin.access;
 
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerSyncHandler;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerSynchronizer;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ScreenHandler.class)
+@Mixin(AbstractContainerMenu.class)
 public interface ScreenHandlerAccessor {
 
     @Nullable
     @Accessor
-    ScreenHandlerSyncHandler getSyncHandler();
+    ContainerSynchronizer getSynchronizer();
 }

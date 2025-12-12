@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.schematic.mixin;
 
-import net.minecraft.structure.StructureTemplate;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
@@ -10,8 +10,8 @@ import java.util.List;
 public interface StructureTemplateAccessor {
 
     @Accessor
-    List<StructureTemplate.PalettedBlockInfoList> getBlockInfoLists();
+    List<StructureTemplate.Palette> getPalettes();
 
     @Accessor
-    List<StructureTemplate.StructureEntityInfo> getEntities();
+    List<StructureTemplate.StructureEntityInfo> getEntityInfoList();
 }

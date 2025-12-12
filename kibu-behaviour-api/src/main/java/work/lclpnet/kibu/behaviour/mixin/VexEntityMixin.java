@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.behaviour.mixin;
 
-import net.minecraft.entity.mob.VexEntity;
+import net.minecraft.world.entity.monster.Vex;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.behaviour.type.KibuVexEntity;
 
-@Mixin(VexEntity.class)
+@Mixin(Vex.class)
 public class VexEntityMixin implements KibuVexEntity {
 
     @Unique
@@ -28,14 +28,14 @@ public class VexEntityMixin implements KibuVexEntity {
             method = "tick",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/mob/HostileEntity;tick()V"
+                    target = "Lnet/minecraft/world/entity/monster/Monster;tick()V"
             )
     )
     public void kibu$beforeTick(CallbackInfo ci) {
         if (!forceClip) return;
 
-        VexEntity vex = (VexEntity) (Object) this;
+        Vex vex = (Vex) (Object) this;
 
-        vex.noClip = false;
+        vex.noPhysics = false;
     }
 }

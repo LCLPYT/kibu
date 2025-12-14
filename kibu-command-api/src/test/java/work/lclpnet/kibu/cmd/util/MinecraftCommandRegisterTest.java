@@ -3,9 +3,12 @@ package work.lclpnet.kibu.cmd.util;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.SharedConstants;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.server.MinecraftServer;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
@@ -16,6 +19,11 @@ import static org.mockito.Mockito.when;
 
 public class MinecraftCommandRegisterTest {
 
+    @BeforeAll
+    public static void setup() {
+        SharedConstants.tryDetectVersion();
+        Bootstrap.bootStrap();
+    }
 
     @Test
     void testServerChangedBuilderRegistrationClient() {

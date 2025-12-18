@@ -90,7 +90,7 @@ public abstract class ServerGamePacketListenerMixin {
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/level/ServerPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;",
-                    ordinal = 0
+                    ordinal = 1
             ),
             cancellable = true
     )

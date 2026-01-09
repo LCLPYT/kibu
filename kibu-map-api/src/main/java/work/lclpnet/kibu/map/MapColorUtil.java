@@ -3,7 +3,6 @@ package work.lclpnet.kibu.map;
 import net.minecraft.world.level.material.MapColor;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.util.Arrays;
 
 public class MapColorUtil {
@@ -99,20 +98,14 @@ public class MapColorUtil {
         int width = image.getWidth();
         int height = image.getHeight();
 
-        byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+        int[] pixels = image.getRGB(0, 0, width, height, null, 0, width);
         byte[] data = new byte[width * height];
 
-        final boolean alpha = image.getAlphaRaster() != null;
-        final int elements = alpha ? 4 : 3, offset = elements - 1;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int argb = pixels[y * width + x];
 
-        for (int i = 0, x = 0, y = 0; i + offset < pixels.length; i += elements) {
-            int argb = getArgb(alpha, pixels, i);
-
-            data[y * width + x] = mapColor0(argb);
-
-            if (++x == width) {
-                x = 0;
-                y++;
+                data[y * width + x] = mapColor0(argb);
             }
         }
 

@@ -225,7 +225,12 @@ public class KibuTestMod implements ModInitializer {
 
     private void preventWithWitherRose() {
         // cancel when holding a wither rose
-        EntityHealthCallback.HOOK.register((entity, health) -> cancelMainhandWitherRose(entity));
+        EntityHealthCallback.HOOK.register((entity, health) -> {
+            // check if spawned in world yet
+            if (entity.level().getEntity(entity.getId()) == null) return false;
+
+            return cancelMainhandWitherRose(entity);
+        });
 
         PlayerInventoryHooks.SWAP_HANDS.register((player, slot) -> cancelMainhandWitherRose(player));
     }

@@ -1,5 +1,5 @@
 plugins {
-    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}" apply false
+    id 'net.fabricmc.fabric-loom' version "${loom_version}" apply false
     id 'maven-publish'
     id 'gradle-build-utils' version '1.7.0'
 }
@@ -29,7 +29,7 @@ allprojects {
     }
 
     if (ext.isMc) {
-        apply plugin: 'net.fabricmc.fabric-loom-remap'
+        apply plugin: 'net.fabricmc.fabric-loom'
     }
 
     repositories {
@@ -50,10 +50,9 @@ allprojects {
     if (ext.isMc) {
         dependencies {
             minecraft "com.mojang:minecraft:${project.minecraft_version}"
-            mappings loom.officialMojangMappings()
-            modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+            implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-            modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+            implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
             testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
         }
@@ -82,15 +81,14 @@ allprojects {
     }
 
     tasks.withType(JavaCompile).configureEach {
-        it.options.release = 21
+        it.options.release = 25
     }
 
     java {
-        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
         withSourcesJar()
 
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
     }
 
     [jar, sourcesJar].each {
@@ -140,7 +138,7 @@ import work.lclpnet.build.task.GithubDeploymentTask
 def env = System.getenv()
 
 tasks.register("github", GithubDeploymentTask) {
-    dependsOn tasks.remapJar
+    dependsOn tasks.jar
 
     config {
         token = env.get("GITHUB_TOKEN")
@@ -152,7 +150,7 @@ tasks.register("github", GithubDeploymentTask) {
         tag = project.version
     }
 
-    assets.add(tasks.remapJar.archiveFile.get())
+    assets.add(tasks.jar.archiveFile.get())
 }
 
 publishing {
@@ -170,10 +168,10 @@ publishing {
     }
 }
 
-// main jar must remap after all the subprojects
+// main jar must be built after all the subprojects
 subprojects.each {
     if (it.ext.isMc) {
-        remapJar.dependsOn("${it.path}:remapJar")
+        jar.dependsOn("${it.path}:jar")
     }
 }
 
@@ -197,25 +195,25 @@ loom {
 }
 
 dependencies {
-    afterEvaluate {
-        subprojects.each {
-            api project(path: it.path, configuration: "namedElements")
-        }
+    subprojects.each {
+        api it
     }
 }
 
 // add subprojects as nested jar to the main jar
-remapJar {
-    afterEvaluate {
-        subprojects.each {
-            if (it.ext.isMc) {
-                nestedJars.from project(it.path).tasks.named("remapJar")
-            } else {
-                nestedJars.from project(it.path).tasks.named("jar")
-            }
-        }
+configurations {
+    nestedJars {
+        transitive = false
     }
 }
+
+dependencies {
+    subprojects.each {
+        nestedJars project("${it.path}")
+    }
+}
+
+loom.nestJars(tasks.named("jar"), configurations.nestedJars)
 
 processTestmodResources {
     inputs.property "version", project.version
@@ -234,7 +232,7 @@ def checkProjectIsDeployed(Project project, Properties props) {
 
     String xml
     try {
-        xml = new URL(url).text
+        xml = URI.create(url).toURL().text
     } catch (Throwable ignored) {
         return false
     }
@@ -295,9 +293,7 @@ static def configureNonLoomProject(Project project) {
 
 def moduleDependencies(project, List<String> dependencies) {
     // for each subproject dependency, collect the 'namedElements' configuration
-    def deps = dependencies.iterator().collect {
-        project.dependencies.project(path: ":$it", configuration: 'namedElements')
-    }
+    def deps = dependencies.iterator().collect { project.dependencies.project(path: ":$it") }
 
     // now add the actual dependency to the project
     project.dependencies {

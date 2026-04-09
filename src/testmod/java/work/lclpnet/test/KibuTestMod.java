@@ -32,7 +32,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import work.lclpnet.kibu.access.VelocityModifier;
 import work.lclpnet.kibu.access.entity.EntityAccess;
 import work.lclpnet.kibu.access.entity.GoatEntityAccess;
@@ -131,7 +131,7 @@ public class KibuTestMod implements ModInitializer {
         EntityTeleportCallback.HOOK.register((entity, x, y, z) -> entity.getY() > 300);
         ProjectileCanHitCallback.HOOK.register((projectile, entity) -> entity.getY() <= 300);
         FarmlandMoistureChangeCallback.HOOK.register((world, pos, moisture)
-                -> pos.getY() > 300 && moisture < world.getBlockState(pos).getValue(FarmBlock.MOISTURE));
+                -> pos.getY() > 300 && moisture < world.getBlockState(pos).getValue(FarmlandBlock.MOISTURE));
     }
 
     private void entityEditor() {
@@ -148,21 +148,21 @@ public class KibuTestMod implements ModInitializer {
                 return InteractionResult.PASS;
             }
 
-            if (entity instanceof Goat goat) {
-                if (goat.hasLeftHorn() && goat.hasRightHorn()) {
-                    GoatEntityAccess.setLeftHorn(goat, false);
-                } else if (!goat.hasLeftHorn() && goat.hasRightHorn()) {
-                    GoatEntityAccess.setRightHorn(goat, false);
-                } else {
-                    GoatEntityAccess.setLeftHorn(goat, true);
-                    GoatEntityAccess.setRightHorn(goat, true);
+            switch (entity) {
+                case Goat goat -> {
+                    if (goat.hasLeftHorn() && goat.hasRightHorn()) {
+                        GoatEntityAccess.setLeftHorn(goat, false);
+                    } else if (!goat.hasLeftHorn() && goat.hasRightHorn()) {
+                        GoatEntityAccess.setRightHorn(goat, false);
+                    } else {
+                        GoatEntityAccess.setLeftHorn(goat, true);
+                        GoatEntityAccess.setRightHorn(goat, true);
+                    }
                 }
-            }
-            else if (entity instanceof TropicalFish tropicalFish) {
-                TropicalFishEntityAccess.setVariant(tropicalFish, TropicalFish.Pattern.BETTY, DyeColor.BLUE, DyeColor.GREEN);
-            }
-            else if (entity instanceof Vex vex) {
-                VexEntityBehaviour.setForceClipping(vex, !VexEntityBehaviour.isForceClipping(vex));
+                case TropicalFish tropicalFish ->
+                        TropicalFishEntityAccess.setVariant(tropicalFish, TropicalFish.Pattern.BETTY, DyeColor.BLUE, DyeColor.GREEN);
+                case Vex vex -> VexEntityBehaviour.setForceClipping(vex, !VexEntityBehaviour.isForceClipping(vex));
+                default -> {}
             }
 
             return InteractionResult.SUCCESS;
@@ -170,7 +170,7 @@ public class KibuTestMod implements ModInitializer {
     }
 
     private static void toggleInvisibility(Entity entity, ServerPlayer serverPlayer) {
-        var tags = entity.getTags();
+        var tags = entity.entityTags();
         boolean invisible = tags.contains("invisible");
 
         if (invisible) {
@@ -338,7 +338,7 @@ public class KibuTestMod implements ModInitializer {
                 return server.getRecipeManager().byKey(key)
                         .map(RecipeHolder::value)
                         .map(recipe -> recipe instanceof CraftingRecipe craftingRecipe ? craftingRecipe : null)
-                        .map(craftingRecipe -> craftingRecipe.assemble(input, server.registryAccess()))
+                        .map(craftingRecipe -> craftingRecipe.assemble(input))
                         .map(PendingResult::of)
                         .orElse(PendingResult.pass());
             }

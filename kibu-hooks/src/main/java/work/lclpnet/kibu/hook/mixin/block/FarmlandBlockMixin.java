@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,10 +17,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 import work.lclpnet.kibu.hook.world.FarmlandMoistureChangeCallback;
 
-@Mixin(FarmBlock.class)
-public abstract class FarmBlockMixin extends Block {
+@Mixin(FarmlandBlock.class)
+public abstract class FarmlandBlockMixin extends Block {
 
-    public FarmBlockMixin(Properties settings) {
+    public FarmlandBlockMixin(Properties settings) {
         super(settings);
     }
 
@@ -28,7 +28,7 @@ public abstract class FarmBlockMixin extends Block {
             method = "fallOn",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/block/FarmBlock;turnToDirt(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"
+                    target = "Lnet/minecraft/world/level/block/FarmlandBlock;turnToDirt(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"
             ),
             cancellable = true
     )
@@ -48,7 +48,7 @@ public abstract class FarmBlockMixin extends Block {
             )
     )
     public boolean kibu$onMoistureChange(ServerLevel instance, BlockPos pos, BlockState state, int i, Operation<Boolean> original) {
-        int moisture = state.getValue(FarmBlock.MOISTURE);
+        int moisture = state.getValue(FarmlandBlock.MOISTURE);
 
         if (FarmlandMoistureChangeCallback.HOOK.invoker().onMoistureChange(instance, pos, moisture)) {
             return false;

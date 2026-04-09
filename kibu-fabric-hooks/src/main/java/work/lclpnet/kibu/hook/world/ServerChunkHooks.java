@@ -9,9 +9,9 @@ import work.lclpnet.kibu.hook.HookFactory;
  */
 public class ServerChunkHooks {
 
-    public static final Hook<ServerChunkEvents.Load> CHUNK_LOAD = HookFactory.createArrayBacked(ServerChunkEvents.Load.class, callbacks -> (serverWorld, chunk) -> {
+    public static final Hook<ServerChunkEvents.Load> CHUNK_LOAD = HookFactory.createArrayBacked(ServerChunkEvents.Load.class, callbacks -> (serverWorld, chunk, generated) -> {
         for (ServerChunkEvents.Load callback : callbacks) {
-            callback.onChunkLoad(serverWorld, chunk);
+            callback.onChunkLoad(serverWorld, chunk, generated);
         }
     });
 
@@ -22,7 +22,7 @@ public class ServerChunkHooks {
     });
 
     static {
-        ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> CHUNK_LOAD.invoker().onChunkLoad(world, chunk));
+        ServerChunkEvents.CHUNK_LOAD.register((world, chunk, generated) -> CHUNK_LOAD.invoker().onChunkLoad(world, chunk, generated));
         ServerChunkEvents.CHUNK_UNLOAD.register((world, chunk) -> CHUNK_UNLOAD.invoker().onChunkUnload(world, chunk));
     }
 }

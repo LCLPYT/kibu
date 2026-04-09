@@ -5,12 +5,12 @@ import net.minecraft.network.HashedStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
@@ -204,14 +204,14 @@ public class PlayerInventoryHooks {
     }
 
     public record ClickEvent(ServerPlayer player, int slot, int button, HashedStack cursor,
-                             ClickType action, Int2ObjectMap<HashedStack> modified) {
+                             ContainerInput action, Int2ObjectMap<HashedStack> modified) {
         public boolean isDropAction() {
-            return action == ClickType.THROW || (action == ClickType.PICKUP && slot == -999);
+            return action == ContainerInput.THROW || (action == ContainerInput.PICKUP && slot == -999);
         }
 
         @Nullable
         public Slot handlerSlot() {
-            if (player.containerMenu == null || slot == -1 || slot == -999 || slot >= player.containerMenu.slots.size()) {
+            if (slot == -1 || slot == -999 || slot >= player.containerMenu.slots.size()) {
                 return null;
             }
 
@@ -229,13 +229,8 @@ public class PlayerInventoryHooks {
 
         @Nullable
         public Container inventory() {
-            Inventory inv = player.getInventory();
-
-            if (player.containerMenu == null) {
-                return inv;
-            }
-
             Slot slot = handlerSlot();
+
             if (slot == null) {
                 return null;
             }
@@ -245,7 +240,7 @@ public class PlayerInventoryHooks {
 
         @Nullable
         public Container targetInventory() {
-            if (action != ClickType.QUICK_MOVE) return null;
+            if (action != ContainerInput.QUICK_MOVE) return null;
 
             Container src = inventory();
             if (src == null) return null;
@@ -254,7 +249,6 @@ public class PlayerInventoryHooks {
 
             for (int i : modified().keySet()) {
                 Slot slot = player.containerMenu.getSlot(i);
-                if (slot == null) continue;
 
                 if (!src.equals(slot.container)) {
                     return slot.container;
@@ -273,7 +267,7 @@ public class PlayerInventoryHooks {
         }
 
         @Override
-        public String toString() {
+        public @NonNull String toString() {
             return "ClickEvent{player=%s, slot=%d, button=%d, cursorStack=%s, action=%s, modified=%s}"
                     .formatted(player, slot, button, cursor, action, modified);
         }
@@ -282,7 +276,7 @@ public class PlayerInventoryHooks {
     public record CreativeClickEvent(ServerPlayer player, int slot, ItemStack stack) {
 
         @Override
-        public String toString() {
+        public @NonNull String toString() {
             return "CreativeClickEvent{player=%s, slot=%d, stack=%s}"
                     .formatted(player, slot, stack);
         }

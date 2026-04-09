@@ -21,24 +21,24 @@ public class ServerTickHooks {
                 }
             });
 
-    public static final Hook<ServerTickEvents.StartWorldTick> START_WORLD_TICK = HookFactory.createArrayBacked(ServerTickEvents.StartWorldTick.class,
-            callbacks -> world -> {
-                for (ServerTickEvents.StartWorldTick callback : callbacks) {
-                    callback.onStartTick(world);
+    public static final Hook<ServerTickEvents.StartLevelTick> START_LEVEL_TICK = HookFactory.createArrayBacked(ServerTickEvents.StartLevelTick.class,
+            callbacks -> level -> {
+                for (ServerTickEvents.StartLevelTick callback : callbacks) {
+                    callback.onStartTick(level);
                 }
             });
 
-    public static final Hook<ServerTickEvents.EndWorldTick> END_WORLD_TICK = HookFactory.createArrayBacked(ServerTickEvents.EndWorldTick.class,
-            callbacks -> world -> {
-                for (ServerTickEvents.EndWorldTick callback : callbacks) {
-                    callback.onEndTick(world);
+    public static final Hook<ServerTickEvents.EndLevelTick> END_LEVEL_TICK = HookFactory.createArrayBacked(ServerTickEvents.EndLevelTick.class,
+            callbacks -> level -> {
+                for (ServerTickEvents.EndLevelTick callback : callbacks) {
+                    callback.onEndTick(level);
                 }
             });
 
     static {
         ServerTickEvents.START_SERVER_TICK.register(server -> START_SERVER_TICK.invoker().onStartTick(server));
         ServerTickEvents.END_SERVER_TICK.register(server -> END_SERVER_TICK.invoker().onEndTick(server));
-        ServerTickEvents.START_WORLD_TICK.register(world -> START_WORLD_TICK.invoker().onStartTick(world));
-        ServerTickEvents.END_WORLD_TICK.register(world -> END_WORLD_TICK.invoker().onEndTick(world));
+        ServerTickEvents.START_LEVEL_TICK.register(level -> START_LEVEL_TICK.invoker().onStartTick(level));
+        ServerTickEvents.END_LEVEL_TICK.register(level -> END_LEVEL_TICK.invoker().onEndTick(level));
     }
 }

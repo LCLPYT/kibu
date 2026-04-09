@@ -1,15 +1,17 @@
 package work.lclpnet.kibu.schematic.vanilla;
 
+import com.mojang.datafixers.DataFixer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.level.storage.TagValueInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ import work.lclpnet.kibu.schematic.FabricStructureWrapper;
 import work.lclpnet.kibu.schematic.api.BlockStructureFactory;
 import work.lclpnet.kibu.schematic.api.SchematicDeserializer;
 import work.lclpnet.kibu.schematic.mixin.StructureTemplateAccessor;
+import work.lclpnet.kibu.schematic.mixin.TemplateSourceAccessor;
 import work.lclpnet.kibu.structure.BlockStructure;
 
 import java.util.List;
@@ -32,18 +35,18 @@ class Deserializer implements SchematicDeserializer {
 
     private static final Logger logger = LoggerFactory.getLogger(Deserializer.class);
 
-    private final StructureTemplateManager manager;
     private final HolderLookup.Provider registries;
+    private final TemplateSourceAccessor templateSource;
 
-    Deserializer(StructureTemplateManager manager, HolderLookup.Provider registries) {
-        this.manager = manager;
+    Deserializer(DataFixer fixerUpper, HolderGetter<Block> blockLookup, HolderLookup.Provider registries) {
         this.registries = registries;
+        this.templateSource = (TemplateSourceAccessor) new KibuTemplateSource(fixerUpper, blockLookup);
     }
 
     @Override
     public BlockStructure deserialize(CompoundTag tag, BlockStateAdapter _adapter, BlockStructureFactory factory) {
         net.minecraft.nbt.CompoundTag nbt = FabricNbtConversion.convert(tag, net.minecraft.nbt.CompoundTag.class);
-        StructureTemplate template = manager.readStructure(nbt);
+        StructureTemplate template = templateSource.invokeReadStructure(nbt);
 
         Vec3i size = template.getSize();
         var origin = new KibuBlockPos(0, 0, 0);

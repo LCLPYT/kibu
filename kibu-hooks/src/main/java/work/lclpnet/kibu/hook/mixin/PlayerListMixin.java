@@ -67,7 +67,7 @@ public abstract class PlayerListMixin {
         Component text = PlayerConnectionHooks.JOIN_MESSAGE.invoker().onJoin(player, originalText.withStyle(ChatFormatting.YELLOW));
         if (text != null) {
             this.broadcastSystemMessage(text, false);
-            player.displayClientMessage(text, false);
+            player.sendSystemMessage(text, false);
         }
     }
 

@@ -22,17 +22,14 @@ public class BlockStateUtils {
         var builder = new StringBuilder();
         builder.append(blockId);
 
-        var props = state.getValues();
+        var props = state.getProperties();
         if (!props.isEmpty()) {
             boolean firstProp = true;
 
             builder.append('[');
 
-            for (var entry : props.entrySet()) {
-                if (entry == null) continue;
-
-                var prop = entry.getKey();
-                String value = nameValue(prop, entry.getValue());
+            for (Property<?> prop : props) {
+                String value = nameValue(prop, state.getValue(prop));
 
                 if (firstProp) {
                     firstProp = false;
@@ -94,8 +91,7 @@ public class BlockStateUtils {
 
     static <T extends Comparable<T>> BlockState with(BlockState state, Property<T> property, String rawValue) {
         Optional<T> value = property.getValue(rawValue);
-        if (value.isEmpty()) return state;
 
-        return state.setValue(property, value.get());
+        return value.map(t -> state.setValue(property, t)).orElse(state);
     }
 }

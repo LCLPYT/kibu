@@ -4,7 +4,7 @@ import io.netty.channel.ChannelFutureListener;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.FriendlyByteBufs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
 import net.minecraft.network.FriendlyByteBuf;
@@ -45,7 +45,7 @@ public class ClientProtocolHandler {
 
         logger.info("Server uses protocol {}: server_version={}, client_version={}, supported={}", protocol.id(), serverVersion, protocol.version(), protocol.supported().test(serverVersion));
 
-        FriendlyByteBuf response = PacketByteBufs.create();
+        FriendlyByteBuf response = FriendlyByteBufs.create();
         response.writeVarInt(protocol.version());
 
         return CompletableFuture.completedFuture(response);

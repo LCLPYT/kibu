@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import work.lclpnet.kibu.translate.Translations;
 import work.lclpnet.kibu.translate.text.RootText;
 
@@ -22,7 +23,6 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
     private final BossBarProvider bossBarProvider;
     private final Identifier identifier;
     private final Translations translations;
-    private final String defaultLanguage;
     private final Map<String, CustomBossEvent> localizedBars = new HashMap<>();
     private final Map<UUID, String> players = new HashMap<>();
     private String translationKey;
@@ -31,14 +31,9 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
     private net.minecraft.network.chat.Style titleStyle = net.minecraft.network.chat.Style.EMPTY;
 
     public TranslatedBossBar(BossBarProvider bossBarProvider, Identifier identifier, Translations translations, String translationKey, Object[] args) {
-        this(bossBarProvider, identifier, translations, "en_us", translationKey, args);
-    }
-
-    public TranslatedBossBar(BossBarProvider bossBarProvider, Identifier identifier, Translations translations, String defaultLanguage, String translationKey, Object[] args) {
-        super(null, BossBarColor.WHITE, BossBarOverlay.PROGRESS);
+        super(UUID.randomUUID(), Component.empty(), BossBarColor.WHITE, BossBarOverlay.PROGRESS);
         this.bossBarProvider = bossBarProvider;
         this.translations = translations;
-        this.defaultLanguage = defaultLanguage;
         this.identifier = identifier;
 
         setTitle(translationKey, args);
@@ -156,14 +151,14 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
     }
 
     @Override
-    public void setColor(BossBarColor color) {
+    public void setColor(@NonNull BossBarColor color) {
         this.color = color;
 
         updateBars(bar -> bar.setColor(this.color));
     }
 
     @Override
-    public void setOverlay(BossBarOverlay style) {
+    public void setOverlay(@NonNull BossBarOverlay style) {
         this.overlay = style;
 
         updateBars(bar -> bar.setOverlay(this.overlay));
@@ -177,7 +172,7 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
     }
 
     @Override
-    public BossEvent setDarkenScreen(boolean darkenSky) {
+    public @NonNull BossEvent setDarkenScreen(boolean darkenSky) {
         this.darkenScreen = darkenSky;
 
         updateBars(bar -> bar.setDarkenScreen(this.darkenScreen));
@@ -186,7 +181,7 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
     }
 
     @Override
-    public BossEvent setPlayBossMusic(boolean dragonMusic) {
+    public @NonNull BossEvent setPlayBossMusic(boolean dragonMusic) {
         this.playBossMusic = dragonMusic;
 
         updateBars(bar -> bar.setPlayBossMusic(this.playBossMusic));
@@ -195,7 +190,7 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
     }
 
     @Override
-    public BossEvent setCreateWorldFog(boolean thickenFog) {
+    public @NonNull BossEvent setCreateWorldFog(boolean thickenFog) {
         this.createWorldFog = thickenFog;
 
         updateBars(bar -> bar.setCreateWorldFog(this.createWorldFog));
@@ -209,7 +204,7 @@ public class TranslatedBossBar extends ServerBossEvent implements CustomBossBar 
      * @apiNote Use {@link TranslatedBossBar#setTitle(String, Object...)} instead for this class.
      */
     @Override
-    public void setName(Component name) {
+    public void setName(@NonNull Component name) {
         throw new IllegalStateException("setName() invoked on TranslatedBossBar");
     }
 

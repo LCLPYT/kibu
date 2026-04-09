@@ -1,30 +1,30 @@
 package work.lclpnet.kibu.hook.world;
 
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLevelEvents;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
 /**
- * Hook versions of {@link ServerWorldEvents} from fabric-lifecycle-events.
+ * Hook versions of {@link ServerLevelEvents} from fabric-lifecycle-events.
  */
 public class ServerWorldHooks {
 
-    public static final Hook<ServerWorldEvents.Load> LOAD = HookFactory.createArrayBacked(ServerWorldEvents.Load.class,
-            callbacks -> (server, world) -> {
-                for (ServerWorldEvents.Load callback : callbacks) {
-                    callback.onWorldLoad(server, world);
+    public static final Hook<ServerLevelEvents.Load> LOAD = HookFactory.createArrayBacked(ServerLevelEvents.Load.class,
+            callbacks -> (server, level) -> {
+                for (ServerLevelEvents.Load callback : callbacks) {
+                    callback.onLevelLoad(server, level);
                 }
             });
 
-    public static final Hook<ServerWorldEvents.Unload> UNLOAD = HookFactory.createArrayBacked(ServerWorldEvents.Unload.class,
-            callbacks -> (server, world) -> {
-                for (ServerWorldEvents.Unload callback : callbacks) {
-                    callback.onWorldUnload(server, world);
+    public static final Hook<ServerLevelEvents.Unload> UNLOAD = HookFactory.createArrayBacked(ServerLevelEvents.Unload.class,
+            callbacks -> (server, level) -> {
+                for (ServerLevelEvents.Unload callback : callbacks) {
+                    callback.onLevelUnload(server, level);
                 }
             });
 
     static {
-        ServerWorldEvents.LOAD.register((server, world) -> LOAD.invoker().onWorldLoad(server, world));
-        ServerWorldEvents.UNLOAD.register((server, world) -> UNLOAD.invoker().onWorldUnload(server, world));
+        ServerLevelEvents.LOAD.register((server, level) -> LOAD.invoker().onLevelLoad(server, level));
+        ServerLevelEvents.UNLOAD.register((server, level) -> UNLOAD.invoker().onLevelUnload(server, level));
     }
 }

@@ -1,20 +1,24 @@
 package work.lclpnet.kibu.schematic.vanilla;
 
+import com.mojang.datafixers.DataFixer;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import net.minecraft.world.level.block.Block;
 import work.lclpnet.kibu.schematic.api.*;
 import work.lclpnet.kibu.schematic.type.KibuServerView;
 
 public class VanillaStructureFormat implements SchematicFormat {
 
-    private final StructureTemplateManager manager;
+    private final DataFixer fixerUpper;
+    private final HolderGetter<Block> blockLookup;
     private final HolderLookup.Provider registries;
     private volatile SchematicDeserializer deserializer = null;
     private volatile SchematicReader reader = null;
 
-    public VanillaStructureFormat(StructureTemplateManager manager, HolderLookup.Provider registries) {
-        this.manager = manager;
+    public VanillaStructureFormat(DataFixer fixerUpper, HolderGetter<Block> blockLookup, HolderLookup.Provider registries) {
+        this.fixerUpper = fixerUpper;
+        this.blockLookup = blockLookup;
         this.registries = registries;
     }
 
@@ -29,7 +33,7 @@ public class VanillaStructureFormat implements SchematicFormat {
 
         synchronized (this) {
             if (deserializer == null) {
-                deserializer = new Deserializer(manager, registries);
+                deserializer = new Deserializer(fixerUpper, blockLookup, registries);
             }
         }
 

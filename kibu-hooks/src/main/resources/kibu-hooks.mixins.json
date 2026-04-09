@@ -41,7 +41,7 @@
     "block.ComposterBlockMixin",
     "block.CoralBlockMixin",
     "block.DecoratedPotBlockMixin",
-    "block.FarmBlockMixin",
+    "block.FarmlandBlockMixin",
     "block.IceBlockMixin",
     "block.LayeredCauldronBlockMixin",
     "block.LecternBlockEntityMixin",

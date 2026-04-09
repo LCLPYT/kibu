@@ -56,7 +56,7 @@ public class ServerProtocolHandler {
 
     private void onLoginStart(ServerLoginPacketListenerImpl handler, MinecraftServer server, LoginPacketSender sender, ServerLoginNetworking.LoginSynchronizer synchronizer) {
         // send protocol version query
-        FriendlyByteBuf buf = PacketByteBufs.create();
+        FriendlyByteBuf buf = FriendlyByteBufs.create();
         buf.writeVarInt(protocol.version());
 
         sender.sendPacket(protocol.id(), buf);

@@ -122,7 +122,7 @@ public abstract class ServerGamePacketListenerMixin {
     )
     public void kibu$onClickSlot(ServerboundContainerClickPacket packet, CallbackInfo ci) {
         var event = new PlayerInventoryHooks.ClickEvent(player, packet.slotNum(), packet.buttonNum(), packet.carriedItem(),
-                packet.clickType(), packet.changedSlots());
+                packet.containerInput(), packet.changedSlots());
 
         boolean cancel = PlayerInventoryHooks.MODIFY_INVENTORY.invoker().onModify(event);
         if (cancel) {
@@ -138,7 +138,7 @@ public abstract class ServerGamePacketListenerMixin {
     )
     public void kibu$onClickedSlot(ServerboundContainerClickPacket packet, CallbackInfo ci) {
         var event = new PlayerInventoryHooks.ClickEvent(player, packet.slotNum(), packet.buttonNum(), packet.carriedItem(),
-                packet.clickType(), packet.changedSlots());
+                packet.containerInput(), packet.changedSlots());
 
         PlayerInventoryHooks.MODIFIED_INVENTORY.invoker().onModified(event);
     }

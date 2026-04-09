@@ -57,7 +57,7 @@ public class TranslatedText implements TextTranslatable {
     }
 
     public void sendTo(ServerPlayer player, boolean overlay) {
-        player.displayClientMessage(textFor(player), overlay);
+        player.sendSystemMessage(textFor(player), overlay);
     }
 
     public void sendTo(Iterable<? extends ServerPlayer> players) {

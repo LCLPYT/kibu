@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import work.lclpnet.kibu.hook.world.BlockBreakParticleCallback;
+import work.lclpnet.kibu.hook.level.BlockBreakParticleCallback;
 
 @Mixin(Level.class)
 public class LevelMixin {

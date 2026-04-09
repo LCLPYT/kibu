@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 
 @Mixin(SnowLayerBlock.class)
 public class SnowLayerBlockMixin {
@@ -23,7 +23,7 @@ public class SnowLayerBlockMixin {
             cancellable = true
     )
     public void kibu$onMelt(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        if (WorldPhysicsHooks.MELT.invoker().onFade(level, pos))
+        if (LevelPhysicsHooks.MELT.invoker().onFade(level, pos))
             ci.cancel();
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import work.lclpnet.kibu.hook.entity.EntityDropItemCallback;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 
 public class MixinUtils {
 
@@ -18,7 +18,7 @@ public class MixinUtils {
         if (entity instanceof ItemEntity itemEntity) {
             ItemStack stack = itemEntity.getItem();
 
-            if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(world, pos, stack)) {
+            if (LevelPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(world, pos, stack)) {
                 // cancelled, do not call original
                 return false;
             }

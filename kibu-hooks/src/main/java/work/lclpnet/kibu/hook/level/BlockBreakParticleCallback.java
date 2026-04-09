@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.hook.world;
+package work.lclpnet.kibu.hook.level;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

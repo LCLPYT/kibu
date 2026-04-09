@@ -41,13 +41,13 @@ import work.lclpnet.kibu.behaviour.entity.VexEntityBehaviour;
 import work.lclpnet.kibu.hook.ServerMessageHooks;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.entity.leash.*;
+import work.lclpnet.kibu.hook.level.BlockModificationHooks;
+import work.lclpnet.kibu.hook.level.FarmlandMoistureChangeCallback;
+import work.lclpnet.kibu.hook.level.ItemScatterCallback;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 import work.lclpnet.kibu.hook.network.ServerSendPacketCallback;
 import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PendingResult;
-import work.lclpnet.kibu.hook.world.BlockModificationHooks;
-import work.lclpnet.kibu.hook.world.FarmlandMoistureChangeCallback;
-import work.lclpnet.kibu.hook.world.ItemScatterCallback;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
 import work.lclpnet.kibu.inv.prompt.OptionPrompt;
 import work.lclpnet.kibu.inv.prompt.TextPrompt;
 import work.lclpnet.kibu.inv.type.RestrictedInventory;
@@ -188,7 +188,7 @@ public class KibuTestMod implements ModInitializer {
     }
 
     private void preventWhenRaining() {
-        WorldPhysicsHooks.BLOCK_ITEM_DROP.register((world, pos, stack) -> world.isRaining());
+        LevelPhysicsHooks.BLOCK_ITEM_DROP.register((world, pos, stack) -> world.isRaining());
 
         ItemScatterCallback.HOOK.register((world, x, y, z, stack) -> world.isRaining());
 
@@ -198,9 +198,9 @@ public class KibuTestMod implements ModInitializer {
 
         WitherShootCallback.HOOK.register((wither, targetX, targetY, targetZ) -> wither.level().isRaining());
 
-        WorldPhysicsHooks.CORAL_DEATH.register((world, pos) -> world.isRaining());
+        LevelPhysicsHooks.CORAL_DEATH.register((world, pos) -> world.isRaining());
 
-        WorldPhysicsHooks.EXPLOSION.register(explosion -> explosion.level().isRaining());
+        LevelPhysicsHooks.EXPLOSION.register(explosion -> explosion.level().isRaining());
     }
 
     private void useSeparateMapsForNether() {
@@ -374,7 +374,7 @@ public class KibuTestMod implements ModInitializer {
                 && (packet instanceof ClientboundSoundPacket || packet instanceof ClientboundSoundEntityPacket)
                 ? PendingResult.empty() : PendingResult.pass());
 
-        WorldPhysicsHooks.REPLACE_DISK_ENCHANTMENT.register((world, pos, entity, state)
+        LevelPhysicsHooks.REPLACE_DISK_ENCHANTMENT.register((world, pos, entity, state)
                 -> entity instanceof ServerPlayer player && player.getMainHandItem().is(STICK));
 
         EntityUsePortalCallback.HOOK.register((entity, portal, pos)

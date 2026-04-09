@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 
 @Mixin(BaseCoralPlantTypeBlock.class)
 public class BaseCoralPlantTypeBlockMixin {
@@ -22,7 +22,7 @@ public class BaseCoralPlantTypeBlockMixin {
     private static void ruler$isInWater(BlockState state, BlockGetter level, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
         if (!(level instanceof Level world)) return;
 
-        boolean cancelled = WorldPhysicsHooks.CORAL_DEATH.invoker().onFade(world, blockPos);
+        boolean cancelled = LevelPhysicsHooks.CORAL_DEATH.invoker().onFade(world, blockPos);
 
         if (cancelled) {
             cir.setReturnValue(true);

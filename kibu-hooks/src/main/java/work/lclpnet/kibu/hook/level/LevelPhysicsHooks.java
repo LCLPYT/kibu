@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.hook.world;
+package work.lclpnet.kibu.hook.level;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import work.lclpnet.kibu.hook.Hook;
 import work.lclpnet.kibu.hook.HookFactory;
 
-public class WorldPhysicsHooks {
+public class LevelPhysicsHooks {
 
     public static final Hook<ExplosionHook> EXPLOSION = HookFactory.createArrayBacked(ExplosionHook.class, callbacks -> explosion -> {
         boolean cancelled = false;

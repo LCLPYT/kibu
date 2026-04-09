@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.world.ItemScatterCallback;
+import work.lclpnet.kibu.hook.level.ItemScatterCallback;
 
 @Mixin(Containers.class)
 public class ContainersMixin {

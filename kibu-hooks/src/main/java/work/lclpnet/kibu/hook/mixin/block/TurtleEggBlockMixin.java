@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.world.BlockModificationHooks;
+import work.lclpnet.kibu.hook.level.BlockModificationHooks;
 
 @Mixin(TurtleEggBlock.class)
 public class TurtleEggBlockMixin {

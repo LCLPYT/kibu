@@ -9,7 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import work.lclpnet.kibu.behaviour.world.ServerWorldBehaviour;
+import work.lclpnet.kibu.behaviour.level.ServerLevelBehaviour;
 
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
@@ -32,7 +32,7 @@ public class BehaviourCommand {
         boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
         ServerPlayer player = ctx.getSource().getPlayerOrException();
 
-        ServerWorldBehaviour.setFluidTicksEnabled(player.level(), enabled);
+        ServerLevelBehaviour.setFluidTicksEnabled(player.level(), enabled);
 
         player.sendSystemMessage(Component.literal("Set behaviour fluid_ticks to \"" + enabled + "\""));
 

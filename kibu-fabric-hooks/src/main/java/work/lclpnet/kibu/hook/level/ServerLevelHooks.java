@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.hook.world;
+package work.lclpnet.kibu.hook.level;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLevelEvents;
 import work.lclpnet.kibu.hook.Hook;
@@ -7,7 +7,7 @@ import work.lclpnet.kibu.hook.HookFactory;
 /**
  * Hook versions of {@link ServerLevelEvents} from fabric-lifecycle-events.
  */
-public class ServerWorldHooks {
+public class ServerLevelHooks {
 
     public static final Hook<ServerLevelEvents.Load> LOAD = HookFactory.createArrayBacked(ServerLevelEvents.Load.class,
             callbacks -> (server, level) -> {

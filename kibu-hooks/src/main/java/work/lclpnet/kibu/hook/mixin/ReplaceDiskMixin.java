@@ -10,7 +10,7 @@ import net.minecraft.world.item.enchantment.effects.ReplaceDisk;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 
 @Mixin(ReplaceDisk.class)
 public class ReplaceDiskMixin {
@@ -25,7 +25,7 @@ public class ReplaceDiskMixin {
     public boolean kibu$onSetBlock(ServerLevel instance, BlockPos pos, BlockState state, Operation<Boolean> original,
                                    @Local(argsOnly = true, name = "item") EnchantedItemInUse item) {
 
-        if (WorldPhysicsHooks.REPLACE_DISK_ENCHANTMENT.invoker().onApply(instance, pos, item.owner(), state)) {
+        if (LevelPhysicsHooks.REPLACE_DISK_ENCHANTMENT.invoker().onApply(instance, pos, item.owner(), state)) {
             return false;  // cancel modification
         }
 

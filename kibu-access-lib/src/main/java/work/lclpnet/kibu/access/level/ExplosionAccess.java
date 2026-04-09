@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.access.world;
+package work.lclpnet.kibu.access.level;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ServerExplosion;

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 
 @Mixin(IceBlock.class)
 public class IceBlockMixin {
@@ -19,7 +19,7 @@ public class IceBlockMixin {
             cancellable = true
     )
     public void kibu$onMelt(BlockState state, Level level, BlockPos pos, CallbackInfo ci) {
-        if (WorldPhysicsHooks.MELT.invoker().onFade(level, pos))
+        if (LevelPhysicsHooks.MELT.invoker().onFade(level, pos))
             ci.cancel();
     }
 }

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 
 import static net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL;
 
@@ -28,7 +28,7 @@ public class LayeredCauldronBlockMixin {
     public void kibu$onPrecipitationTick(BlockState state, Level level, BlockPos pos, Biome.Precipitation precipitation, CallbackInfo ci) {
         BlockState toState = state.cycle(LEVEL);
 
-        if (WorldPhysicsHooks.CAULDRON_PRECIPITATION.invoker().onChange(level, pos, toState)) {
+        if (LevelPhysicsHooks.CAULDRON_PRECIPITATION.invoker().onChange(level, pos, toState)) {
             ci.cancel();
         }
     }
@@ -44,7 +44,7 @@ public class LayeredCauldronBlockMixin {
     public void kibu$onFillFromDripstone(BlockState state, Level level, BlockPos pos, Fluid fluid, CallbackInfo ci) {
         BlockState toState = state.setValue(LEVEL, state.getValue(LEVEL) + 1);
 
-        if (WorldPhysicsHooks.CAULDRON_DRIP_STONE.invoker().onChange(level, pos, toState)) {
+        if (LevelPhysicsHooks.CAULDRON_DRIP_STONE.invoker().onChange(level, pos, toState)) {
             ci.cancel();
         }
     }

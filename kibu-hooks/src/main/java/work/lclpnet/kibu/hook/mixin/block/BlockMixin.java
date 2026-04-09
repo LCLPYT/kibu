@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.world.BlockBreakParticleCallback;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.hook.level.BlockBreakParticleCallback;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 
 @Mixin(Block.class)
 public class BlockMixin {
@@ -31,7 +31,7 @@ public class BlockMixin {
         if (level.isClientSide() || itemStack.isEmpty() || !(level instanceof ServerLevel serverWorld)
             || !serverWorld.getGameRules().get(GameRules.BLOCK_DROPS)) return;
 
-        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, itemStack)) {
+        if (LevelPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, itemStack)) {
             ci.cancel();
         }
     }
@@ -48,7 +48,7 @@ public class BlockMixin {
         if (level.isClientSide() || itemStack.isEmpty() || !(level instanceof ServerLevel serverWorld)
             || !serverWorld.getGameRules().get(GameRules.BLOCK_DROPS)) return;
 
-        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, itemStack)) {
+        if (LevelPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, itemStack)) {
             ci.cancel();
         }
     }
@@ -62,7 +62,7 @@ public class BlockMixin {
             cancellable = true
     )
     public void kibu$onTileXpDrop(ServerLevel level, BlockPos pos, int amount, CallbackInfo ci) {
-        if (WorldPhysicsHooks.BLOCK_XP_DROP.invoker().onTileDropExperience(level, pos, amount)) {
+        if (LevelPhysicsHooks.BLOCK_XP_DROP.invoker().onTileDropExperience(level, pos, amount)) {
             ci.cancel();
         }
     }

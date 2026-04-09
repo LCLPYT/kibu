@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 
 @Mixin(ServerLevel.class)
 public class ServerLevelMixin {
@@ -53,7 +53,7 @@ public class ServerLevelMixin {
             CallbackInfo ci,
             @Local(name = "explosion") ServerExplosion explosion
     ) {
-        if (WorldPhysicsHooks.EXPLOSION.invoker().onExplode(explosion)) {
+        if (LevelPhysicsHooks.EXPLOSION.invoker().onExplode(explosion)) {
             ci.cancel();
         }
     }
@@ -67,10 +67,10 @@ public class ServerLevelMixin {
     )
     public boolean kibu$onFreeze(ServerLevel instance, BlockPos pos, BlockState blockState) {
         if (blockState.is(Blocks.SNOW)) {
-            if (WorldPhysicsHooks.SNOW_FALL.invoker().onSnowFall(instance, pos))
+            if (LevelPhysicsHooks.SNOW_FALL.invoker().onSnowFall(instance, pos))
                 return false;
         } else if (blockState.is(Blocks.ICE)) {
-            if (WorldPhysicsHooks.FREEZE.invoker().onFade(instance, pos))
+            if (LevelPhysicsHooks.FREEZE.invoker().onFade(instance, pos))
                 return false;
         }
         return instance.setBlockAndUpdate(pos, blockState);
@@ -88,7 +88,7 @@ public class ServerLevelMixin {
         Level w = (Level) (Object) this;
 
         // fire snow fall event a second time to determine if entities should be pushed
-        if (WorldPhysicsHooks.SNOW_FALL.invoker().onSnowFall(w, pos)) {
+        if (LevelPhysicsHooks.SNOW_FALL.invoker().onSnowFall(w, pos)) {
             // canceled, do not push entities and return original block state
             return state;
         }

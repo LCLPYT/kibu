@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.lclpnet.kibu.hook.entity.ItemUseOnEntityCallback;
+import work.lclpnet.kibu.hook.level.BlockModificationHooks;
 import work.lclpnet.kibu.hook.util.PlayerUtils;
-import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin {

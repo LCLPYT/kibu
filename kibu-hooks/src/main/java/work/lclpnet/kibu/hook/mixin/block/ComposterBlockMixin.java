@@ -17,8 +17,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import work.lclpnet.kibu.hook.level.BlockModificationHooks;
 import work.lclpnet.kibu.hook.util.MixinUtils;
-import work.lclpnet.kibu.hook.world.BlockModificationHooks;
 
 @Mixin(ComposterBlock.class)
 public class ComposterBlockMixin {

@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.hook.world;
+package work.lclpnet.kibu.hook.level;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;

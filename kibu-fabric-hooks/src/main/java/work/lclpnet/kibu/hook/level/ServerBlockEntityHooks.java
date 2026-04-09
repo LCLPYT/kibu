@@ -1,4 +1,4 @@
-package work.lclpnet.kibu.hook.world;
+package work.lclpnet.kibu.hook.level;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import work.lclpnet.kibu.hook.Hook;

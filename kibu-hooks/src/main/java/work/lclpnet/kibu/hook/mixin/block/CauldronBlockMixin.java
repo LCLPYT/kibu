@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import work.lclpnet.kibu.hook.world.WorldPhysicsHooks;
+import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
 
 @Mixin(CauldronBlock.class)
 public class CauldronBlockMixin {
@@ -34,7 +34,7 @@ public class CauldronBlockMixin {
 
         if (toState == null) return;
 
-        if (WorldPhysicsHooks.CAULDRON_PRECIPITATION.invoker().onChange(level, pos, toState)) {
+        if (LevelPhysicsHooks.CAULDRON_PRECIPITATION.invoker().onChange(level, pos, toState)) {
             ci.cancel();
         }
     }
@@ -57,7 +57,7 @@ public class CauldronBlockMixin {
 
         if (toState == null) return;
 
-        if (WorldPhysicsHooks.CAULDRON_DRIP_STONE.invoker().onChange(level, pos, toState)) {
+        if (LevelPhysicsHooks.CAULDRON_DRIP_STONE.invoker().onChange(level, pos, toState)) {
             ci.cancel();
         }
     }

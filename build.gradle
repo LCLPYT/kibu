@@ -1,3 +1,6 @@
+import groovy.xml.XmlSlurper
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     alias(libs.plugins.fabric.loom) apply false
     alias(libs.plugins.maven.publish)
@@ -13,6 +16,7 @@ ext {
 version = "${project.mod_version}+${libs.versions.minecraft.get()}"
 
 def modId = project.mod_id
+def javaVersion = libs.versions.java.get().toInteger()
 
 allprojects {
     group = project.maven_group
@@ -70,27 +74,15 @@ allprojects {
         useJUnitPlatform()
     }
 
-    processResources {
-        inputs.property "version", project.version
-        inputs.property "loader_version", libs.versions.fabric.loader.get()
-        inputs.property "minecraft_compat", project.minecraft_compat
-
-        filesMatching("fabric.mod.json") {
-            expand "version": project.version,
-                    "loader_version": libs.versions.fabric.loader.get(),
-                    "minecraft_compat": project.minecraft_compat
-        }
-    }
-
     tasks.withType(JavaCompile).configureEach {
-        it.options.release = 25
+        it.options.release = javaVersion
     }
 
     java {
         withSourcesJar()
 
-        sourceCompatibility = JavaVersion.VERSION_25
-        targetCompatibility = JavaVersion.VERSION_25
+        sourceCompatibility = JavaVersion.toVersion(javaVersion)
+        targetCompatibility = JavaVersion.toVersion(javaVersion)
     }
 
     [jar, sourcesJar].each {
@@ -137,7 +129,28 @@ base {
     archivesName.set(modId)
 }
 
-import groovy.xml.XmlSlurper
+allprojects {
+    processResources {
+        def tokens = [
+                "version": project.version,
+                "loader_version": libs.versions.fabric.loader.get(),
+                "minecraft_compat": project.minecraft_compat,
+                "java_version": javaVersion.toString()
+        ]
+
+        inputs.properties(tokens)
+
+        filesMatching("fabric.mod.json") {
+            expand(tokens)
+        }
+
+        filesMatching("*.mixins.json") {
+            filter(ReplaceTokens, beginToken: '${', endToken: '}', tokens: tokens)
+        }
+    }
+}
+
+
 import work.lclpnet.build.task.GithubDeploymentTask
 
 def env = System.getenv()
@@ -221,14 +234,17 @@ dependencies {
 loom.nestJars(tasks.named("jar"), configurations.nestedJars)
 
 processTestmodResources {
-    inputs.property "version", project.version
-    inputs.property "loader_version", libs.versions.fabric.loader.get()
-    inputs.property "minecraft_compat", project.minecraft_compat
+    def tokens = [
+            "version": project.version,
+            "loader_version": libs.versions.fabric.loader.get(),
+            "minecraft_compat": project.minecraft_compat,
+            "java_version": javaVersion.toString()
+    ]
+
+    inputs.properties(tokens)
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version,
-                "loader_version": libs.versions.fabric.loader.get(),
-                "minecraft_compat": project.minecraft_compat
+        expand(tokens)
     }
 }
 

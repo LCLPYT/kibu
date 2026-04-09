@@ -17,7 +17,7 @@
 	"entrypoints": {},
 	"mixins": [],
 	"depends": {
-		"java": ">=21"
+		"java": ">=${java_version}"
 	},
 	"suggests": {},
 	"custom": {

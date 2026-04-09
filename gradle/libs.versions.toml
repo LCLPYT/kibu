@@ -11,7 +11,7 @@ mockito = "5.23.0"
 translations4j = "2.11.0"
 
 [plugins]
-fabric-loom = { id = "fabric-loom", version.ref = "fabric-loom" }
+fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }
 maven-publish = { id = "maven-publish" }
 gradle-build-utils = { id = "gradle-build-utils", version.ref = "gradle-build-tools" }
 

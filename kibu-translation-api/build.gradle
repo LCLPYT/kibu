@@ -23,7 +23,8 @@ publishing {
 }
 
 dependencies {
-    include(implementation("work.lclpnet:translations4j:${rootProject.translations4j_version}"))
+    implementation(libs.translations4j)
+    include(libs.translations4j)
 }
 
 test {

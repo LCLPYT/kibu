@@ -1,7 +1,7 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version "${loom_version}" apply false
-    id 'maven-publish'
-    id 'gradle-build-utils' version '1.7.0'
+    alias(libs.plugins.fabric.loom) apply false
+    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.gradle.build.utils)
 }
 
 Properties props = buildUtils.loadProperties('publish.properties')
@@ -10,7 +10,9 @@ ext {
     versionPattern = "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][a-zA-Z0-9.]+)?\$"
 }
 
-version = "${project.mod_version}+${project.minecraft_version}"
+version = "${project.mod_version}+${libs.versions.minecraft.get()}"
+
+def modId = project.mod_id
 
 allprojects {
     group = project.maven_group
@@ -41,26 +43,26 @@ allprojects {
     }
 
     dependencies {
-        testCompileOnly(compileOnly('org.jetbrains:annotations:24.1.0'))
+        compileOnly(libs.jetbrains.annotations)
+        testCompileOnly(libs.jetbrains.annotations)
 
-        testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
-        testImplementation 'org.mockito:mockito-core:5.6.0'
+        testImplementation(libs.junit.jupiter.params)
+        testImplementation(libs.mockito.core)
     }
 
     if (ext.isMc) {
         dependencies {
-            minecraft "com.mojang:minecraft:${project.minecraft_version}"
-            implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+            minecraft(libs.minecraft)
+            implementation(libs.fabric.loader)
+            implementation(libs.fabric.api)
 
-            implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-            testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+            testImplementation(libs.fabric.loader.junit)
         }
     } else {
         dependencies {
-            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-            testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-            testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+            testImplementation(libs.junit.jupiter.api)
+            testRuntimeOnly(libs.junit.jupiter.engine)
+            testRuntimeOnly(libs.junit.platform.launcher)
         }
     }
 
@@ -70,12 +72,12 @@ allprojects {
 
     processResources {
         inputs.property "version", project.version
-        inputs.property "loader_version", project.loader_version
+        inputs.property "loader_version", libs.versions.fabric.loader.get()
         inputs.property "minecraft_compat", project.minecraft_compat
 
         filesMatching("fabric.mod.json") {
             expand "version": project.version,
-                    "loader_version": project.loader_version,
+                    "loader_version": libs.versions.fabric.loader.get(),
                     "minecraft_compat": project.minecraft_compat
         }
     }
@@ -131,6 +133,9 @@ subprojects {
     }
 }
 
+base {
+    archivesName.set(modId)
+}
 
 import groovy.xml.XmlSlurper
 import work.lclpnet.build.task.GithubDeploymentTask
@@ -146,7 +151,7 @@ tasks.register("github", GithubDeploymentTask) {
     }
 
     release {
-        title = "[$project.minecraft_version] Kibu $project.version"
+        title = "[${libs.versions.minecraft.get()}] Kibu $project.version"
         tag = project.version
     }
 
@@ -217,12 +222,12 @@ loom.nestJars(tasks.named("jar"), configurations.nestedJars)
 
 processTestmodResources {
     inputs.property "version", project.version
-    inputs.property "loader_version", project.loader_version
+    inputs.property "loader_version", libs.versions.fabric.loader.get()
     inputs.property "minecraft_compat", project.minecraft_compat
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version,
-                "loader_version": project.loader_version,
+                "loader_version": libs.versions.fabric.loader.get(),
                 "minecraft_compat": project.minecraft_compat
     }
 }
@@ -271,12 +276,13 @@ static def getSubprojectVersion(Project project) {
 
     def versionString = version.toString()
     def snapshotSuffix = "-SNAPSHOT"
+    def minecraftVersion = project.libs.versions.minecraft.get()
 
     if (versionString.endsWith(snapshotSuffix)) {
-        return versionString.substring(0, versionString.length() - snapshotSuffix.length()) + "+" + project.minecraft_version + suffix + snapshotSuffix
+        return versionString.substring(0, versionString.length() - snapshotSuffix.length()) + "+" + minecraftVersion + suffix + snapshotSuffix
     }
 
-    return versionString + "+" + project.minecraft_version + suffix
+    return versionString + "+" + minecraftVersion + suffix
 }
 
 static def configureNonLoomProject(Project project) {

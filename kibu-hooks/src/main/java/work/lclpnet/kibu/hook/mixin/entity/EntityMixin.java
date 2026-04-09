@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Leashable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Portal;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -55,12 +56,12 @@ public class EntityMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onSneak(boolean sneaking, CallbackInfo ci) {
+    public void kibu$onSneak(boolean shiftKeyDown, CallbackInfo ci) {
         Entity self = (Entity) (Object) this;
 
         if (!(self instanceof ServerPlayer serverPlayer)) return;
 
-        if (PlayerSneakCallback.HOOK.invoker().onSneak(serverPlayer, sneaking)) {
+        if (PlayerSneakCallback.HOOK.invoker().onSneak(serverPlayer, shiftKeyDown)) {
             ci.cancel();
         }
     }
@@ -69,12 +70,12 @@ public class EntityMixin {
             method = "setSprinting",
             at = @At("HEAD")
     )
-    public void kibu$onSprint(boolean sneaking, CallbackInfo ci) {
+    public void kibu$onSprint(boolean isSprinting, CallbackInfo ci) {
         Entity self = (Entity) (Object) this;
 
         if (!(self instanceof ServerPlayer serverPlayer)) return;
 
-        PlayerSprintCallback.HOOK.invoker().onSprint(serverPlayer, sneaking);
+        PlayerSprintCallback.HOOK.invoker().onSprint(serverPlayer, isSprinting);
     }
 
     @WrapOperation(
@@ -96,10 +97,10 @@ public class EntityMixin {
             ),
             cancellable = true
     )
-    public void kibu$onStartRiding(Entity entity, boolean force, boolean emitEvent, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onStartRiding(Entity entityToRide, boolean force, boolean sendEventAndTriggers, CallbackInfoReturnable<Boolean> cir) {
         Entity self = (Entity) (Object) this;
 
-        if (EntityMountCallback.HOOK.invoker().onMount(self, entity, force)) {
+        if (EntityMountCallback.HOOK.invoker().onMount(self, entityToRide, force)) {
             cir.setReturnValue(false);
         }
     }
@@ -130,7 +131,7 @@ public class EntityMixin {
             ),
             cancellable = true
     )
-    public void kibu$onLeash(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    public void kibu$onLeash(Player player, InteractionHand hand, Vec3 location, CallbackInfoReturnable<InteractionResult> cir) {
         Entity self = (Entity) (Object) this;
 
         if (LeashEntityCallback.HOOK.invoker().onLeash(player, self)) {
@@ -157,7 +158,7 @@ public class EntityMixin {
             )},
             cancellable = true
     )
-    public void kibu$beforeUnleashMob(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    public void kibu$beforeUnleashMob(Player player, InteractionHand hand, Vec3 location, CallbackInfoReturnable<InteractionResult> cir) {
         Entity self = (Entity) (Object) this;
 
         if (UnleashEntityCallback.HOOK.invoker().onUnleash(player, self)) {
@@ -185,19 +186,19 @@ public class EntityMixin {
                     target = "Lnet/minecraft/world/entity/Leashable;leashableInArea(Lnet/minecraft/world/entity/Entity;Ljava/util/function/Predicate;)Ljava/util/List;"
             )
     )
-    public List<Leashable> kibu$collectEntitiesToLeash(Entity leashHolder, Predicate<Leashable> leashablePredicate, Operation<List<Leashable>> original,
-                                                       @Local(argsOnly = true) Player player) {
+    public List<Leashable> kibu$collectEntitiesToLeash(Entity entity, Predicate<Leashable> test, Operation<List<Leashable>> original,
+                                                       @Local(argsOnly = true, name = "player") Player player) {
 
-        List<Leashable> list = original.call(leashHolder, leashablePredicate);
+        List<Leashable> list = original.call(entity, test);
         List<Entity> entities = new ArrayList<>(list.size());
 
         for (Leashable leashable : list) {
-            if (leashable instanceof Entity entity) {
-                entities.add(entity);
+            if (leashable instanceof Entity leashed) {
+                entities.add(leashed);
             }
         }
 
-        if (LeashEntitiesToEntityCallback.HOOK.invoker().onLeashToEntity(player, leashHolder, entities)) {
+        if (LeashEntitiesToEntityCallback.HOOK.invoker().onLeashToEntity(player, entity, entities)) {
             // cancelled, return empty list so that caller continues
             return List.of();
         }

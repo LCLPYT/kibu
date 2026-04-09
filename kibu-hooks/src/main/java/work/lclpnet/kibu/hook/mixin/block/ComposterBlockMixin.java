@@ -31,8 +31,8 @@ public class ComposterBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onAddToComposter(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.COMPOSTER.invoker().onModify(world, pos, player)) {
+    public void kibu$onAddToComposter(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.COMPOSTER.invoker().onModify(level, pos, player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }
@@ -45,8 +45,8 @@ public class ComposterBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onEmptyComposter(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.COMPOSTER.invoker().onModify(world, pos, player)) {
+    public void kibu$onEmptyComposter(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.COMPOSTER.invoker().onModify(level, pos, player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }
@@ -58,7 +58,7 @@ public class ComposterBlockMixin {
                     target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    private static boolean kibu$onDropItem(Level world, Entity entity, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
+    private static boolean kibu$onDropItem(Level world, Entity entity, Operation<Boolean> original, @Local(argsOnly = true, name = "pos") BlockPos pos) {
         return MixinUtils.wrapBlockItemDrop(world, entity, original, pos);
     }
 }

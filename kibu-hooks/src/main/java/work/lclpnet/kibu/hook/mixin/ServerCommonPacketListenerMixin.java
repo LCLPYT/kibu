@@ -24,7 +24,7 @@ public class ServerCommonPacketListenerMixin {
             cancellable = true
     )
     public void kibu$send(Packet<?> packet, ChannelFutureListener channelFutureListener, CallbackInfo ci,
-                          @Local(argsOnly = true) LocalRef<Packet<?>> capture) {
+                          @Local(argsOnly = true, name = "packet") LocalRef<Packet<?>> capture) {
 
         ServerCommonPacketListenerImpl self = (ServerCommonPacketListenerImpl) (Object) this;
 

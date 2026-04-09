@@ -19,10 +19,10 @@ public class BaseCoralPlantTypeBlockMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private static void ruler$isInWater(BlockState state, BlockGetter blockView, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (!(blockView instanceof Level world)) return;
+    private static void ruler$isInWater(BlockState state, BlockGetter level, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
+        if (!(level instanceof Level world)) return;
 
-        boolean cancelled = WorldPhysicsHooks.CORAL_DEATH.invoker().onFade(world, pos);
+        boolean cancelled = WorldPhysicsHooks.CORAL_DEATH.invoker().onFade(world, blockPos);
 
         if (cancelled) {
             cir.setReturnValue(true);

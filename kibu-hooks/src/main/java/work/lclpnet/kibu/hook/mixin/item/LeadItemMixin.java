@@ -28,14 +28,14 @@ public class LeadItemMixin {
             ),
             cancellable = true
     )
-    private static void kibu$attachToBlock(Player player, Level world, BlockPos pos, CallbackInfoReturnable<InteractionResult> cir,
-                                           @Local List<Leashable> list) {
+    private static void kibu$attachToBlock(Player player, Level level, BlockPos pos, CallbackInfoReturnable<InteractionResult> cir,
+                                           @Local(name = "entitiesToLeash") List<Leashable> entitiesToLeash) {
 
-        if (list.isEmpty()) return;
+        if (entitiesToLeash.isEmpty()) return;
 
-        List<Entity> entities = new ArrayList<>(list.size());
+        List<Entity> entities = new ArrayList<>(entitiesToLeash.size());
 
-        for (Leashable leashable : list) {
+        for (Leashable leashable : entitiesToLeash) {
             if (leashable instanceof Entity entity) {
                 entities.add(entity);
             }

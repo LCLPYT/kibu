@@ -24,10 +24,10 @@ public class BlockItemMixin {
             ),
             cancellable = true
     )
-    public void kibu$onPlaceBlock(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir, @Local BlockState newState) {
-        final Player player = context.getPlayer();
+    public void kibu$onPlaceBlock(BlockPlaceContext placeContext, CallbackInfoReturnable<InteractionResult> cir, @Local(name = "placementState") BlockState placementState) {
+        final Player player = placeContext.getPlayer();
 
-        if (BlockModificationHooks.PLACE_BLOCK.invoker().onPlace(context.getLevel(), context.getClickedPos(), player, newState)) {
+        if (BlockModificationHooks.PLACE_BLOCK.invoker().onPlace(placeContext.getLevel(), placeContext.getClickedPos(), player, placementState)) {
             cir.setReturnValue(InteractionResult.FAIL);
 
             if (player != null) {
@@ -40,7 +40,7 @@ public class BlockItemMixin {
             method = "placeBlock(Lnet/minecraft/world/item/context/BlockPlaceContext;Lnet/minecraft/world/level/block/state/BlockState;)Z",
             at = @At("RETURN")
     )
-    public void kibu$onBlockPlaced(BlockPlaceContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onBlockPlaced(BlockPlaceContext context, BlockState placementState, CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValueZ()) return;
 
         BlockModificationHooks.BLOCK_PLACED.invoker().onModified(context.getLevel(), context.getClickedPos(), context.getPlayer());

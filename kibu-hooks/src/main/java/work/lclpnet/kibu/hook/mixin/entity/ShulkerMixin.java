@@ -20,10 +20,10 @@ public class ShulkerMixin {
             ),
             cancellable = true
     )
-    public void kibu$onTeleport(CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 1) BlockPos pos) {
+    public void kibu$onTeleport(CallbackInfoReturnable<Boolean> cir, @Local(name = "target") BlockPos target) {
         Shulker shulker = (Shulker) (Object) this;
 
-        double x = pos.getX() + 0.5, y = pos.getY(), z = pos.getZ() + 0.5;
+        double x = target.getX() + 0.5, y = target.getY(), z = target.getZ() + 0.5;
 
         if (EntityTeleportCallback.HOOK.invoker().onTeleport(shulker, x, y, z)) {
             cir.setReturnValue(false);

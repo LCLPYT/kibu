@@ -19,14 +19,14 @@ public class ProjectileMixin {
             method = "onHitBlock",
             at = @At("TAIL")
     )
-    public void kibu$onBlockHit(BlockHitResult blockHitResult, CallbackInfo ci) {
+    public void kibu$onBlockHit(BlockHitResult hitResult, CallbackInfo ci) {
         Projectile self = (Projectile) (Object) this;
 
-        ProjectileHooks.HIT_BLOCK.invoker().onHitBlock(self, blockHitResult);
+        ProjectileHooks.HIT_BLOCK.invoker().onHitBlock(self, hitResult);
     }
 
     @ModifyReturnValue(method = "canHitEntity(Lnet/minecraft/world/entity/Entity;)Z", at = @At("RETURN"))
-    public boolean kibu$canHit(boolean original, @Local(argsOnly = true) Entity entity) {
+    public boolean kibu$canHit(boolean original, @Local(argsOnly = true, name = "entity") Entity entity) {
         if (!original) return false;
 
         Projectile self = (Projectile) (Object) this;

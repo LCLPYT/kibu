@@ -17,18 +17,19 @@ import work.lclpnet.kibu.hook.entity.EntityStatusEffectCallback;
 public class MobEffectUtilMixin {
 
     @Inject(
-            method = "method_42145",
+            method = "lambda$addEffectToPlayersAround$0",
             at = @At("RETURN"),
             cancellable = true
     )
     private static void kibu$onTargetPlayerForStatusEffect(
-            Entity entity, Vec3 vec3d, double d, Holder<MobEffect> registryEntry,
-            MobEffectInstance statusEffectInstance, int i, ServerPlayer player, CallbackInfoReturnable<Boolean> cir) {
+            Entity source, Vec3 position, double radius, Holder<MobEffect> effect,
+            MobEffectInstance effectInstance, int displayEffectLimit, ServerPlayer input,
+            CallbackInfoReturnable<Boolean> cir) {
 
         if (!cir.getReturnValueZ()) return;
 
         // player would be targeted
-        if (EntityStatusEffectCallback.HOOK.invoker().onAddEffect(player, statusEffectInstance, entity)) {
+        if (EntityStatusEffectCallback.HOOK.invoker().onAddEffect(input, effectInstance, source)) {
             cir.setReturnValue(false);
         }
     }

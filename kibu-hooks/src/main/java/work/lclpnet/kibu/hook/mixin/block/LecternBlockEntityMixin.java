@@ -21,7 +21,7 @@ public class LecternBlockEntityMixin {
                     target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    private boolean kibu$onDropItem(Level world, Entity entity, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
+    private boolean kibu$onDropItem(Level world, Entity entity, Operation<Boolean> original, @Local(argsOnly = true, name = "pos") BlockPos pos) {
         return MixinUtils.wrapBlockItemDrop(world, entity, original, pos);
     }
 }

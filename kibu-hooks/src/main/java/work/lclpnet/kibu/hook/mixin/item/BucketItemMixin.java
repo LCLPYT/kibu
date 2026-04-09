@@ -35,14 +35,14 @@ public class BucketItemMixin {
             ),
             cancellable = true
     )
-    public void kibu$onPickupFluid(Level world, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir,
-                                   @Local(ordinal = 0) BlockPos pos) {
+    public void kibu$onPickupFluid(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir,
+                                   @Local(name = "pos") BlockPos pos) {
 
-        if (BlockModificationHooks.PICKUP_FLUID.invoker().onTransfer(world, pos, player, content)) {
+        if (BlockModificationHooks.PICKUP_FLUID.invoker().onTransfer(level, pos, player, content)) {
             cir.setReturnValue(InteractionResult.FAIL);
 
             if (player instanceof ServerPlayer) {
-                ((ServerPlayer) player).connection.send(new ClientboundBlockUpdatePacket(world, pos));
+                ((ServerPlayer) player).connection.send(new ClientboundBlockUpdatePacket(level, pos));
                 PlayerUtils.syncPlayerItems(player);
             }
         }
@@ -57,8 +57,8 @@ public class BucketItemMixin {
             ),
             cancellable = true
     )
-    public void kibu$onPlaceFluid(LivingEntity user, Level world, BlockPos pos, BlockHitResult hitResult, CallbackInfoReturnable<Boolean> cir) {
-        if (BlockModificationHooks.PLACE_FLUID.invoker().onTransfer(world, pos, user, content)) {
+    public void kibu$onPlaceFluid(LivingEntity user, Level level, BlockPos pos, BlockHitResult hitResult, CallbackInfoReturnable<Boolean> cir) {
+        if (BlockModificationHooks.PLACE_FLUID.invoker().onTransfer(level, pos, user, content)) {
             cir.setReturnValue(false);
 
             if (user instanceof ServerPlayer player) {

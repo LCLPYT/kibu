@@ -27,11 +27,11 @@ public class BlockMixin {
             ),
             cancellable = true
     )
-    private static void kibu$onTileDrop(Level world, BlockPos pos, ItemStack stack, CallbackInfo ci) {
-        if (world.isClientSide() || stack.isEmpty() || !(world instanceof ServerLevel serverWorld)
+    private static void kibu$onTileDrop(Level level, BlockPos pos, ItemStack itemStack, CallbackInfo ci) {
+        if (level.isClientSide() || itemStack.isEmpty() || !(level instanceof ServerLevel serverWorld)
             || !serverWorld.getGameRules().get(GameRules.BLOCK_DROPS)) return;
 
-        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, stack)) {
+        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, itemStack)) {
             ci.cancel();
         }
     }
@@ -44,11 +44,11 @@ public class BlockMixin {
             ),
             cancellable = true
     )
-    private static void kibu$onTileDrop(Level world, BlockPos pos, Direction direction, ItemStack stack, CallbackInfo ci) {
-        if (world.isClientSide() || stack.isEmpty() || !(world instanceof ServerLevel serverWorld)
+    private static void kibu$onTileDrop(Level level, BlockPos pos, Direction face, ItemStack itemStack, CallbackInfo ci) {
+        if (level.isClientSide() || itemStack.isEmpty() || !(level instanceof ServerLevel serverWorld)
             || !serverWorld.getGameRules().get(GameRules.BLOCK_DROPS)) return;
 
-        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, stack)) {
+        if (WorldPhysicsHooks.BLOCK_ITEM_DROP.invoker().onTileDrop(serverWorld, pos, itemStack)) {
             ci.cancel();
         }
     }
@@ -61,8 +61,8 @@ public class BlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onTileXpDrop(ServerLevel world, BlockPos pos, int size, CallbackInfo ci) {
-        if (WorldPhysicsHooks.BLOCK_XP_DROP.invoker().onTileDropExperience(world, pos, size)) {
+    public void kibu$onTileXpDrop(ServerLevel level, BlockPos pos, int amount, CallbackInfo ci) {
+        if (WorldPhysicsHooks.BLOCK_XP_DROP.invoker().onTileDropExperience(level, pos, amount)) {
             ci.cancel();
         }
     }
@@ -72,8 +72,8 @@ public class BlockMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onSpawnBreakParticles(Level world, Player player, BlockPos pos, BlockState state, CallbackInfo ci) {
-        if (BlockBreakParticleCallback.HOOK.invoker().onSpawnParticles(world, pos, state)) {
+    public void kibu$onSpawnBreakParticles(Level level, Player player, BlockPos pos, BlockState state, CallbackInfo ci) {
+        if (BlockBreakParticleCallback.HOOK.invoker().onSpawnParticles(level, pos, state)) {
             ci.cancel();
         }
     }

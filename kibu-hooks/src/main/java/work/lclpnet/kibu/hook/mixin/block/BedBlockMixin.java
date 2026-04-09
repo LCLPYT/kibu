@@ -26,8 +26,8 @@ public class BedBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onExplosion(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.EXPLODE_RESPAWN_LOCATION.invoker().onModify(world, pos, player)) {
+    public void kibu$onExplosion(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.EXPLODE_RESPAWN_LOCATION.invoker().onModify(level, pos, player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }
@@ -40,8 +40,8 @@ public class BedBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onTrySleep(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (PlayerSpawnPointChangeCallback.HOOK.invoker().onChange(player, world, pos)) {
+    public void kibu$onTrySleep(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (PlayerSpawnPointChangeCallback.HOOK.invoker().onChange(player, level, pos)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }

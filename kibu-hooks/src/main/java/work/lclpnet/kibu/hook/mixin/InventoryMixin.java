@@ -27,7 +27,7 @@ public class InventoryMixin {
             ),
             cancellable = true
     )
-    public void kibu$onDropSelectedItem(boolean entireStack, CallbackInfoReturnable<ItemStack> cir) {
+    public void kibu$onDropSelectedItem(boolean all, CallbackInfoReturnable<ItemStack> cir) {
         boolean cancel = PlayerInventoryHooks.DROP_ITEM.invoker().onDropItem(player, selected, false);
 
         if (cancel) {
@@ -44,7 +44,7 @@ public class InventoryMixin {
                     shift = At.Shift.AFTER
             )
     )
-    public void kibu$onDroppedSelectedItem(boolean entireStack, CallbackInfoReturnable<ItemStack> cir) {
+    public void kibu$onDroppedSelectedItem(boolean all, CallbackInfoReturnable<ItemStack> cir) {
         PlayerInventoryHooks.DROPPED_ITEM.invoker().onDroppedItem(player, selected);
     }
 }

@@ -47,10 +47,10 @@ public class ItemStackMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$interceptUseOnEntity(Player user, LivingEntity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    public void kibu$interceptUseOnEntity(Player player, LivingEntity target, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         ItemStack stack = (ItemStack) (Object) this;
 
-        if (ItemUseOnEntityCallback.HOOK.invoker().onUseOnEntity(user, entity, hand, stack)) {
+        if (ItemUseOnEntityCallback.HOOK.invoker().onUseOnEntity(player, target, hand, stack)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }

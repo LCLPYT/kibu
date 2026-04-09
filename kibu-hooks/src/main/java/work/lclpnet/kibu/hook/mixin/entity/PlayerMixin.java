@@ -35,11 +35,11 @@ public class PlayerMixin {
             ),
             cancellable = true
     )
-    public void kibu$onDamage(ServerLevel world, DamageSource source, float amount, CallbackInfo ci) {
+    public void kibu$onDamage(ServerLevel level, DamageSource source, float dmg, CallbackInfo ci) {
         @SuppressWarnings("DataFlowIssue")
         LivingEntity entity = (LivingEntity) (Object) this;
 
-        if (EntityDamageCallback.HOOK.invoker().onDamage(entity, source, amount)) {
+        if (EntityDamageCallback.HOOK.invoker().onDamage(entity, source, dmg)) {
             ci.cancel();
         }
     }

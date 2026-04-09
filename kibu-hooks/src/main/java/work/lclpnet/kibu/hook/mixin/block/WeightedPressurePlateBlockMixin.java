@@ -26,17 +26,17 @@ public class WeightedPressurePlateBlockMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onGetWeightedRedstoneOutput(Level world, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
+    public void kibu$onGetWeightedRedstoneOutput(Level level, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
         AABB box = BasePressurePlateBlockAccessor.getBox().move(pos);
 
-        var entities = world.getEntitiesOfClass(Entity.class, box, EntitySelector.NO_SPECTATORS
+        var entities = level.getEntitiesOfClass(Entity.class, box, EntitySelector.NO_SPECTATORS
                 .and((entity) -> !entity.isIgnoringBlockTriggers()));
 
         int i = 0;
         boolean modified = false;
 
         for (Entity entity : entities) {
-            if (PressurePlateCallback.HOOK.invoker().onPress(world, pos, entity)) {
+            if (PressurePlateCallback.HOOK.invoker().onPress(level, pos, entity)) {
                 modified = true;
             } else {
                 i++;

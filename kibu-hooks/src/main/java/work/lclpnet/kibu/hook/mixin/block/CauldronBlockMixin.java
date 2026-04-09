@@ -25,7 +25,7 @@ public class CauldronBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onPrecipitationTick(BlockState state, Level world, BlockPos pos, Biome.Precipitation precipitation, CallbackInfo ci) {
+    public void kibu$onPrecipitationTick(BlockState state, Level level, BlockPos pos, Biome.Precipitation precipitation, CallbackInfo ci) {
         BlockState toState = switch (precipitation) {
             case RAIN -> Blocks.WATER_CAULDRON.defaultBlockState();
             case SNOW -> Blocks.POWDER_SNOW_CAULDRON.defaultBlockState();
@@ -34,7 +34,7 @@ public class CauldronBlockMixin {
 
         if (toState == null) return;
 
-        if (WorldPhysicsHooks.CAULDRON_PRECIPITATION.invoker().onChange(world, pos, toState)) {
+        if (WorldPhysicsHooks.CAULDRON_PRECIPITATION.invoker().onChange(level, pos, toState)) {
             ci.cancel();
         }
     }
@@ -47,7 +47,7 @@ public class CauldronBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onFillFromDripstone(BlockState state, Level world, BlockPos pos, Fluid fluid, CallbackInfo ci) {
+    public void kibu$onFillFromDripstone(BlockState state, Level level, BlockPos pos, Fluid fluid, CallbackInfo ci) {
         BlockState toState = null;
         if (fluid == Fluids.WATER) {
             toState = Blocks.WATER_CAULDRON.defaultBlockState();
@@ -57,7 +57,7 @@ public class CauldronBlockMixin {
 
         if (toState == null) return;
 
-        if (WorldPhysicsHooks.CAULDRON_DRIP_STONE.invoker().onChange(world, pos, toState)) {
+        if (WorldPhysicsHooks.CAULDRON_DRIP_STONE.invoker().onChange(level, pos, toState)) {
             ci.cancel();
         }
     }

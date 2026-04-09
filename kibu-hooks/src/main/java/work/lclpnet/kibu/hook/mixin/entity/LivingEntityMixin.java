@@ -61,11 +61,11 @@ public class LivingEntityMixin {
             ),
             cancellable = true
     )
-    public void kibu$onDamage(ServerLevel world, DamageSource source, float amount, CallbackInfo ci) {
+    public void kibu$onDamage(ServerLevel level, DamageSource source, float dmg, CallbackInfo ci) {
         @SuppressWarnings("DataFlowIssue")
         LivingEntity entity = (LivingEntity) (Object) this;
 
-        if (EntityDamageCallback.HOOK.invoker().onDamage(entity, source, amount)) {
+        if (EntityDamageCallback.HOOK.invoker().onDamage(entity, source, dmg)) {
             ci.cancel();
         }
     }
@@ -78,10 +78,10 @@ public class LivingEntityMixin {
             ),
             cancellable = true
     )
-    public void kibu$onAddStatusEffect(MobEffectInstance effect, Entity source, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onAddStatusEffect(MobEffectInstance newEffect, Entity source, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity self = (LivingEntity) (Object) this;
 
-        if (EntityStatusEffectCallback.HOOK.invoker().onAddEffect(self, effect, source)) {
+        if (EntityStatusEffectCallback.HOOK.invoker().onAddEffect(self, newEffect, source)) {
             cir.setReturnValue(false);
         }
     }
@@ -105,13 +105,13 @@ public class LivingEntityMixin {
             method = "stopRiding",
             at = @At("TAIL")
     )
-    public void kibu$onStoppedRiding(CallbackInfo ci, @Local Entity vehicle) {
-        if (vehicle == null) return;
+    public void kibu$onStoppedRiding(CallbackInfo ci, @Local(name = "oldVehicle") Entity oldVehicle) {
+        if (oldVehicle == null) return;
 
         LivingEntity self = (LivingEntity) (Object) this;
 
         if (self instanceof ServerPlayer player) {
-            PlayerMountHooks.DISMOUNTED.invoker().doAfter(player, vehicle);
+            PlayerMountHooks.DISMOUNTED.invoker().doAfter(player, oldVehicle);
         }
     }
 
@@ -123,10 +123,10 @@ public class LivingEntityMixin {
             ),
             cancellable = true
     )
-    public void kibu$onDropItem(ItemStack stack, boolean dropAtSelf, boolean retainOwnership, CallbackInfoReturnable<ItemEntity> cir, @Local ItemEntity item) {
+    public void kibu$onDropItem(ItemStack itemStack, boolean randomly, boolean thrownFromHand, CallbackInfoReturnable<ItemEntity> cir, @Local(name = "entity") ItemEntity entity) {
         LivingEntity self = (LivingEntity) (Object) this;
 
-        if (self instanceof ServerPlayer player && PlayerInventoryHooks.DROP_ITEM_ENTITY.invoker().onDropItemEntity(player, item)) {
+        if (self instanceof ServerPlayer player && PlayerInventoryHooks.DROP_ITEM_ENTITY.invoker().onDropItemEntity(player, entity)) {
             cir.setReturnValue(null);
         }
     }

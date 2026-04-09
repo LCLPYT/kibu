@@ -22,10 +22,10 @@ public class ArmorStandMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$beforeEquip(Player player, EquipmentSlot slot, ItemStack stack, InteractionHand hand, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$beforeEquip(Player player, EquipmentSlot slot, ItemStack playerItemStack, InteractionHand hand, CallbackInfoReturnable<Boolean> cir) {
         ArmorStand self = (ArmorStand) (Object) this;
 
-        if (ArmorStandManipulateCallback.HOOK.invoker().onManipulate(self, player, slot, stack, hand)) {
+        if (ArmorStandManipulateCallback.HOOK.invoker().onManipulate(self, player, slot, playerItemStack, hand)) {
             cir.setReturnValue(false);
         }
     }
@@ -35,10 +35,10 @@ public class ArmorStandMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$beforeDamage(ServerLevel world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$beforeDamage(ServerLevel level, DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
         ArmorStand self = (ArmorStand) (Object) this;
 
-        if (NonLivingDamageCallback.HOOK.invoker().onDamage(self, source, amount)) {
+        if (NonLivingDamageCallback.HOOK.invoker().onDamage(self, source, damage)) {
             cir.setReturnValue(false);
         }
     }

@@ -27,8 +27,8 @@ public class RespawnAnchorBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onCharge(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.CHARGE_RESPAWN_ANCHOR.invoker().onModify(world, pos, player)) {
+    public void kibu$onCharge(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.CHARGE_RESPAWN_ANCHOR.invoker().onModify(level, pos, player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }
@@ -41,8 +41,8 @@ public class RespawnAnchorBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onExplode(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.EXPLODE_RESPAWN_LOCATION.invoker().onModify(world, pos, player)) {
+    public void kibu$onExplode(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.EXPLODE_RESPAWN_LOCATION.invoker().onModify(level, pos, player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }
@@ -55,8 +55,8 @@ public class RespawnAnchorBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onSetSpawnPoint(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (PlayerSpawnPointChangeCallback.HOOK.invoker().onChange(player, world, pos)) {
+    public void kibu$onSetSpawnPoint(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (PlayerSpawnPointChangeCallback.HOOK.invoker().onChange(player, level, pos)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }

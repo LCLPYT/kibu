@@ -13,7 +13,7 @@ import work.lclpnet.kibu.hook.util.MixinUtils;
 public class MooshroomCowMixin {
 
     @WrapOperation(
-            method = "method_61469",  // this is a lambda in sheared(); the name might change in the future
+            method = "lambda$shear$1",  // this is a lambda in sheared(); the name might change in the future
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"

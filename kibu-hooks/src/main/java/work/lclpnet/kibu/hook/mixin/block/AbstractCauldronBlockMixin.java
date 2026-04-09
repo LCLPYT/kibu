@@ -24,7 +24,7 @@ public class AbstractCauldronBlockMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$interceptOnUse(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
+    public void kibu$interceptOnUse(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
         var ctx = new UseOnContext(player, hand, hit);
         var result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(ctx);
 

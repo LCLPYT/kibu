@@ -22,8 +22,8 @@ public class SnowLayerBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onMelt(BlockState state, ServerLevel world, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        if (WorldPhysicsHooks.MELT.invoker().onFade(world, pos))
+    public void kibu$onMelt(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+        if (WorldPhysicsHooks.MELT.invoker().onFade(level, pos))
             ci.cancel();
     }
 }

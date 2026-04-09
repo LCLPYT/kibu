@@ -26,8 +26,8 @@ public class CandleBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$interceptExtinguish(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.EXTINGUISH_CANDLE.invoker().onModify(world, pos, player)) {
+    public void kibu$interceptExtinguish(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.EXTINGUISH_CANDLE.invoker().onModify(level, pos, player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }

@@ -15,12 +15,12 @@ public class ServerPlayerMixin {
             method = "updateOptions",
             at = @At("HEAD")
     )
-    public void kibu$fireLanguageEvent(ClientInformation packet, CallbackInfo ci) {
+    public void kibu$fireLanguageEvent(ClientInformation information, CallbackInfo ci) {
         ServerPlayer self = (ServerPlayer) (Object) this;
 
         // ignore early call during the join process
         if (self.connection == null) return;
 
-        LanguageChangedCallback.HOOK.invoker().onChanged(self, packet.language(), LanguageChangedCallback.Reason.PLAYER);
+        LanguageChangedCallback.HOOK.invoker().onChanged(self, information.language(), LanguageChangedCallback.Reason.PLAYER);
     }
 }

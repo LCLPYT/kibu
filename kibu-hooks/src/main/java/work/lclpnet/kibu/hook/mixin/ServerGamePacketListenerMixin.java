@@ -31,16 +31,16 @@ public abstract class ServerGamePacketListenerMixin {
     @Shadow public ServerPlayer player;
 
     @Shadow
-    private static double clampHorizontal(double d) {
+    private static double clampHorizontal(double value) {
         throw new AssertionError();
     }
 
     @Shadow
-    private static double clampVertical(double d) {
+    private static double clampVertical(double value) {
         throw new AssertionError();
     }
 
-    @Shadow public abstract void teleport(double x, double y, double z, float yaw, float pitch);
+    @Shadow public abstract void teleport(double x, double y, double z, float yRot, float xRot);
 
     @Unique
     private double lastX = Double.NaN, lastY = Double.NaN, lastZ = Double.NaN;
@@ -271,14 +271,14 @@ public abstract class ServerGamePacketListenerMixin {
                     target = "Lnet/minecraft/server/level/ServerPlayer;teleportSetPosition(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;)V"
             )
     )
-    public void kibu$onRequestTeleport(PositionMoveRotation pos, Set<Relative> flags, CallbackInfo ci) {
+    public void kibu$onRequestTeleport(PositionMoveRotation destination, Set<Relative> relatives, CallbackInfo ci) {
         hookTeleported = true;
         teleporting = true;
-        lastX = pos.position().x;
-        lastY = pos.position().y;
-        lastZ = pos.position().z;
-        lastYaw = pos.yRot();
-        lastPitch = pos.xRot();
+        lastX = destination.position().x;
+        lastY = destination.position().y;
+        lastZ = destination.position().z;
+        lastYaw = destination.yRot();
+        lastPitch = destination.xRot();
     }
 
     @Inject(

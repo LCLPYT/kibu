@@ -25,7 +25,7 @@ public class LecternMenuMixin implements BlockPosAware {
             ),
             cancellable = true
     )
-    public void kibu$onTakeBook(Player player, int id, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$onTakeBook(Player player, int buttonId, CallbackInfoReturnable<Boolean> cir) {
         if (BlockModificationHooks.TAKE_LECTERN_BOOK.invoker().onModify(player.level(), blockPosition, player)) {
             cir.setReturnValue(false);
         }

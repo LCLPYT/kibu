@@ -17,7 +17,7 @@ public class CatEntity$CatRelaxOnOwnerGoalMixin {
     @Shadow @Final private Cat cat;
 
     @WrapOperation(
-            method = "method_64176",  // this is a lambda in dropMorningGifts(), naming may change in the future
+            method = "lambda$giveMorningGift$0",  // this is a lambda in dropMorningGifts(), naming may change in the future
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"

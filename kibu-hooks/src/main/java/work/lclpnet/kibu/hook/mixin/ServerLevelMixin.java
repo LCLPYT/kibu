@@ -36,12 +36,23 @@ public class ServerLevelMixin {
             ),
             cancellable = true
     )
-    public void kibu$onExplode(@Nullable Entity entity, @Nullable DamageSource damageSource,
-                               @Nullable ExplosionDamageCalculator behavior, double x, double y, double z, float power,
-                               boolean createFire, Level.ExplosionInteraction explosionSourceType,
-                               ParticleOptions smallParticle, ParticleOptions largeParticle,
-                               WeightedList<ExplosionParticleInfo> blockParticles, Holder<SoundEvent> soundEvent,
-                               CallbackInfo ci, @Local ServerExplosion explosion) {
+    public void kibu$onExplode(
+            @Nullable Entity source,
+            @Nullable DamageSource damageSource,
+            @Nullable ExplosionDamageCalculator damageCalculator,
+            double x,
+            double y,
+            double z,
+            float r,
+            boolean fire,
+            Level.ExplosionInteraction interactionType,
+            ParticleOptions smallExplosionParticles,
+            ParticleOptions largeExplosionParticles,
+            WeightedList<ExplosionParticleInfo> blockParticles,
+            Holder<SoundEvent> explosionSound,
+            CallbackInfo ci,
+            @Local(name = "explosion") ServerExplosion explosion
+    ) {
         if (WorldPhysicsHooks.EXPLOSION.invoker().onExplode(explosion)) {
             ci.cancel();
         }
@@ -72,16 +83,16 @@ public class ServerLevelMixin {
                     target = "Lnet/minecraft/world/level/block/Block;pushEntitiesUp(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"
             )
     )
-    public BlockState kibu$onSnowAccumulatePushEntities(BlockState from, BlockState to, LevelAccessor world, BlockPos pos) {
+    public BlockState kibu$onSnowAccumulatePushEntities(BlockState state, BlockState newState, LevelAccessor level, BlockPos pos) {
         @SuppressWarnings("DataFlowIssue")
         Level w = (Level) (Object) this;
 
         // fire snow fall event a second time to determine if entities should be pushed
         if (WorldPhysicsHooks.SNOW_FALL.invoker().onSnowFall(w, pos)) {
             // canceled, do not push entities and return original block state
-            return from;
+            return state;
         }
 
-        return Block.pushEntitiesUp(from, to, world, pos);
+        return Block.pushEntitiesUp(state, newState, level, pos);
     }
 }

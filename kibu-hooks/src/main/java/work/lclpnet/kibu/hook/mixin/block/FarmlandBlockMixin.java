@@ -62,8 +62,8 @@ public abstract class FarmlandBlockMixin extends Block {
             at = @At("HEAD"),
             cancellable = true
     )
-    private static void kibu$setToDirt(Entity entity, BlockState state, Level world, BlockPos pos, CallbackInfo ci) {
-        if (world instanceof ServerLevel serverWorld
+    private static void kibu$setToDirt(Entity sourceEntity, BlockState state, Level level, BlockPos pos, CallbackInfo ci) {
+        if (level instanceof ServerLevel serverWorld
                 && state.is(Blocks.FARMLAND)
                 && FarmlandMoistureChangeCallback.HOOK.invoker().onMoistureChange(serverWorld, pos, -1)) {
             ci.cancel();

@@ -20,7 +20,7 @@ public class ZombieVillagerMixin {
             ),
             cancellable = true
     )
-    public void kibu$onConvert(ServerLevel world, CallbackInfo ci) {
+    public void kibu$onConvert(ServerLevel level, CallbackInfo ci) {
         ZombieVillager self = (ZombieVillager) (Object) this;
 
         if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityType.VILLAGER)) {

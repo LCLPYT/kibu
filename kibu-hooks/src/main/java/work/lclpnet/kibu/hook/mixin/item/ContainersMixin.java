@@ -17,8 +17,8 @@ public class ContainersMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private static void kibu$onScatter(Level world, double x, double y, double z, ItemStack stack, CallbackInfo ci) {
-        if (ItemScatterCallback.HOOK.invoker().onScatter(world, x, y, z, stack)) {
+    private static void kibu$onScatter(Level level, double x, double y, double z, ItemStack itemStack, CallbackInfo ci) {
+        if (ItemScatterCallback.HOOK.invoker().onScatter(level, x, y, z, itemStack)) {
             ci.cancel();
         }
     }

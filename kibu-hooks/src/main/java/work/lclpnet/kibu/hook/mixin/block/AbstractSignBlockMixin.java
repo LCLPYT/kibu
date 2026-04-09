@@ -23,12 +23,12 @@ public class AbstractSignBlockMixin {
             method = "useItemOn",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/SignApplicator;canApplyToSign(Lnet/minecraft/world/level/block/entity/SignText;Lnet/minecraft/world/entity/player/Player;)Z"
+                    target = "Lnet/minecraft/world/item/SignApplicator;canApplyToSign(Lnet/minecraft/world/level/block/entity/SignText;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;)Z"
             ),
             cancellable = true
     )
-    public void kibu$interceptOnUse(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        var ctx = new UseOnContext(player, hand, hit);
+    public void kibu$interceptOnUse(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        var ctx = new UseOnContext(player, hand, hitResult);
         var result = BlockModificationHooks.USE_ITEM_ON_BLOCK.invoker().onUse(ctx);
 
         if (result != null) {
@@ -44,8 +44,8 @@ public class AbstractSignBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onEditSign(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.EDIT_SIGN.invoker().onModify(world, pos, player)) {
+    public void kibu$onEditSign(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.EDIT_SIGN.invoker().onModify(level, pos, player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }

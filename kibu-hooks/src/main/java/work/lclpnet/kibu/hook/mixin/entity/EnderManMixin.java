@@ -20,12 +20,12 @@ public class EnderManMixin {
             ),
             cancellable = true
     )
-    public void kibu$onTeleport(double _x, double _y, double _z, CallbackInfoReturnable<Boolean> cir, @Local Vec3 finalPos) {
+    public void kibu$onTeleport(double x, double y, double z, CallbackInfoReturnable<Boolean> cir, @Local(name = "oldPos") Vec3 oldPos) {
         EnderMan self = (EnderMan) (Object) this;
 
-        double x = finalPos.x, y = finalPos.y, z = finalPos.z;
+        double fx = oldPos.x, fy = oldPos.y, fz = oldPos.z;
 
-        if (EntityTeleportCallback.HOOK.invoker().onTeleport(self, x, y, z)) {
+        if (EntityTeleportCallback.HOOK.invoker().onTeleport(self, fx, fy, fz)) {
             cir.setReturnValue(false);
         }
     }

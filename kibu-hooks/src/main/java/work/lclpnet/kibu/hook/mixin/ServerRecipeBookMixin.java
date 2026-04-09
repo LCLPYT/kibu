@@ -30,7 +30,7 @@ public class ServerRecipeBookMixin {
     }
 
     @ModifyArg(
-            method = "method_64591",  // this is a lambda in unlockRecipes(); naming may change
+            method = "lambda$addRecipes$0",  // this is a lambda in addRecipes(); naming may change
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/network/protocol/game/ClientboundRecipeBookAddPacket$Entry;<init>(Lnet/minecraft/world/item/crafting/display/RecipeDisplayEntry;ZZ)V"
@@ -38,15 +38,15 @@ public class ServerRecipeBookMixin {
             index = 1
     )
     private static boolean kibu$adjustRecipeNotification(boolean showNotification,
-                                                         @Local(argsOnly = true) RecipeHolder<?> recipeRef,
-                                                         @Local(argsOnly = true) RecipeDisplayEntry displayEntry) {
+                                                         @Local(argsOnly = true, name = "recipe") RecipeHolder<?> recipe,
+                                                         @Local(argsOnly = true, name = "display") RecipeDisplayEntry display) {
         if (!showNotification) return false;
 
         ServerPlayer player = playerRef.get();
 
         if (player == null) return true;
 
-        boolean hide = PlayerRecipeNotificationCallback.HOOK.invoker().onDisplay(player, recipeRef, displayEntry);
+        boolean hide = PlayerRecipeNotificationCallback.HOOK.invoker().onDisplay(player, recipe, display);
 
         return !hide;
     }

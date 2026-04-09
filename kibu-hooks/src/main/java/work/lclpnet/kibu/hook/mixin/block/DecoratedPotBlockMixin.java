@@ -29,8 +29,8 @@ public class DecoratedPotBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$beforeWobble(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.DECORATIVE_POT_STORE.invoker().onModify(world, hit.getBlockPos(), player)) {
+    public void kibu$beforeWobble(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.DECORATIVE_POT_STORE.invoker().onModify(level, hitResult.getBlockPos(), player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }
@@ -43,8 +43,8 @@ public class DecoratedPotBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$beforeWobbleBack(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.DECORATIVE_POT_STORE.invoker().onModify(world, hit.getBlockPos(), player)) {
+    public void kibu$beforeWobbleBack(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.DECORATIVE_POT_STORE.invoker().onModify(level, hitResult.getBlockPos(), player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }
@@ -57,8 +57,8 @@ public class DecoratedPotBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$beforeProjectileDestroy(Level world, BlockState state, BlockHitResult hit, Projectile projectile, CallbackInfo ci) {
-        if (ProjectileHooks.BREAK_DECORATED_POT.invoker().onAffect(projectile, hit)) {
+    public void kibu$beforeProjectileDestroy(Level level, BlockState state, BlockHitResult blockHit, Projectile projectile, CallbackInfo ci) {
+        if (ProjectileHooks.BREAK_DECORATED_POT.invoker().onAffect(projectile, blockHit)) {
             ci.cancel();
         }
     }

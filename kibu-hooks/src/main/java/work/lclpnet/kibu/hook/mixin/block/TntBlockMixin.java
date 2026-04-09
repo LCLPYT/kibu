@@ -26,8 +26,8 @@ public class TntBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onPrimeTnt(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
-        if (BlockModificationHooks.PRIME_TNT.invoker().onModify(world, pos, player)) {
+    public void kibu$onPrimeTnt(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
+        if (BlockModificationHooks.PRIME_TNT.invoker().onModify(level, pos, player)) {
             cir.setReturnValue(InteractionResult.PASS);
         }
     }

@@ -8,6 +8,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,7 +28,7 @@ public class ItemFrameMixin {
             ),
             cancellable = true
     )
-    public void kibu$beforeDamage(ServerLevel world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$beforeDamage(ServerLevel level, DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
         ItemFrame self = (ItemFrame) (Object) this;
 
         if (ItemFrameRemoveItemCallback.HOOK.invoker().onRemoveItem(self, source.getEntity())) {
@@ -43,7 +44,7 @@ public class ItemFrameMixin {
             ),
             cancellable = true
     )
-    public void kibu$onPutIntoFrame(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir, @Local ItemStack stack) {
+    public void kibu$onPutIntoFrame(Player player, InteractionHand hand, Vec3 location, CallbackInfoReturnable<InteractionResult> cir, @Local ItemStack stack) {
         ItemFrame self = (ItemFrame) (Object) this;
 
         if (ItemFramePutItemCallback.HOOK.invoker().onPutIntoFrame(self, stack, player, hand)) {
@@ -59,7 +60,7 @@ public class ItemFrameMixin {
             ),
             cancellable = true
     )
-    public void kibu$onRotateFrame(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    public void kibu$onRotateFrame(Player player, InteractionHand hand, Vec3 location, CallbackInfoReturnable<InteractionResult> cir) {
         ItemFrame self = (ItemFrame) (Object) this;
 
         if (ItemFrameRotateCallback.HOOK.invoker().onRotateFrame(self, player, hand)) {

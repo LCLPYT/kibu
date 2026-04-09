@@ -23,9 +23,9 @@ public class ReplaceDiskMixin {
             )
     )
     public boolean kibu$onSetBlock(ServerLevel instance, BlockPos pos, BlockState state, Operation<Boolean> original,
-                                   @Local(argsOnly = true) EnchantedItemInUse context) {
+                                   @Local(argsOnly = true, name = "item") EnchantedItemInUse item) {
 
-        if (WorldPhysicsHooks.REPLACE_DISK_ENCHANTMENT.invoker().onApply(instance, pos, context.owner(), state)) {
+        if (WorldPhysicsHooks.REPLACE_DISK_ENCHANTMENT.invoker().onApply(instance, pos, item.owner(), state)) {
             return false;  // cancel modification
         }
 

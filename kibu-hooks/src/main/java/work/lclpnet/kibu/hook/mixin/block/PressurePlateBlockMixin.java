@@ -25,18 +25,18 @@ public class PressurePlateBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onGetRedstoneOutput(Level world, BlockPos pos, CallbackInfoReturnable<Integer> cir,
-                                         @Local Class<? extends Entity> entityClass) {
+    public void kibu$onGetRedstoneOutput(Level level, BlockPos pos, CallbackInfoReturnable<Integer> cir,
+                                         @Local(name = "entityClass") Class<? extends Entity> entityClass) {
         AABB box = BasePressurePlateBlockAccessor.getBox().move(pos);
 
-        var entities = world.getEntitiesOfClass(entityClass, box, EntitySelector.NO_SPECTATORS
+        var entities = level.getEntitiesOfClass(entityClass, box, EntitySelector.NO_SPECTATORS
                 .and((entity) -> !entity.isIgnoringBlockTriggers()));
 
         boolean success = false;
         boolean modified = false;
 
         for (Entity entity : entities) {
-            if (PressurePlateCallback.HOOK.invoker().onPress(world, pos, entity)) {
+            if (PressurePlateCallback.HOOK.invoker().onPress(level, pos, entity)) {
                 modified = true;
             } else {
                 success = true;

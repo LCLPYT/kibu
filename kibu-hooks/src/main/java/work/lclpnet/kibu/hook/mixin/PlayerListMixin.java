@@ -50,7 +50,7 @@ public abstract class PlayerListMixin {
                     target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"
             )
     )
-    public void kibu$sendCustomJoinMessage(Connection connection, ServerPlayer player, CommonListenerCookie clientData, CallbackInfo ci) {
+    public void kibu$sendCustomJoinMessage(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
         NameAndId configEntry = player.nameAndId();
         UserNameToIdResolver nameToIdCache = this.server.services().nameToIdCache();
 
@@ -79,7 +79,7 @@ public abstract class PlayerListMixin {
                     shift = At.Shift.AFTER
             )
     )
-    public void kibu$afterConnected(Connection connection, ServerPlayer player, CommonListenerCookie clientData, CallbackInfo ci) {
+    public void kibu$afterConnected(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
         PlayerConnectionHooks.JOIN.invoker().act(player);
 
         var data = new PlayerSpawnLocationCallback.LocationData(player, true, player.level(),
@@ -97,7 +97,7 @@ public abstract class PlayerListMixin {
             method = "respawn",
             at = @At("RETURN")
     )
-    public void kibu$afterRespawn(ServerPlayer oldPlayer, boolean alive, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayer> cir) {
+    public void kibu$afterRespawn(ServerPlayer serverPlayer, boolean keepAllPlayerData, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayer> cir) {
         ServerPlayer player = cir.getReturnValue();
 
         var data = new PlayerSpawnLocationCallback.LocationData(player, false, player.level(),

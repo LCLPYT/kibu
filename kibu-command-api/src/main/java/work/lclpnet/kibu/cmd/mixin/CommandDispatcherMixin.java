@@ -29,13 +29,13 @@ public class CommandDispatcherMixin {
             ),
             remap = false
     )
-    public <S> void beforeRegister(LiteralArgumentBuilder<S> builder, CallbackInfoReturnable<LiteralCommandNode<S>> cir, @Local LiteralCommandNode<S> command) {
-        var redirect = command.getRedirect();
+    public <S> void beforeRegister(LiteralArgumentBuilder<S> command, CallbackInfoReturnable<LiteralCommandNode<S>> cir, @Local(name = "build") LiteralCommandNode<S> build) {
+        var redirect = build.getRedirect();
         if (!(redirect instanceof LiteralCommandNode<S> literal)) return;
 
         var redirects = ((RedirectAware) root).kibu$getRedirects();
 
         // track all redirects on the root node
-        redirects.computeIfAbsent(literal, l -> new ArrayList<>()).add(command);
+        redirects.computeIfAbsent(literal, l -> new ArrayList<>()).add(build);
     }
 }

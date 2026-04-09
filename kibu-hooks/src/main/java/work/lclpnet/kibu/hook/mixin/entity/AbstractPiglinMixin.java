@@ -34,10 +34,10 @@ public class AbstractPiglinMixin {
                     target = "Lnet/minecraft/world/entity/monster/piglin/AbstractPiglin;finishConversion(Lnet/minecraft/server/level/ServerLevel;)V"
             )
     )
-    public void kibu$onZombify(AbstractPiglin instance, ServerLevel world, Operation<Void> original,
+    public void kibu$onZombify(AbstractPiglin instance, ServerLevel level, Operation<Void> original,
                                @Share("zombify") LocalBooleanRef cancelled) {
         if (!cancelled.get()) {
-            original.call(instance, world);
+            original.call(instance, level);
         }
     }
 }

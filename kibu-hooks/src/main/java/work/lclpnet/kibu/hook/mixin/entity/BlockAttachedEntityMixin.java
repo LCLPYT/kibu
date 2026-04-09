@@ -17,10 +17,10 @@ public class BlockAttachedEntityMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$beforeDamage(ServerLevel world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    public void kibu$beforeDamage(ServerLevel level, DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
         BlockAttachedEntity self = (BlockAttachedEntity) (Object) this;
 
-        if (NonLivingDamageCallback.HOOK.invoker().onDamage(self, source, amount)) {
+        if (NonLivingDamageCallback.HOOK.invoker().onDamage(self, source, damage)) {
             cir.setReturnValue(false);
         }
     }

@@ -24,7 +24,7 @@ public class ServerPlayerGameModeMixin {
                     shift = At.Shift.AFTER
             )
     )
-    public void kibu$changedGameMode(GameType gameMode, CallbackInfoReturnable<Boolean> cir) {
-        PlayerGameModeChangeCallback.HOOK.invoker().onChangeGameMode(player, gameMode);
+    public void kibu$changedGameMode(GameType gameModeForPlayer, CallbackInfoReturnable<Boolean> cir) {
+        PlayerGameModeChangeCallback.HOOK.invoker().onChangeGameMode(player, gameModeForPlayer);
     }
 }

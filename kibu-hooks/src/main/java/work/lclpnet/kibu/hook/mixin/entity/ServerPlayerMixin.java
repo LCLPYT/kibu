@@ -19,26 +19,26 @@ public class ServerPlayerMixin {
             method = "startRiding",
             at = @At("RETURN")
     )
-    public void kibu$onStartedRiding(Entity vehicle, boolean force, boolean emitEvent, CallbackInfoReturnable<Boolean> cir) {
-        if (vehicle == null || !cir.getReturnValue()) return;
+    public void kibu$onStartedRiding(Entity entityToRide, boolean force, boolean sendEventAndTriggers, CallbackInfoReturnable<Boolean> cir) {
+        if (entityToRide == null || !cir.getReturnValue()) return;
 
         @SuppressWarnings("DataFlowIssue")
         ServerPlayer self = (ServerPlayer) (Object) this;
 
-        PlayerMountHooks.MOUNTED.invoker().doAfter(self, vehicle);
+        PlayerMountHooks.MOUNTED.invoker().doAfter(self, entityToRide);
     }
 
     @Inject(
             method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;",
             at = @At(value = "RETURN")
     )
-    public void kibu$onDroppedItem(ItemStack stack, boolean throwRandomly, boolean retainOwnership, CallbackInfoReturnable<ItemEntity> cir,
-                                   @Local ItemEntity item) {
-        if (item == null) return;
+    public void kibu$onDroppedItem(ItemStack itemStack, boolean randomly, boolean thrownFromHand, CallbackInfoReturnable<ItemEntity> cir,
+                                   @Local(name = "entity") ItemEntity entity) {
+        if (entity == null) return;
 
         @SuppressWarnings("DataFlowIssue")
         ServerPlayer self = (ServerPlayer) (Object) this;
 
-        PlayerInventoryHooks.DROPPED_ITEM_ENTITY.invoker().onDroppedItemEntity(self, item);
+        PlayerInventoryHooks.DROPPED_ITEM_ENTITY.invoker().onDroppedItemEntity(self, entity);
     }
 }

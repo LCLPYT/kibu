@@ -27,14 +27,14 @@ public abstract class LeashFenceKnotMixin {
                     ordinal = 0
             )
     )
-    public List<Leashable> kibu$collectEntitiesToLeashToBlock(Entity leashHolder, Operation<List<Leashable>> original,
-                                                              @Local(argsOnly = true) Player player) {
-        List<Leashable> list = original.call(leashHolder);
+    public List<Leashable> kibu$collectEntitiesToLeashToBlock(Entity entity, Operation<List<Leashable>> original,
+                                                              @Local(argsOnly = true, name = "player") Player player) {
+        List<Leashable> list = original.call(entity);
         List<Entity> entities = new ArrayList<>(list.size());
 
         for (Leashable leashable : list) {
-            if (leashable instanceof Entity entity) {
-                entities.add(entity);
+            if (leashable instanceof Entity leashed) {
+                entities.add(leashed);
             }
         }
 
@@ -57,8 +57,8 @@ public abstract class LeashFenceKnotMixin {
                     ordinal = 1
             )
     )
-    public List<Leashable> kibu$collectEntitiesToTakeHoldOf(Entity leashHolder, Operation<List<Leashable>> original,
-                                                            @Local(argsOnly = true) Player player) {
+    public List<Leashable> kibu$collectEntitiesToTakeHoldOf(Entity entity, Operation<List<Leashable>> original,
+                                                            @Local(argsOnly = true, name = "player") Player player) {
 
         var self = (LeashFenceKnotEntity) (Object) this;
 
@@ -66,6 +66,6 @@ public abstract class LeashFenceKnotMixin {
             return List.of();
         }
 
-        return original.call(leashHolder);
+        return original.call(entity);
     }
 }

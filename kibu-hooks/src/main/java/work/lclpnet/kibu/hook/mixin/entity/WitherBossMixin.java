@@ -20,10 +20,10 @@ public class WitherBossMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void kibu$onShootSkull(int headIndex, double targetX, double targetY, double targetZ, boolean charged, CallbackInfo ci) {
+    public void kibu$onShootSkull(int head, double tx, double ty, double tz, boolean dangerous, CallbackInfo ci) {
         WitherBoss self = (WitherBoss) (Object) this;
 
-        if (WitherShootCallback.HOOK.invoker().onShootAt(self, targetX, targetY, targetZ)) {
+        if (WitherShootCallback.HOOK.invoker().onShootAt(self, tx, ty, tz)) {
             ci.cancel();
         }
     }

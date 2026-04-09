@@ -15,7 +15,7 @@ import work.lclpnet.kibu.hook.util.MixinUtils;
 public class DolphinEntity$PlayWithItemsGoalMixin {
 
     @Shadow @Final
-    Dolphin field_6757;  // reference to the outer class, naming may change in the future
+    Dolphin this$0;  // reference to the outer class, naming may change in the future
 
     @WrapOperation(
             method = "drop",
@@ -25,6 +25,6 @@ public class DolphinEntity$PlayWithItemsGoalMixin {
             )
     )
     public boolean kibu$onDropItem(Level world, Entity entity, Operation<Boolean> original) {
-        return MixinUtils.wrapEntityItemDrop(world, entity, original, this.field_6757);
+        return MixinUtils.wrapEntityItemDrop(world, entity, original, this.this$0);
     }
 }

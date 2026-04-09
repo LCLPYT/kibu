@@ -18,7 +18,7 @@ public class LecternBlockEntityMixin {
             method = "createMenu",
             at = @At("RETURN")
     )
-    public void kibu$injectBlockPos(int i, Inventory playerInventory, Player playerEntity, CallbackInfoReturnable<AbstractContainerMenu> cir) {
+    public void kibu$injectBlockPos(int containerId, Inventory inventory, Player player, CallbackInfoReturnable<AbstractContainerMenu> cir) {
         @SuppressWarnings("DataFlowIssue")
         BlockEntity blockEntity = (BlockEntity) (Object) this;
 

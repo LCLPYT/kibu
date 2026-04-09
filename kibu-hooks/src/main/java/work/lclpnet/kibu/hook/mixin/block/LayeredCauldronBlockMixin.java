@@ -25,10 +25,10 @@ public class LayeredCauldronBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onPrecipitationTick(BlockState state, Level world, BlockPos pos, Biome.Precipitation precipitation, CallbackInfo ci) {
+    public void kibu$onPrecipitationTick(BlockState state, Level level, BlockPos pos, Biome.Precipitation precipitation, CallbackInfo ci) {
         BlockState toState = state.cycle(LEVEL);
 
-        if (WorldPhysicsHooks.CAULDRON_PRECIPITATION.invoker().onChange(world, pos, toState)) {
+        if (WorldPhysicsHooks.CAULDRON_PRECIPITATION.invoker().onChange(level, pos, toState)) {
             ci.cancel();
         }
     }
@@ -41,10 +41,10 @@ public class LayeredCauldronBlockMixin {
             ),
             cancellable = true
     )
-    public void kibu$onFillFromDripstone(BlockState state, Level world, BlockPos pos, Fluid fluid, CallbackInfo ci) {
+    public void kibu$onFillFromDripstone(BlockState state, Level level, BlockPos pos, Fluid fluid, CallbackInfo ci) {
         BlockState toState = state.setValue(LEVEL, state.getValue(LEVEL) + 1);
 
-        if (WorldPhysicsHooks.CAULDRON_DRIP_STONE.invoker().onChange(world, pos, toState)) {
+        if (WorldPhysicsHooks.CAULDRON_DRIP_STONE.invoker().onChange(level, pos, toState)) {
             ci.cancel();
         }
     }

@@ -22,7 +22,7 @@ public class BehaviorUtilsMixin {
                     target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"
             )
     )
-    private static boolean kibu$onDropItem(Level world, Entity entity, Operation<Boolean> original, @Local(argsOnly = true) LivingEntity thrower) {
+    private static boolean kibu$onDropItem(Level world, Entity entity, Operation<Boolean> original, @Local(argsOnly = true, name = "thrower") LivingEntity thrower) {
         if (entity instanceof ItemEntity itemEntity) {
             if (EntityDropItemCallback.HOOK.invoker().onDropItem(world, thrower, itemEntity)) {
                 // cancelled, do not call original

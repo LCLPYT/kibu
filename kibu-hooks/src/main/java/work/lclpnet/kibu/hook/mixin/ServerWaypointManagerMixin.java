@@ -23,7 +23,7 @@ public class ServerWaypointManagerMixin {
                     target = "Lnet/minecraft/server/waypoints/ServerWaypointManager;isLocatorBarEnabledFor(Lnet/minecraft/server/level/ServerPlayer;)Z"
             )
     )
-    public boolean kibu$isLocatorEnabled(ServerPlayer player, Operation<Boolean> original, @Local(argsOnly = true) WaypointTransmitter waypoint) {
+    public boolean kibu$isLocatorEnabled(ServerPlayer player, Operation<Boolean> original, @Local(argsOnly = true, name = "waypoint") WaypointTransmitter waypoint) {
         boolean enabled = original.call(player);
 
         if (!enabled) {

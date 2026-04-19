@@ -1,5 +1,6 @@
 import groovy.xml.XmlSlurper
 import org.apache.tools.ant.filters.ReplaceTokens
+import work.lclpnet.build.task.GithubDeploymentTask
 
 plugins {
     alias(libs.plugins.fabric.loom) apply false
@@ -132,7 +133,7 @@ base {
 allprojects {
     processResources {
         def tokens = [
-                "version": project.version,
+                "version": project.version.toString(),
                 "loader_version": libs.versions.fabric.loader.get(),
                 "minecraft_compat": project.minecraft_compat,
                 "java_version": javaVersion.toString()
@@ -149,9 +150,6 @@ allprojects {
         }
     }
 }
-
-
-import work.lclpnet.build.task.GithubDeploymentTask
 
 def env = System.getenv()
 
@@ -235,7 +233,7 @@ loom.nestJars(tasks.named("jar"), configurations.nestedJars)
 
 processTestmodResources {
     def tokens = [
-            "version": project.version,
+            "version": project.version.toString(),
             "loader_version": libs.versions.fabric.loader.get(),
             "minecraft_compat": project.minecraft_compat,
             "java_version": javaVersion.toString()

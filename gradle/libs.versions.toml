@@ -1,8 +1,8 @@
 [versions]
-minecraft = "26.1"
-fabric-api = "0.144.3+26.1"
-fabric-loader = "0.19.1"
-fabric-loom = "1.15-SNAPSHOT"
+minecraft = "26.1.2"
+fabric-api = "0.148.0+26.1.2"
+fabric-loader = "0.19.2"
+fabric-loom = "1.16-SNAPSHOT"
 gradle-build-tools = "1.7.0"
 java = "25"
 jetbrains-annotations = "24.1.0"

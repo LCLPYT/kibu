@@ -25,6 +25,7 @@ public class ConfigManager<C> implements ConfigAccess<C>, AutoCloseable {
     private final ObjectDeserializer deserializer;
     private final C config;
     private final FileWatcher fileWatcher;
+    private boolean closed = false;
     private @Nullable Runnable onChanged = null;
 
     public ConfigManager(Path configPath, C config) {
@@ -163,6 +164,11 @@ public class ConfigManager<C> implements ConfigAccess<C>, AutoCloseable {
 
     @Override
     public void close() {
+        synchronized (this) {
+            if (closed) return;
+            closed = true;
+        }
+
         if (fileConfig != null) {
             fileConfig.close();
         }

@@ -3,6 +3,7 @@ package work.lclpnet.kibu.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableCommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.electronwill.nightconfig.core.file.GenericBuilder;
 import com.electronwill.nightconfig.core.serde.ObjectDeserializer;
 import com.electronwill.nightconfig.core.serde.ObjectSerializer;
@@ -23,6 +24,7 @@ public class ConfigManager<C> implements ConfigAccess<C>, AutoCloseable {
     private final ObjectSerializer serializer;
     private final ObjectDeserializer deserializer;
     private final C config;
+    private final FileWatcher fileWatcher;
     private @Nullable Runnable onChanged = null;
 
     public ConfigManager(Path configPath, C config) {
@@ -43,8 +45,9 @@ public class ConfigManager<C> implements ConfigAccess<C>, AutoCloseable {
         }
 
 
+        fileWatcher = new FileWatcher();
         fileConfig = modifier.apply(CommentedFileConfig.builder(configPath)
-                .autoreload()
+                .autoreload(fileWatcher)
                 .onAutoReload(this::updateConfig)).build();
 
         serializer = ObjectSerializer.standard();
@@ -163,6 +166,8 @@ public class ConfigManager<C> implements ConfigAccess<C>, AutoCloseable {
         if (fileConfig != null) {
             fileConfig.close();
         }
+
+        fileWatcher.stop();
     }
 
     public void onChanged(@Nullable Runnable action) {

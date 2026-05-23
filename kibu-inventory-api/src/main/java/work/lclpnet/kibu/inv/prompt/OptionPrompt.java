@@ -20,14 +20,20 @@ import java.util.function.Function;
 public class OptionPrompt {
 
     public static <T> CompletableFuture<Optional<T>> open(ServerPlayer player, Component title, Collection<T> options, Function<T, ItemStack> iconFactory) {
+        return openHandle(player, title, options, iconFactory).future();
+    }
+
+    public static <T> OpenPrompt<T> openHandle(ServerPlayer player, Component title, Collection<T> options, Function<T, ItemStack> iconFactory) {
         var future = new CompletableFuture<Optional<T>>();
 
         RestrictedInventory inventory = createInventory(title, options, iconFactory, future);
 
         player.openMenu(inventory);
 
-        return future;
+        return new OpenPrompt<>(inventory, future);
     }
+
+    public record OpenPrompt<T>(RestrictedInventory inventory, CompletableFuture<Optional<T>> future) {}
 
     public static <T> RestrictedInventory createInventory(Component title, Collection<T> options, Function<T, ItemStack> iconFactory, CompletableFuture<Optional<T>> future) {
         int rows = Math.max(1, Math.min(6, (int) Math.ceil(options.size() / 9d)));

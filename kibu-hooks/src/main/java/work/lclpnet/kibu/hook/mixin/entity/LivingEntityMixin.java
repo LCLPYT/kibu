@@ -37,6 +37,10 @@ public class LivingEntityMixin {
         @SuppressWarnings("DataFlowIssue")
         LivingEntity entity = (LivingEntity) (Object) this;
 
+        // the constructor calls setHealth before the entity has been assigned an id and added to a level
+        // skip those calls, as the entity is not fully initialized yet
+        if (((EntityAccessor) entity).getId() == 0) return;
+
         if (EntityHealthCallback.HOOK.invoker().onHealthChange(entity, health)) {
             ci.cancel();
         }

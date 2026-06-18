@@ -62,6 +62,7 @@
     "entity.ArmorStandMixin",
     "entity.BlockAttachedEntityMixin",
     "entity.EnderManMixin",
+    "entity.EntityAccessor",
     "entity.EntityMixin",
     "entity.EyeOfEnderMixin",
     "entity.FishingHookMixin",

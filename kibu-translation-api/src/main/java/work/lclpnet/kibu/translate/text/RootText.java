@@ -3,10 +3,7 @@ package work.lclpnet.kibu.translate.text;
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
@@ -123,7 +120,7 @@ public class RootText implements Component {
      *
      * @param styleUpdater the style updater
      */
-    public RootText styled(UnaryOperator<Style> styleUpdater) {
+    public RootText withStyle(UnaryOperator<Style> styleUpdater) {
         this.setStyle(styleUpdater.apply(this.getStyle()));
         return this;
     }
@@ -136,7 +133,7 @@ public class RootText implements Component {
      *
      * @param styleOverride the style that provides definitions for absent definitions in this text's style
      */
-    public RootText fillStyle(Style styleOverride) {
+    public RootText withStyle(Style styleOverride) {
         this.setStyle(styleOverride.applyTo(this.getStyle()));
         return this;
     }
@@ -146,7 +143,7 @@ public class RootText implements Component {
      *
      * @param formattings an array of formattings
      */
-    public RootText formatted(ChatFormatting... formattings) {
+    public RootText withStyle(ChatFormatting... formattings) {
         this.setStyle(this.getStyle().applyFormats(formattings));
         return this;
     }
@@ -156,8 +153,28 @@ public class RootText implements Component {
      *
      * @param formatting a formatting
      */
-    public RootText formatted(ChatFormatting formatting) {
+    public RootText withStyle(ChatFormatting formatting) {
         this.setStyle(this.getStyle().applyFormat(formatting));
+        return this;
+    }
+
+    /**
+     * Set the color of this text's style.
+     *
+     * @param color The packed color int.
+     */
+    public RootText withColor(int color) {
+        this.setStyle(this.getStyle().withColor(color));
+        return this;
+    }
+
+    /**
+     * Set the color of this text's style.
+     *
+     * @param color The text color.
+     */
+    public RootText withColor(TextColor color) {
+        this.setStyle(this.getStyle().withColor(color));
         return this;
     }
 }

@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,7 +90,7 @@ public class TranslatedText implements TextTranslatable {
      *
      * @param styleUpdater the style updater
      */
-    public TranslatedText styled(UnaryOperator<Style> styleUpdater) {
+    public TranslatedText withStyle(UnaryOperator<Style> styleUpdater) {
         this.setStyle(styleUpdater.apply(this.getStyle()));
         return this;
     }
@@ -102,7 +103,7 @@ public class TranslatedText implements TextTranslatable {
      *
      * @param styleOverride the style that provides definitions for absent definitions in this text's style
      */
-    public TranslatedText fillStyle(Style styleOverride) {
+    public TranslatedText withStyle(Style styleOverride) {
         this.setStyle(styleOverride.applyTo(this.getStyle()));
         return this;
     }
@@ -112,7 +113,7 @@ public class TranslatedText implements TextTranslatable {
      *
      * @param formattings an array of formattings
      */
-    public TranslatedText formatted(ChatFormatting... formattings) {
+    public TranslatedText withStyle(ChatFormatting... formattings) {
         this.setStyle(this.getStyle().applyFormats(formattings));
         return this;
     }
@@ -122,8 +123,28 @@ public class TranslatedText implements TextTranslatable {
      *
      * @param formatting a formatting
      */
-    public TranslatedText formatted(ChatFormatting formatting) {
+    public TranslatedText withStyle(ChatFormatting formatting) {
         this.setStyle(this.getStyle().applyFormat(formatting));
+        return this;
+    }
+
+    /**
+     * Set the color of this text's style.
+     *
+     * @param color The packed color int.
+     */
+    public TranslatedText withColor(int color) {
+        this.setStyle(this.getStyle().withColor(color));
+        return this;
+    }
+
+    /**
+     * Set the color of this text's style.
+     *
+     * @param color The text color.
+     */
+    public TranslatedText withColor(TextColor color) {
+        this.setStyle(this.getStyle().withColor(color));
         return this;
     }
 

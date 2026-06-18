@@ -37,7 +37,7 @@ public class TextFormatterTest {
     void formatText_prefix_textArg() {
         var service = new TextFormatter();
 
-        RootText text = service.formatText("%s bar", Component.literal("Hello").withStyle(BLUE)).formatted(YELLOW);
+        RootText text = service.formatText("%s bar", Component.literal("Hello").withStyle(BLUE)).withStyle(YELLOW);
         assertEquals("Hello bar", text.getString());
         assertEquals(2, text.getSiblings().size());
         assertEquals("#5555FFHello#FFFF55 bar", debugString(text));
@@ -47,7 +47,7 @@ public class TextFormatterTest {
     void formatText_suffix() {
         var service = new TextFormatter();
 
-        RootText text = service.formatText("Hello %s", "world").formatted(BOLD);
+        RootText text = service.formatText("Hello %s", "world").withStyle(BOLD);
         assertEquals("Hello world", text.getString());
         assertEquals(2, text.getSiblings().size());
         assertEquals("#FFFFFF§lHello #FFFFFF§lworld", debugString(text));
@@ -57,7 +57,7 @@ public class TextFormatterTest {
     void formatText_styledArg() {
         var service = new TextFormatter();
 
-        RootText text = service.formatText("Count %.2f", styled(Math.PI, YELLOW)).formatted(GREEN, BOLD);
+        RootText text = service.formatText("Count %.2f", styled(Math.PI, YELLOW)).withStyle(GREEN, BOLD);
         assertEquals("Count 3.14", text.getString());
         assertEquals(2, text.getSiblings().size());
         assertEquals("#55FF55§lCount #FFFF55§l3.14", debugString(text));

@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.zombie.ZombieVillager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +23,7 @@ public class ZombieVillagerMixin {
     public void kibu$onConvert(ServerLevel level, CallbackInfo ci) {
         ZombieVillager self = (ZombieVillager) (Object) this;
 
-        if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityType.VILLAGER)) {
+        if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityTypes.VILLAGER)) {
             ci.cancel();
         }
     }

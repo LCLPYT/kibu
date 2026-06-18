@@ -18,24 +18,7 @@ public class LlamaEntityAccess {
             return;
         }
 
-        Item item = switch (color) {
-            case WHITE -> Items.WHITE_CARPET;
-            case ORANGE -> Items.ORANGE_CARPET;
-            case MAGENTA -> Items.MAGENTA_CARPET;
-            case LIGHT_BLUE -> Items.LIGHT_BLUE_CARPET;
-            case YELLOW -> Items.YELLOW_CARPET;
-            case LIME -> Items.LIME_CARPET;
-            case PINK -> Items.PINK_CARPET;
-            case GRAY -> Items.GRAY_CARPET;
-            case LIGHT_GRAY -> Items.LIGHT_GRAY_CARPET;
-            case CYAN -> Items.CYAN_CARPET;
-            case PURPLE -> Items.PURPLE_CARPET;
-            case BLUE -> Items.BLUE_CARPET;
-            case BROWN -> Items.BROWN_CARPET;
-            case GREEN -> Items.GREEN_CARPET;
-            case RED -> Items.RED_CARPET;
-            case BLACK -> Items.BLACK_CARPET;
-        };
+        Item item = Items.CARPET.pick(color);
 
         llama.setItemSlot(EquipmentSlot.BODY, new ItemStack(item));
     }

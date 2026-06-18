@@ -1,7 +1,7 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,6 +26,6 @@ public class HoglinMixin {
         // the hoglin would convert
         Hoglin self = (Hoglin) (Object) this;
 
-        return !EntityConvertCallback.HOOK.invoker().onConvert(self, EntityType.ZOGLIN);
+        return !EntityConvertCallback.HOOK.invoker().onConvert(self, EntityTypes.ZOGLIN);
     }
 }

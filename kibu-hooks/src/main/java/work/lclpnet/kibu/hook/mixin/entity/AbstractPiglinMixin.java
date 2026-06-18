@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +23,7 @@ public class AbstractPiglinMixin {
     )
     public void kibu$onPlayZombificationSound(AbstractPiglin instance, Operation<Void> original,
                                               @Share("zombify") LocalBooleanRef cancelled) {
-        boolean cancel = EntityConvertCallback.HOOK.invoker().onConvert(instance, EntityType.ZOMBIFIED_PIGLIN);
+        boolean cancel = EntityConvertCallback.HOOK.invoker().onConvert(instance, EntityTypes.ZOMBIFIED_PIGLIN);
         cancelled.set(cancel);
     }
 

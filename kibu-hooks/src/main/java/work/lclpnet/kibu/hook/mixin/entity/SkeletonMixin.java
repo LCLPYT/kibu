@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +19,7 @@ public class SkeletonMixin {
     public void kibu$onConvertToStray(CallbackInfo ci) {
         Skeleton self = (Skeleton) (Object) this;
 
-        if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityType.STRAY)) {
+        if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityTypes.STRAY)) {
             ci.cancel();
         }
     }

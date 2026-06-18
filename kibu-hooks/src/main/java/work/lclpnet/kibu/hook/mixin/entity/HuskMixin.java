@@ -1,6 +1,6 @@
 package work.lclpnet.kibu.hook.mixin.entity;
 
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.zombie.Husk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +19,7 @@ public class HuskMixin {
     public void kibu$onConvertToZombie(CallbackInfo ci) {
         Husk self = (Husk) (Object) this;
 
-        if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityType.ZOMBIE)) {
+        if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityTypes.ZOMBIE)) {
             ci.cancel();
         }
     }

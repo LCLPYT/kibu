@@ -6,10 +6,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProblemReporter;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityProcessor;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -117,7 +114,7 @@ public class FabricKibuEntity implements KibuEntity {
 
         nbt.put("Pos", posList);
 
-        Entity entity = EntityType.loadEntityRecursive(nbt, world, EntitySpawnReason.STRUCTURE, EntityProcessor.NOP);
+        Entity entity = EntityType.loadEntityRecursive(nbt, world, new EntitySpawnRequest(EntitySpawnReason.STRUCTURE, false), EntityProcessor.NOP);
         if (entity == null) return false;
 
         Vec3 rootPos = entity.position();

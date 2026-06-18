@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.entity.ConversionParams;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.npc.villager.Villager;
@@ -24,7 +25,7 @@ public class ZombieMixin {
     public void kibu$onConvertToDrowned(CallbackInfo ci) {
         Zombie self = (Zombie) (Object) this;
 
-        if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityType.DROWNED)) {
+        if (EntityConvertCallback.HOOK.invoker().onConvert(self, EntityTypes.DROWNED)) {
             ci.cancel();
         }
     }

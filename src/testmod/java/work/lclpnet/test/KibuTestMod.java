@@ -330,7 +330,7 @@ public class KibuTestMod implements ModInitializer {
 
         CraftingRecipeCallback.HOOK.register((player, input, result) -> {
             // if the player is holding a stick and tries to dye a bundle blue, the bundle will be dyed red instead using the transmute recipe
-            if (player.getMainHandItem().is(STICK) && result.is(Items.BLUE_BUNDLE)) {
+            if (player.getMainHandItem().is(STICK) && result.is(Items.DYED_BUNDLE.pick(DyeColor.BLUE))) {
                 MinecraftServer server = player.level().getServer();
 
                 var key = ResourceKey.create(Registries.RECIPE, Identifier.parse("red_bundle"));

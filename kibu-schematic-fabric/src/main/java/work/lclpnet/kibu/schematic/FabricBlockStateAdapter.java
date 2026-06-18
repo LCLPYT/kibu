@@ -6,7 +6,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -84,7 +83,7 @@ public class FabricBlockStateAdapter implements BlockStateAdapter {
     }
 
     public Optional<FabricKibuEntity> revert(KibuEntity entity) {
-        return EntityType.byString(entity.getId()).map(type -> {
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.tryParse(entity.getId())).map(type -> {
             Vec3 pos = new Vec3(entity.getX(), entity.getY(), entity.getZ());
             CompoundTag nbt = FabricNbtConversion.convert(entity.getExtraNbt(), CompoundTag.class);
 

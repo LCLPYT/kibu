@@ -48,6 +48,7 @@
     "block.PressurePlateBlockMixin",
     "block.PumpkinBlockMixin",
     "block.RespawnAnchorBlockMixin",
+    "block.ShelfBlockMixin",
     "block.ShulkerBoxBlockMixin",
     "block.SnowLayerBlockMixin",
     "block.TntBlockMixin",

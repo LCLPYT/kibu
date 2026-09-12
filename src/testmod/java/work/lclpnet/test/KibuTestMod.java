@@ -41,10 +41,7 @@ import work.lclpnet.kibu.behaviour.entity.VexEntityBehaviour;
 import work.lclpnet.kibu.hook.ServerMessageHooks;
 import work.lclpnet.kibu.hook.entity.*;
 import work.lclpnet.kibu.hook.entity.leash.*;
-import work.lclpnet.kibu.hook.level.BlockModificationHooks;
-import work.lclpnet.kibu.hook.level.FarmlandMoistureChangeCallback;
-import work.lclpnet.kibu.hook.level.ItemScatterCallback;
-import work.lclpnet.kibu.hook.level.LevelPhysicsHooks;
+import work.lclpnet.kibu.hook.level.*;
 import work.lclpnet.kibu.hook.network.ServerSendPacketCallback;
 import work.lclpnet.kibu.hook.player.*;
 import work.lclpnet.kibu.hook.util.PendingResult;
@@ -114,7 +111,7 @@ public class KibuTestMod implements ModInitializer {
     }
 
     private void teleportWithBrick() {
-        PlayerInteractionHooks.USE_ITEM.register((player, world, hand) -> {
+        PlayerInteractionHooks.USE_ITEM.register((player, world, _) -> {
             if (!world.isClientSide() && player.getMainHandItem().is(Items.BRICK) && player instanceof ServerPlayer sp) {
                 sp.teleportTo(sp.level(), sp.getX(), sp.getY() + 20, sp.getZ(), Set.of(), sp.getYRot(), sp.getXRot(), true);
                 return InteractionResult.SUCCESS_SERVER;
@@ -128,8 +125,8 @@ public class KibuTestMod implements ModInitializer {
 
     private void preventBeyond300() {
         AffectedByDaylightCallback.HOOK.register(entity -> entity.getY() > 300);
-        EntityTeleportCallback.HOOK.register((entity, x, y, z) -> entity.getY() > 300);
-        ProjectileCanHitCallback.HOOK.register((projectile, entity) -> entity.getY() <= 300);
+        EntityTeleportCallback.HOOK.register((entity, _, _, _) -> entity.getY() > 300);
+        ProjectileCanHitCallback.HOOK.register((_, entity) -> entity.getY() <= 300);
         FarmlandMoistureChangeCallback.HOOK.register((world, pos, moisture)
                 -> pos.getY() > 300 && moisture < world.getBlockState(pos).getValue(FarmlandBlock.MOISTURE));
     }
@@ -188,17 +185,17 @@ public class KibuTestMod implements ModInitializer {
     }
 
     private void preventWhenRaining() {
-        LevelPhysicsHooks.BLOCK_ITEM_DROP.register((world, pos, stack) -> world.isRaining());
+        LevelPhysicsHooks.BLOCK_ITEM_DROP.register((world, _, _) -> world.isRaining());
 
-        ItemScatterCallback.HOOK.register((world, x, y, z, stack) -> world.isRaining());
+        ItemScatterCallback.HOOK.register((world, _, _, _, _) -> world.isRaining());
 
-        EntityDropItemCallback.HOOK.register((world, entity, itemEntity) -> world.isRaining());
+        EntityDropItemCallback.HOOK.register((world, _, _) -> world.isRaining());
 
-        EntityConvertCallback.HOOK.register((entity, type) -> entity.level().isRaining());
+        EntityConvertCallback.HOOK.register((entity, _) -> entity.level().isRaining());
 
-        WitherShootCallback.HOOK.register((wither, targetX, targetY, targetZ) -> wither.level().isRaining());
+        WitherShootCallback.HOOK.register((wither, _, _, _) -> wither.level().isRaining());
 
-        LevelPhysicsHooks.CORAL_DEATH.register((world, pos) -> world.isRaining());
+        LevelPhysicsHooks.CORAL_DEATH.register((world, _) -> world.isRaining());
 
         LevelPhysicsHooks.EXPLOSION.register(explosion -> explosion.level().isRaining());
     }
@@ -214,7 +211,7 @@ public class KibuTestMod implements ModInitializer {
     }
 
     private void testCommands() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, _, _) -> {
             new ImageMapCommand().register(dispatcher);
             new SchematicCommand().register(dispatcher);
             new BehaviourCommand().register(dispatcher);
@@ -225,14 +222,14 @@ public class KibuTestMod implements ModInitializer {
 
     private void preventWithWitherRose() {
         // cancel when holding a wither rose
-        EntityHealthCallback.HOOK.register((entity, health) -> {
+        EntityHealthCallback.HOOK.register((entity, _) -> {
             // check if spawned in world yet
             if (entity.level().getEntity(entity.getId()) == null) return false;
 
             return cancelMainhandWitherRose(entity);
         });
 
-        PlayerInventoryHooks.SWAP_HANDS.register((player, slot) -> cancelMainhandWitherRose(player));
+        PlayerInventoryHooks.SWAP_HANDS.register((player, _) -> cancelMainhandWitherRose(player));
     }
 
     private boolean cancelMainhandWitherRose(LivingEntity entity) {
@@ -252,57 +249,57 @@ public class KibuTestMod implements ModInitializer {
     }
 
     private void preventWithStick() {
-        NonLivingDamageCallback.HOOK.register((entity, source, amount) -> {
+        NonLivingDamageCallback.HOOK.register((_, source, _) -> {
             if (!(source.getDirectEntity() instanceof ServerPlayer player)) return false;
 
             ItemStack stack = player.getMainHandItem();
             return stack.is(STICK);
         });
 
-        ItemFramePutItemCallback.HOOK.register((itemFrame, stack, player, hand) -> stack.is(STICK));
+        ItemFramePutItemCallback.HOOK.register((_, stack, _, _) -> stack.is(STICK));
 
-        ItemFrameRotateCallback.HOOK.register((itemFrame, player, hand) -> {
+        ItemFrameRotateCallback.HOOK.register((_, player, hand) -> {
             ItemStack stack = player.getItemInHand(hand);
             return stack.is(STICK);
         });
 
-        ItemFrameRemoveItemCallback.HOOK.register((itemFrame, attacker) -> {
+        ItemFrameRemoveItemCallback.HOOK.register((_, attacker) -> {
             if (!(attacker instanceof ServerPlayer player)) return false;
 
             ItemStack stack = player.getMainHandItem();
             return stack.is(STICK);
         });
 
-        ArmorStandManipulateCallback.HOOK.register((armorStand, player, slot, stack, hand) -> player.getItemInHand(hand).is(STICK));
+        ArmorStandManipulateCallback.HOOK.register((_, player, _, _, hand) -> player.getItemInHand(hand).is(STICK));
 
-        ItemUseOnEntityCallback.HOOK.register((player, entity, hand, stack) -> cancelOffhandStick(player));
+        ItemUseOnEntityCallback.HOOK.register((player, _, _, _) -> cancelOffhandStick(player));
 
-        LeashEntityCallback.HOOK.register((player, entity) -> cancelOffhandStick(player));
-        UnleashEntityCallback.HOOK.register((player, entity) -> cancelOffhandStick(player));
-        LeashDestroyCallback.HOOK.register((player, leashed) -> cancelOffhandStick(player));
-        LeashEntitiesToBlockCallback.HOOK.register((player, pos, entities) -> cancelOffhandStick(player));
-        LeashEntitiesToEntityCallback.HOOK.register((player, pos, entities) -> cancelOffhandStick(player));
-        LeashKnotTakeCallback.HOOK.register((player, leashKnot) -> cancelOffhandStick(player));
+        LeashEntityCallback.HOOK.register((player, _) -> cancelOffhandStick(player));
+        UnleashEntityCallback.HOOK.register((player, _) -> cancelOffhandStick(player));
+        LeashDestroyCallback.HOOK.register((player, _) -> cancelOffhandStick(player));
+        LeashEntitiesToBlockCallback.HOOK.register((player, _, _) -> cancelOffhandStick(player));
+        LeashEntitiesToEntityCallback.HOOK.register((player, _, _) -> cancelOffhandStick(player));
+        LeashKnotTakeCallback.HOOK.register((player, _) -> cancelOffhandStick(player));
 
-        ProjectilePickupCallback.HOOK.register((player, projectile) -> player.getMainHandItem().is(STICK));
+        ProjectilePickupCallback.HOOK.register((player, _) -> player.getMainHandItem().is(STICK));
 
-        BlockModificationHooks.EXTINGUISH_CANDLE.register((world, pos, entity)
+        BlockModificationHooks.EXTINGUISH_CANDLE.register((_, _, entity)
                 -> entity instanceof ServerPlayer player && player.getMainHandItem().is(STICK));
 
-        PlayerAdvancementPacketCallback.HOOK.register((player, packet) -> player.getMainHandItem().is(STICK));
+        PlayerAdvancementPacketCallback.HOOK.register((player, _) -> player.getMainHandItem().is(STICK));
 
-        PlayerRecipeNotificationCallback.HOOK.register((player, recipeEntry, displayEntry) -> player.getMainHandItem().is(STICK));
+        PlayerRecipeNotificationCallback.HOOK.register((player, _, _) -> player.getMainHandItem().is(STICK));
 
-        BlockModificationHooks.DECORATIVE_POT_STORE.register((world, pos, entity)
+        BlockModificationHooks.DECORATIVE_POT_STORE.register((_, _, entity)
                 -> entity instanceof ServerPlayer player && cancelOffhandStick(player));
 
-        ProjectileHooks.BREAK_DECORATED_POT.register((projectile, hit) -> {
+        ProjectileHooks.BREAK_DECORATED_POT.register((projectile, _) -> {
             if (!(projectile.getOwner() instanceof ServerPlayer player)) return false;
 
             return cancelOffhandStick(player);
         });
 
-        PlayerInventoryHooks.DROP_ITEM_ENTITY.register((player, itemEntity) -> cancelOffhandStick(player));
+        PlayerInventoryHooks.DROP_ITEM_ENTITY.register((player, _) -> cancelOffhandStick(player));
 
         PlayerInventoryHooks.DROPPED_ITEM_ENTITY.register((player, itemEntity) -> {
             if (player.getMainHandItem().is(STICK)) {
@@ -310,7 +307,7 @@ public class KibuTestMod implements ModInitializer {
             }
         });
 
-        CraftingRecipeCallback.HOOK.register((player, input, result) -> {
+        CraftingRecipeCallback.HOOK.register((player, _, result) -> {
             // if the player is holding a stick and tries to craft sticks, the result will be empty, meaning no sticks can be crafted
             if (player.getMainHandItem().is(STICK) && result.is(STICK)) {
                 return PendingResult.empty();
@@ -319,7 +316,7 @@ public class KibuTestMod implements ModInitializer {
             return PendingResult.pass();
         });
 
-        CraftingRecipeCallback.HOOK.register((player, input, result) -> {
+        CraftingRecipeCallback.HOOK.register((player, _, result) -> {
             // if the player is holding a stick and tries to craft a stone sword, a wooden sword will be the result
             if (player.getMainHandItem().is(STICK) && result.is(Items.STONE_SWORD)) {
                 return PendingResult.of(new ItemStack(Items.WOODEN_SWORD));
@@ -346,11 +343,11 @@ public class KibuTestMod implements ModInitializer {
             return PendingResult.pass();
         });
 
-        EntityDamageCallback.HOOK.register((entity, source, amount)
+        EntityDamageCallback.HOOK.register((entity, _, _)
                 -> entity instanceof ServerPlayer player
                 && cancelOffhandStick(player));
 
-        ServerMessageHooks.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> !sender.getMainHandItem().is(STICK));
+        ServerMessageHooks.ALLOW_CHAT_MESSAGE.register((_, sender, _) -> !sender.getMainHandItem().is(STICK));
 
         // disallow mobs to target players who hold a stick
         EntityTargetCallback.HOOK.register((entity, target)
@@ -363,10 +360,10 @@ public class KibuTestMod implements ModInitializer {
                 && player.getMainHandItem().is(STICK)
                 && !effect.getEffect().value().isBeneficial());
 
-        EntityBossBarCallback.HOOK.register((entity, bossBar, player) -> player.getMainHandItem().is(STICK));
+        EntityBossBarCallback.HOOK.register((_, _, player) -> player.getMainHandItem().is(STICK));
 
-        EntityMountCallback.HOOK.register((entity, vehicle, force) -> entity instanceof ServerPlayer player && player.getMainHandItem().is(STICK));
-        EntityDismountCallback.HOOK.register((entity, vehicle) -> entity instanceof ServerPlayer player && player.getMainHandItem().is(STICK));
+        EntityMountCallback.HOOK.register((entity, _, _) -> entity instanceof ServerPlayer player && player.getMainHandItem().is(STICK));
+        EntityDismountCallback.HOOK.register((entity, _) -> entity instanceof ServerPlayer player && player.getMainHandItem().is(STICK));
 
         ServerSendPacketCallback.HOOK.register((packet, handler)
                 -> handler instanceof ServerGamePacketListenerImpl networkHandler
@@ -374,13 +371,16 @@ public class KibuTestMod implements ModInitializer {
                 && (packet instanceof ClientboundSoundPacket || packet instanceof ClientboundSoundEntityPacket)
                 ? PendingResult.empty() : PendingResult.pass());
 
-        LevelPhysicsHooks.REPLACE_DISK_ENCHANTMENT.register((world, pos, entity, state)
+        LevelPhysicsHooks.REPLACE_DISK_ENCHANTMENT.register((_, _, entity, _)
                 -> entity instanceof ServerPlayer player && player.getMainHandItem().is(STICK));
 
-        EntityUsePortalCallback.HOOK.register((entity, portal, pos)
+        EntityUsePortalCallback.HOOK.register((entity, _, _)
                 -> entity instanceof ServerPlayer player && player.getMainHandItem().is(STICK));
 
-        PlayerWaypointCallback.HOOK.register((player, waypoint) -> player.getMainHandItem().is(STICK));
+        PlayerWaypointCallback.HOOK.register((player, _) -> player.getMainHandItem().is(STICK));
+
+        ShelfPlaceItemCallback.HOOK.register((_, _, _, _, player) -> player.getMainHandItem().is(STICK));
+        ShelfTakeItemCallback.HOOK.register((_, _, _, _, player) -> player.getMainHandItem().is(STICK));
     }
 
     private boolean cancelOffhandStick(Player player) {
@@ -388,10 +388,10 @@ public class KibuTestMod implements ModInitializer {
     }
 
     private void misc() {
-        PlayerSwingHandHook.HOOK.register((player, hand) -> System.out.println("player swings " + hand));
+        PlayerSwingHandHook.HOOK.register((_, hand) -> System.out.println("player swings " + hand));
 
         // prevent all movement when holding an echo shard in the offhand
-        PlayerMoveCallback.HOOK.register((player, from, to) -> {
+        PlayerMoveCallback.HOOK.register((player, _, _) -> {
             if (player.getMainHandItem().is(Items.POPPY) && player.level().getBlockState(player.blockPosition().below()).is(Blocks.DIAMOND_BLOCK)) {
                 player.teleportTo(player.level(), player.getX(), player.getY() + 2, player.getZ(), Set.of(), 0f, 0f, true);
             }
